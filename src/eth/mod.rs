@@ -1,41 +1,36 @@
-use std::env;
+use crate::eth::helper::get_signatures_table;
+use crate::eth::transfer::decode_transfer;
 use chrono::{DateTime, NaiveDateTime, Utc};
-use web3::contract::{Contract, Options};
-use web3::transports::WebSocket;
-use web3::types::{Block, BlockId, BlockNumber, H160, H256, TransactionId, U64};
-use web3::Web3;
+use std::env;
 use web3::helpers as w3h;
-use crate::eth::helper::{get_signatures_table, wei_to_eth};
+use web3::transports::WebSocket;
+use web3::types::{Block, BlockId, BlockNumber, TransactionId, H256, U64};
+use web3::Web3;
 
 mod helper;
-
-
-const INPUT_CHUNK_SIZE: usize = 64; // Number of bytes in one function argument
-const ADDRESS_PREFIX_SIZE: usize = 24; // Number of leading zeros in address argument
-const DEFAULT_DENOMINATOR: u128 = 100;
+mod transfer;
 
 pub async fn read_eth_blocks() -> anyhow::Result<()> {
     // Load variables from .env
     // Token contract address
-    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS").unwrap().to_lowercase();
-
-    // Token name
-    let eth_token_name = env::var("ETH_TOKEN_NAME").unwrap();
+    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")?.to_lowercase();
 
     // Oldest saved block num
-    let eth_end_block = U64::from_str_radix(&env::var("ETH_STARTING_BLOCK").unwrap(), 10).unwrap();
+    let eth_end_block = U64::from_str_radix(&env::var("ETH_END_BLOCK")?, 10)?;
 
     // Lookup table of contract methods
     let code_sig_lookup = get_signatures_table()?;
 
-    let websocket = WebSocket::new(&env::var("ETH_NETWORK").unwrap())
-        .await
-        .unwrap();
+    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
     let web3s = Web3::new(websocket);
 
-    // Start from the latest block
-    // let mut block_id = BlockId::Number(BlockNumber::Latest);
-    let mut block_id = BlockId::Number(BlockNumber::Number(U64::from(4319836)));
+    // Start from the latest block if nothing was specified in the env
+    let mut block_id = match U64::from_str_radix(&env::var("ETH_STARTING_BLOCK")?, 10) {
+        Ok(val) => BlockId::Number(BlockNumber::Number(U64::from(val))),
+        Err(_) => BlockId::Number(BlockNumber::Latest),
+    };
+
+    let mut transfers = vec![];
 
     loop {
         // Read block
@@ -67,10 +62,18 @@ pub async fn read_eth_blocks() -> anyhow::Result<()> {
 
             // Check that transaction destination is equal to the specified address
             if let Some(address) = tx.to {
-                let dest = w3h::to_string(&address).trim().trim_end_matches('"').trim_start_matches('"').to_string().to_lowercase();
+                let dest = w3h::to_string(&address)
+                    .trim()
+                    .trim_end_matches('"')
+                    .trim_start_matches('"')
+                    .to_string()
+                    .to_lowercase();
                 tracing::trace!("Txn destination address: {dest}");
-                if  dest != eth_contract_address {
-                    tracing::trace!("Wrong destination address, skip it. `{}` != `{eth_contract_address}`", dest);
+                if dest != eth_contract_address {
+                    tracing::trace!(
+                        "Wrong destination address, skip it. `{}` != `{eth_contract_address}`",
+                        dest
+                    );
                     continue;
                 }
             } else {
@@ -78,138 +81,15 @@ pub async fn read_eth_blocks() -> anyhow::Result<()> {
                 continue;
             }
 
-            // Check that contract contains code and that token name is equal to the specified
-            // TODO: think of necessity of this checks. mb remove
-            let token_name = if false {
-                let smart_contract_addr = match tx.to {
-                    Some(addr) => match web3s.eth().code(addr, None).await {
-                        Ok(code) => {
-                            if code == web3::types::Bytes::from([]) {
-                                tracing::trace!("Empty code, skipping.");
-                                continue;
-                            } else {
-                                addr
-                            }
-                        }
-                        _ => {
-                            tracing::trace!("Unable to retrieve code, skipping.");
-                            continue;
-                        }
-                    },
-                    _ => {
-                        tracing::trace!("Destination address is not a valid address, skipping.");
-                        continue;
-                    }
-                };
-
-
-                let smart_contract = match Contract::from_json(
-                    web3s.eth(),
-                    smart_contract_addr,
-                    include_bytes!("../../resources/elock.abi.json"),
-                ) {
-                    Ok(contract) => contract,
-                    _ => {
-                        tracing::trace!("Failed to init contract, skipping.");
-                        continue;
-                    }
-                };
-
-                let token_name: String = match smart_contract
-                    .query("name", (), None, Options::default(), None)
-                    .await
-                {
-                    Ok(result) => result,
-                    _ => {
-                        tracing::trace!("Could not get token name, skipping.");
-                        continue;
-                    }
-                };
-
-                if token_name != eth_token_name {
-                    tracing::trace!("Wrong token name, skip it. {token_name} != {eth_token_name}");
-                    continue;
-                }
-                token_name
-            } else {
-                eth_token_name.clone()
-            };
-
-            // Decode function call
-            let input_str: String = w3h::to_string(&tx.input);
-            if input_str.len() < 12 {
-                continue;
+            match decode_transfer(tx, &code_sig_lookup) {
+                Ok(transfer) => transfers.push(transfer),
+                Err(_) => {}
             }
-            tracing::trace!("{} input_str: {input_str}", w3h::to_string(&tx.hash));
-            let func_code = input_str[3..11].to_string();
-            let func_signature: String = match code_sig_lookup.get(&func_code) {
-                Some(func_sig) => format!("{:?}", func_sig),
-                _ => {
-                    tracing::trace!("Function not found.");
-                    "[unknown]".to_string()
-                }
-            };
-
-            let chunks = input_str[11..]
-                .chars()
-                .collect::<Vec<char>>()
-                .chunks(INPUT_CHUNK_SIZE)
-                .map(|c| c.iter().collect::<String>())
-                .collect::<Vec<String>>();
-
-            let destination_address = match chunks.get(0) {
-                Some(chars) => {
-                    if chars.len() == INPUT_CHUNK_SIZE {
-                        let mut address = chars.clone();
-                        address.drain(0..ADDRESS_PREFIX_SIZE);
-                        format!("0x{address}")
-                    } else {
-                        String::from("Unknown")
-                    }
-                },
-                None => {
-                    tracing::trace!("Failed to decode transfer destination");
-                    String::from("Unknown")
-                }
-            };
-
-            let token_value = match chunks.get(1) {
-                Some(chars) => {
-                    if chars.len() == INPUT_CHUNK_SIZE {
-                        chars.clone()
-                    } else {
-                        String::from("Unknown")
-                    }
-                },
-                None => {
-                    tracing::trace!("Failed to decode transfer destination");
-                    String::from("Unknown")
-                }
-            };
-            let token_value = u128::from_str_radix(&token_value, 16)? / DEFAULT_DENOMINATOR;
-
-            tracing::info!("Transfer destination: {destination_address}, amount: {token_value}");
-
-            // Decode address fields
-            let from_addr = tx.from.unwrap_or(H160::zero());
-            let to_addr = tx.to.unwrap_or(H160::zero());
-
-            // Decode eth value
-            let eth_value = wei_to_eth(tx.value);
-
-            tracing::info!(
-                "[{}] ({} -> {}) from {}, to {}, value {}, gas {}, gas price {}",
-                tx.transaction_index.unwrap_or(U64::from(0)),
-                &token_name,
-                &func_signature,
-                w3h::to_string(&from_addr),
-                w3h::to_string(&to_addr),
-                eth_value,
-                tx.gas,
-                tx.gas_price.unwrap(),
-            );
         }
     }
+
+    tracing::info!("List of transfers: {transfers:?}");
+
     Ok(())
 }
 

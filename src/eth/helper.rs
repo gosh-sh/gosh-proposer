@@ -5,7 +5,6 @@ use web3::types::U256;
 
 const IDENTIFIERS_PATH: &str = "resources/identifiers.json";
 
-
 pub fn wei_to_eth(wei_val: U256) -> f64 {
     let res = wei_val.as_u128() as f64;
     let res = res / 1_000_000_000_000_000_000.0;
