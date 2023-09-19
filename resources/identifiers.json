@@ -1,0 +1,35 @@
+{
+  "70a08231": [
+    "balanceOf(address)"
+  ],
+  "313ce567": [
+    "decimals()"
+  ],
+  "5aa68ac0": [
+    "getParticipants()"
+  ],
+  "1249c58b": [
+    "mint()"
+  ],
+  "755edd17": [
+    "mintTo(address)"
+  ],
+  "06fdde03": [
+    "name()"
+  ],
+  "c588ef6e": [
+    "remains()"
+  ],
+  "95d89b41": [
+    "symbol()"
+  ],
+  "18160ddd": [
+    "totalSupply()"
+  ],
+  "a9059cbb": [
+    "transfer(address,uint256)"
+  ],
+  "7d2674f1": [
+    "trxCount()"
+  ]
+}
