@@ -1,8 +1,11 @@
 use std::env;
 use std::sync::Arc;
 use std::time::Duration;
+use serde::Deserialize;
 use ton_client::net::NetworkQueriesProtocol;
 use ton_client::{ClientConfig, ClientContext};
+use ton_client::crypto::KeyPair;
+use ton_client::processing::ProcessingEvent;
 
 pub type EverClient = Arc<ClientContext>;
 static DEFAULT_BLOCKCHAIN_TIMEOUT: Duration = Duration::from_secs(15 * 60);
@@ -49,4 +52,91 @@ pub fn create_client() -> anyhow::Result<EverClient> {
         .map_err(|e| anyhow::anyhow!("failed to create EverSDK client: {}", e))?;
 
     Ok(Arc::new(es_client))
+}
+
+#[derive(Deserialize, Debug)]
+pub struct CallResult {
+    #[serde(rename = "id")]
+    pub trx_id: String,
+    pub status: u8,
+    #[serde(with = "ton_sdk::json_helper::uint")]
+    total_fees: u64,
+    in_msg: String,
+    out_msgs: Vec<String>,
+}
+
+fn processing_event_to_string(pe: ProcessingEvent) -> String {
+    match pe {
+        ProcessingEvent::WillSend {
+            shard_block_id,
+            message_id,
+            message: _,
+            ..
+        } => format!(
+            "\nWillSend: {{\n\t\
+shard_block_id: \"{shard_block_id}\",\n\t\
+message_id: \"{message_id}\"\n}}"
+        ),
+        ProcessingEvent::DidSend {
+            shard_block_id,
+            message_id,
+            message: _,
+            ..
+        } => format!(
+            "\nDidSend: {{\n\t\
+shard_block_id: \"{shard_block_id}\",\n\t\
+message_id: \"{message_id}\"\n}}"
+        ),
+        ProcessingEvent::SendFailed {
+            shard_block_id,
+            message_id,
+            message: _,
+            error,
+            ..
+        } => format!(
+            "\nSendFailed: {{\n\t\
+shard_block_id: \"{shard_block_id}\",\n\t\
+message_id: \"{message_id}\"\n\t\
+error: \"{error}\"\n}}"
+        ),
+        ProcessingEvent::WillFetchNextBlock {
+            shard_block_id,
+            message_id,
+            message: _,
+            ..
+        } => format!(
+            "\nWillFetchNextBlock: {{\n\t\
+shard_block_id: \"{shard_block_id}\",\n\t\
+message_id: \"{message_id}\"\n}}"
+        ),
+        ProcessingEvent::FetchNextBlockFailed {
+            shard_block_id,
+            message_id,
+            message: _,
+            error,
+            ..
+        } => format!(
+            "\nFetchNextBlockFailed: {{\n\tshard_block_id: \"{shard_block_id}\",\n\t\
+message_id: \"{message_id}\"\n\terror: \"{error}\"\n}}"
+        ),
+        ProcessingEvent::MessageExpired {
+            message_id,
+            message: _,
+            error,
+            ..
+        } => format!(
+            "\nMessageExpired: {{\n\terror: \"{error}\",\n\tmessage_id: \"{message_id}\"\n}}"
+        ),
+        _ => format!("{:#?}", pe),
+    }
+}
+
+pub async fn default_callback(pe: ProcessingEvent) {
+    tracing::trace!("callback: {}", processing_event_to_string(pe));
+}
+
+pub fn load_keys(path: &str) -> anyhow::Result<KeyPair> {
+    let data_str = std::fs::read_to_string(path)?;
+    Ok(serde_json::from_str(&data_str)
+        .map_err(|e| anyhow::format_err!("Failed to load key pair from {path}: {e}"))?)
 }

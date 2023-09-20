@@ -1,7 +1,9 @@
-use crate::gosh::helper::EverClient;
+use crate::gosh::helper::{CallResult, default_callback, EverClient};
 use std::sync::Arc;
 use ton_client::abi::{encode_message, Abi, CallSet, ParamsOfEncodeMessage, Signer};
+use ton_client::crypto::KeyPair;
 use ton_client::net::{query_collection, ParamsOfQueryCollection};
+use ton_client::processing::{ParamsOfProcessMessage, ResultOfProcessMessage};
 use ton_client::tvm::{run_tvm, ParamsOfRunTvm};
 
 pub mod helper;
@@ -81,4 +83,66 @@ pub async fn call_getter(
     .map_err(|e| anyhow::format_err!("run_local failed: {e}"))?;
 
     Ok(result)
+}
+
+pub async fn call_function(
+    context: &EverClient,
+    address: &str,
+    abi_path: &str,
+    keys: Option<KeyPair>,
+    function_name: &str,
+    args: Option<serde_json::Value>,
+) -> anyhow::Result<()> {
+    tracing::trace!("call_function: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
+    let filter = Some(serde_json::json!({
+        "id": { "eq": address }
+    }));
+
+    let call_set = match args {
+        Some(value) => CallSet::some_with_function_and_input(function_name, value),
+        None => CallSet::some_with_function(function_name),
+    };
+
+    let signer = match keys {
+        Some(key_pair) => Signer::Keys {
+            keys: key_pair.to_owned(),
+        },
+        None => Signer::None,
+    };
+
+    let abi_json = std::fs::read_to_string(abi_path)?;
+    let abi = Abi::Json(abi_json);
+
+    let message_encode_params = ParamsOfEncodeMessage {
+        abi: abi.clone(),
+        address: Some(String::from(address.clone())),
+        call_set,
+        signer,
+        deploy_set: None,
+        processing_try_index: None,
+        signature_id: None,
+    };
+
+    let sdk_result = ton_client::processing::process_message(
+        Arc::clone(context),
+        ParamsOfProcessMessage {
+            send_events: true,
+            message_encode_params,
+        },
+        default_callback,
+    )
+        .await;
+    if let Err(ref e) = sdk_result {
+        tracing::trace!("process_message error: {:#?}", e);
+    }
+    let ResultOfProcessMessage {
+        transaction, /* decoded, */
+        ..
+    } = sdk_result?;
+    let call_result: CallResult = serde_json::from_value(transaction)?;
+    tracing::trace!("trx id: {}", call_result.trx_id);
+    match call_result.status {
+        3 => Ok(()),
+        code => anyhow::bail!("Call ended with error code: {code}")
+    }
 }
