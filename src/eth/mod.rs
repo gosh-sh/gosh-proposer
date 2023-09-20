@@ -4,10 +4,11 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use std::env;
 use web3::helpers as w3h;
 use web3::transports::WebSocket;
-use web3::types::{Block, BlockId, BlockNumber, TransactionId, H256, U64};
+use web3::types::{Block, BlockId, BlockNumber, TransactionId, H256, U256, U64};
 use web3::Web3;
 
 mod helper;
+mod proof;
 mod transfer;
 
 pub async fn read_eth_blocks() -> anyhow::Result<()> {
@@ -114,9 +115,23 @@ async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Resul
         block.transactions.len(),
         block.gas_used,
         block.gas_limit,
-        block.base_fee_per_gas.unwrap(),
+        block.base_fee_per_gas.unwrap_or(U256::from(0)),
         block.difficulty,
-        block.total_difficulty.unwrap()
+        block.total_difficulty.unwrap_or(U256::from(0))
     );
     Ok(block)
+}
+
+#[tokio::test]
+pub async fn test_hash() -> anyhow::Result<()> {
+    dotenv::dotenv().ok();
+    init_default_tracing();
+    let block_id = BlockId::Number(BlockNumber::Number(
+        U64::from_str_radix("400000", 10).unwrap(),
+    ));
+    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+    let web3s = Web3::new(websocket);
+    let block = read_block(&web3s, block_id).await?;
+    serialize_block(block)?;
+    Ok(())
 }
