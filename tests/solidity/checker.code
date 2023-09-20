@@ -1,0 +1,444 @@
+.version sol 0.71.0
+
+.macro constructor
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7_with_init_storage
+}
+GETGLOB 6
+THROWIF 51
+ENDS
+.loc checker.sol, 24
+ACCEPT
+.loc checker.sol, 0
+CALLREF {
+	.inline __c7_to_c4
+}
+THROW 0
+
+.macro checkData
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc checker.sol, 37
+LDU 32
+LDDICT
+ROTREV
+PAIR
+SWAP
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __checkData_13f36e46_internal_macro
+}
+IFREF {
+	.inline __c7_to_c4
+}
+THROW 0
+
+.globl	checkData_13f36e46_internal
+.type	checkData_13f36e46_internal, @function
+.inline __checkData_13f36e46_internal_macro
+
+.macro checkData_13f36e46_internal_macro
+.loc checker.sol, 19
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 100
+.loc checker.sol, 24
+ACCEPT
+.loc checker.sol, 38
+ACCEPT
+.loc checker.sol, 39
+PUSHINT 0
+SWAP
+MYADDR
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 12042311241760164903241885269213816626727588310923165
+STUR 175
+SWAP
+UNPAIR
+XCHG S2
+STU 32
+STDICT
+STU 128
+ENDC
+PUSHINT 1
+SENDRAWMSG
+.loc checker.sol, 0
+
+.macro checkDataIndex
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc checker.sol, 42
+OVER
+PUSHCONT {
+	LDU 32
+	LDDICT
+	ROTREV
+	PAIR
+	SWAP
+	LDREF
+	ENDS
+	CTOS
+}
+PUSHCONT {
+	LDU 32
+	LDDICT
+	ROTREV
+	PAIR
+	SWAP
+}
+IFELSE
+LDU 128
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __checkDataIndex_b6929abe_internal_macro
+}
+IFREF {
+	.inline __c7_to_c4
+}
+THROW 0
+
+.globl	checkDataIndex_b6929abe_internal
+.type	checkDataIndex_b6929abe_internal, @function
+.inline __checkDataIndex_b6929abe_internal_macro
+
+.macro checkDataIndex_b6929abe_internal_macro
+.loc checker.sol, 42
+MYADDR
+.loc checker.sol, 29
+GETGLOB 9
+OVER
+SDEQ
+THROWIFNOT 100
+.loc checker.sol, 24
+ACCEPT
+.loc checker.sol, 25
+ROTREV
+PUSHCONT {
+	.loc checker.sol, 43
+	PUSH2 S0, S1
+	FIRST
+	GEQ
+	PUSHCONT {
+		.loc checker.sol, 44
+		TRUE
+		MYADDR
+		NEWC
+		STSLICECONST x62_
+		STSLICE
+		PUSHINT 12112001070505573100559184388815842756433777146887178
+		STUR 175
+		STI 1
+		ENDC
+		PUSHINT 1
+		SENDRAWMSG
+		.loc checker.sol, 45
+		DROP2
+		.loc checker.sol, 0
+	}
+	IFJMP
+	.loc checker.sol, 47
+	PUSH2 S0, S1
+	SECOND
+	PUSHINT 32
+	DICTUGET
+	THROWIFNOT 50
+	CALLREF {
+		LDREF
+		LDU 256
+		ENDS
+		PAIR
+	}
+	FIRST
+	KECCAK256
+	PUSH2 S1, S2
+	SECOND
+	PUSHINT 32
+	DICTUGET
+	THROWIFNOT 50
+	CALLREF {
+		LDREF
+		LDU 256
+		ENDS
+		PAIR
+	}
+	SECOND
+	NEQ
+	PUSHCONT {
+		.loc checker.sol, 48
+		FALSE
+		MYADDR
+		NEWC
+		STSLICECONST x62_
+		STSLICE
+		PUSHINT 12112001070505573100559184388815842756433777146887178
+		STUR 175
+		STI 1
+		ENDC
+		PUSHINT 1
+		SENDRAWMSG
+		.loc checker.sol, 49
+		DROP2
+		.loc checker.sol, 0
+	}
+	IFJMP
+	.loc checker.sol, 51
+	INC
+	UFITS 128
+	SWAP
+	MYADDR
+	NEWC
+	STSLICECONST x62_
+	STSLICE
+	PUSHINT 12042311241760164903241885269213816626727588310923165
+	STUR 175
+	SWAP
+	UNPAIR
+	XCHG S2
+	STU 32
+	STDICT
+	STU 128
+	ENDC
+	PUSHINT 1
+	SENDRAWMSG
+	.loc checker.sol, 42
+}
+CALLX
+.loc checker.sol, 0
+DROP
+
+.macro isCorrect
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc checker.sol, 54
+LDI 1
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __isCorrect_fd071490_internal_macro
+}
+IFREF {
+	.inline __c7_to_c4
+}
+THROW 0
+
+.globl	isCorrect_fd071490_internal
+.type	isCorrect_fd071490_internal, @function
+.inline __isCorrect_fd071490_internal_macro
+
+.macro isCorrect_fd071490_internal_macro
+.loc checker.sol, 29
+DROP
+GETGLOB 9
+MYADDR
+SDEQ
+THROWIFNOT 100
+.loc checker.sol, 24
+ACCEPT
+.loc checker.sol, 0
+
+.macro c4_to_c7
+PUSHROOT
+CTOS
+LDU 256 ; pubkey c4
+LDU 64 ; pubkey timestamp c4
+LDU 1 ; ctor flag
+NIP
+ENDS
+SETGLOB 3
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS
+SBITS
+GTINT 1
+PUSHCONT {
+	PUSHINT 0
+	PUSHROOT
+	CTOS
+	PLDDICT ; D
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+}
+IFREFELSE {
+	.inline __c4_to_c7
+}
+
+.macro c7_to_c4
+GETGLOB 3
+GETGLOB 2
+NEWC
+STU 256
+STU 64
+STONE
+ENDC
+POPROOT
+
+.macro upd_only_time_in_c4
+PUSHROOT
+CTOS
+LDU 256
+LDU 64
+NIP
+GETGLOB 3
+ROT
+NEWC
+STU 256
+STU 64
+STSLICE
+ENDC
+POPROOT
+
+.internal-alias :main_internal, 0
+.internal :main_internal
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
+PUSH S2
+CTOS
+LDU 4 ; bounced tail
+LDMSGADDR ; bounced src tail
+DROP
+SETGLOB 9
+MODPOW2 1
+IFRET
+OVER
+SEMPTY ; isEmpty
+IFJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+OVER
+LDUQ 32  ; [funcId] body' ok
+THROWIFNOT 60
+OVER
+IFNOTJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+SWAP
+CALLREF {
+	.inline __public_function_selector
+}
+THROW 60
+
+.internal-alias :main_external, -1
+.internal :main_external
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SETGLOB 9
+OVER
+CALLREF {
+	.inline __c4_to_c7_with_init_storage
+}
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHPOW2 9
+	LDSLICEX
+	DUP
+	MYADDR
+	NEWC
+	STSLICE
+	STSLICE
+	ENDC
+	HASHCU
+	SWAP
+	LDU 1 ; signatureSlice hashMsgSlice hasPubkey msgSlice
+	SWAP
+	PUSHCONT {
+		LDU 256 ; signatureSlice hashMsgSlice pubkey msgSlice
+		XCHG S3
+		SWAP
+	}
+	PUSHCONT {
+		XCHG S2
+		GETGLOB 2
+	}
+	IFELSE
+	DUP
+	SETGLOB 5
+	CHKSIGNU
+	THROWIFNOT 40
+}
+PUSHCONT {
+	LDU 1 ; hasPubkey msgSlice
+	SWAP
+	THROWIF 58
+}
+IFELSE
+LDU 64 ; timestamp msgSlice
+SWAP
+.inline __replay_protection_macro
+LDU 32 ; expireAt msgSlice
+SWAP
+NOW ; msgSlice expireAt now
+GREATER ; msgSlice expireAt>now
+THROWIFNOT 57
+LDU 32 ; funcId body
+SWAP
+CALLREF {
+	.inline __public_function_selector
+}
+THROW 60
+
+.macro public_function_selector
+DUP
+PUSHINT 118863773
+EQUAL
+IFJMPREF {
+	.inline __checkDataIndex
+}
+DUP
+PUSHINT 154827786
+EQUAL
+IFJMPREF {
+	.inline __isCorrect
+}
+DUP
+PUSHINT 1756716863
+EQUAL
+IFJMPREF {
+	.inline __constructor
+}
+DUP
+PUSHINT 1806547597
+EQUAL
+IFJMPREF {
+	.inline __checkData
+}
+

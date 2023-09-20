@@ -7,8 +7,8 @@ use web3::transports::WebSocket;
 use web3::types::{Block, BlockId, BlockNumber, TransactionId, H256, U256, U64};
 use web3::Web3;
 
-mod helper;
-mod proof;
+pub mod helper;
+pub mod proof;
 mod transfer;
 
 pub async fn read_eth_blocks() -> anyhow::Result<()> {
@@ -95,7 +95,7 @@ pub async fn read_eth_blocks() -> anyhow::Result<()> {
 }
 
 // Read Ethereum block with specified block id
-async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Result<Block<H256>> {
+pub async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Result<Block<H256>> {
     let block = web3s
         .eth()
         .block(block_id)
@@ -122,16 +122,26 @@ async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Resul
     Ok(block)
 }
 
-#[tokio::test]
-pub async fn test_hash() -> anyhow::Result<()> {
-    dotenv::dotenv().ok();
-    init_default_tracing();
-    let block_id = BlockId::Number(BlockNumber::Number(
-        U64::from_str_radix("400000", 10).unwrap(),
-    ));
-    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
-    let web3s = Web3::new(websocket);
-    let block = read_block(&web3s, block_id).await?;
-    serialize_block(block)?;
-    Ok(())
+mod test {
+    use super::proof::serialize_block;
+    use super::read_block;
+    use crate::helper::tracing::init_default_tracing;
+    use std::env;
+    use web3::transports::WebSocket;
+    use web3::types::{BlockId, BlockNumber, U64};
+    use web3::Web3;
+
+    #[tokio::test]
+    pub async fn test_hash() -> anyhow::Result<()> {
+        dotenv::dotenv().ok();
+        init_default_tracing();
+        let block_id = BlockId::Number(BlockNumber::Number(
+            U64::from_str_radix("400000", 10).unwrap(),
+        ));
+        let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+        let web3s = Web3::new(websocket);
+        let block = read_block(&web3s, block_id).await?;
+        serialize_block(block)?;
+        Ok(())
+    }
 }

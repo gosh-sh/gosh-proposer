@@ -1,0 +1,48 @@
+{
+	"ABI version": 2,
+	"version": "2.3",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "checkData",
+			"inputs": [
+				{"components":[{"name":"data","type":"bytes"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "checkDataIndex",
+			"inputs": [
+				{"components":[{"name":"data","type":"bytes"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple[]"},
+				{"name":"index","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "isCorrect",
+			"inputs": [
+				{"name":"res","type":"bool"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"}
+	]
+}
