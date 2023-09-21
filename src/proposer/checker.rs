@@ -21,6 +21,7 @@ pub async fn check_blocks(blocks: Vec<Block<H256>>) -> anyhow::Result<()> {
             .fold(String::new(), |acc, el| format!("{acc}{:02x}", el));
         json_blocks.push(json!({"data": data_str, "hash": hash}));
     }
+    json_blocks.reverse();
     let args = json!({
         "data": json_blocks
     });

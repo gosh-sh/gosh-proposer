@@ -34,6 +34,15 @@
 			],
 			"outputs": [
 			]
+		},
+		{
+			"name": "getStatus",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"prevhash","type":"optional(uint256)"},
+				{"name":"status","type":"bool"}
+			]
 		}
 	],
 	"data": [
@@ -43,6 +52,8 @@
 	"fields": [
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
-		{"name":"_constructorFlag","type":"bool"}
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"_prevhash","type":"optional(uint256)"},
+		{"name":"_status","type":"bool"}
 	]
 }
