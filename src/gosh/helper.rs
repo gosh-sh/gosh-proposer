@@ -1,11 +1,11 @@
+use serde::Deserialize;
 use std::env;
 use std::sync::Arc;
 use std::time::Duration;
-use serde::Deserialize;
-use ton_client::net::NetworkQueriesProtocol;
-use ton_client::{ClientConfig, ClientContext};
 use ton_client::crypto::KeyPair;
+use ton_client::net::NetworkQueriesProtocol;
 use ton_client::processing::ProcessingEvent;
+use ton_client::{ClientConfig, ClientContext};
 
 pub type EverClient = Arc<ClientContext>;
 static DEFAULT_BLOCKCHAIN_TIMEOUT: Duration = Duration::from_secs(15 * 60);

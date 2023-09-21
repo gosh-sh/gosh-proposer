@@ -1,5 +1,6 @@
-use crate::gosh::helper::{CallResult, default_callback, EverClient};
+use crate::gosh::helper::{default_callback, CallResult, EverClient};
 use std::sync::Arc;
+
 use ton_client::abi::{encode_message, Abi, CallSet, ParamsOfEncodeMessage, Signer};
 use ton_client::crypto::KeyPair;
 use ton_client::net::{query_collection, ParamsOfQueryCollection};
@@ -94,9 +95,6 @@ pub async fn call_function(
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<()> {
     tracing::trace!("call_function: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
-    let filter = Some(serde_json::json!({
-        "id": { "eq": address }
-    }));
 
     let call_set = match args {
         Some(value) => CallSet::some_with_function_and_input(function_name, value),
@@ -131,7 +129,7 @@ pub async fn call_function(
         },
         default_callback,
     )
-        .await;
+    .await;
     if let Err(ref e) = sdk_result {
         tracing::trace!("process_message error: {:#?}", e);
     }
@@ -143,6 +141,6 @@ pub async fn call_function(
     tracing::trace!("trx id: {}", call_result.trx_id);
     match call_result.status {
         3 => Ok(()),
-        code => anyhow::bail!("Call ended with error code: {code}")
+        code => anyhow::bail!("Call ended with error code: {code}"),
     }
 }
