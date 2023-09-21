@@ -1,11 +1,11 @@
 
 .PHONY: install-dev
 install-dev:
-	cd anytree-cli && cargo install --profile dev --path .
+	cargo install --profile dev --path .
 
 .PHONY: install
 install:
-	cd anytree-cli && cargo install --profile release --path .
+	cargo install --profile release --path .
 
 .PHONY: fmt
 fmt:
@@ -18,12 +18,12 @@ fix:
 
 .PHONY: run
 run:
-	cargo run --bin anytree -- build "./hack/cargo_sbom.cdx.json"
-
-.PHONY: run-mac
-run-mac:
-	cargo run --bin anytree -- build "./hack/cargo_sbom_mac.cdx.json"
+	cargo run --release
 
 .PHONY: debug_run
 debug_run:
-	ANYTREE_LOG=trace cargo run --bin anytree -- build "./hack/cargo_sbom.cdx.json"
+	GOSH_LOG=trace cargo run --releaes
+
+.PHONY: test
+test:
+	cargo test --release
