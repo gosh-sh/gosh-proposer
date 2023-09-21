@@ -4,11 +4,25 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use std::env;
 use web3::helpers as w3h;
 use web3::transports::WebSocket;
-use web3::types::{Block, BlockId, BlockNumber, TransactionId, H256, U64};
+use web3::types::{
+    Address, Block, BlockId, BlockNumber, Bytes, TransactionId, H256, U256, U64
+};
 use web3::Web3;
 
 mod helper;
 mod transfer;
+
+pub struct StorageProofValue {
+    pub value: U256,
+    // Array of rlp-serialized MerkleTree-Nodes, starting with the storageHash-Node,
+    // following the path of the SHA3 (key) as path.
+    pub proof: Vec<Bytes>,
+}
+
+pub enum StorageProof {
+    TotalSupply(StorageProofValue),
+    TrxCount(StorageProofValue),
+}
 
 pub async fn read_eth_blocks() -> anyhow::Result<()> {
     // Load variables from .env
@@ -119,4 +133,40 @@ async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Resul
         block.total_difficulty.unwrap()
     );
     Ok(block)
+}
+
+async fn get_storage_proof(
+    web3s: &Web3<WebSocket>,
+    account: Address,
+    block_num: Option<BlockNumber>
+) -> anyhow::Result<Vec<StorageProof>> {
+    let keys = vec![
+        U256::from_str_radix(&env::var("ELOCK_INDEX_TOTAL_SUPPLY")?, 10)?, // totalSupply storage slot
+        U256::from_str_radix(&env::var("ELOCK_INDEX_TRX_COUNT")?, 10)?, // trxCount storage slot
+    ];
+
+    let proof = web3s
+        .eth()
+        .proof(account, keys, block_num)
+        .await?;
+
+    let storage_proofs = match proof {
+            Some(proof) => {
+                let total_supply_proof = StorageProofValue {
+                    value: proof.storage_proof[0].value,
+                    proof: proof.storage_proof[0].proof.clone()
+                };
+                let trx_count_proof = StorageProofValue {
+                    value: proof.storage_proof[1].value,
+                    proof: proof.storage_proof[1].proof.clone()
+                };
+                vec![
+                    StorageProof::TotalSupply(total_supply_proof),
+                    StorageProof::TrxCount(trx_count_proof),
+                ]
+            },
+            None => vec![]
+        };
+
+    Ok(storage_proofs)
 }
