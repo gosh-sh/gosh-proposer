@@ -98,6 +98,7 @@ pub async fn read_eth_blocks() -> anyhow::Result<()> {
 
 // Read Ethereum block with specified block id
 pub async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Result<FullBlock<H256>> {
+    tracing::info!("Reading block: {block_id:?}");
     let include_txs = w3h::serialize(&false);
     let block = match block_id {
         BlockId::Hash(hash) => {
@@ -110,7 +111,7 @@ pub async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::R
         }
     }.await?;
 
-    println!("{block:?}");
+    tracing::info!("{}", serde_json::to_string_pretty(&block)?);
     Ok(serde_json::from_value(block)?)
 }
 
