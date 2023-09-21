@@ -4,8 +4,9 @@ use crate::gosh::helper::{create_client, load_keys};
 use serde_json::json;
 use std::env;
 use web3::types::{Block, H256};
+use crate::eth::block::FullBlock;
 
-pub async fn check_blocks(blocks: Vec<Block<H256>>) -> anyhow::Result<()> {
+pub async fn check_blocks(blocks: Vec<FullBlock<H256>>) -> anyhow::Result<()> {
     let checker_address = env::var("CHECKER_ADDRESS")?;
     let client = create_client()?;
     let abi_path = "tests/solidity/checker.abi.json";
