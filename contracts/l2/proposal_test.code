@@ -59,28 +59,38 @@ IFREF {
 	.inline __c4_to_c7
 }
 .loc proposal_test.sol, 53
-LDREF
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 256
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
-	.inline __setvdict_89eaa25b_internal_macro
+	.inline __setvdict_dfb7c4b0_internal_macro
 }
 CALLREF {
 	.inline __c7_to_c4
 }
 THROW 0
 
-.globl	setvdict_89eaa25b_internal
-.type	setvdict_89eaa25b_internal, @function
-.inline __setvdict_89eaa25b_internal_macro
+.globl	setvdict_dfb7c4b0_internal
+.type	setvdict_dfb7c4b0_internal, @function
+.inline __setvdict_dfb7c4b0_internal_macro
 
-.macro setvdict_89eaa25b_internal_macro
+.macro setvdict_dfb7c4b0_internal_macro
 .loc proposal_test.sol, 54
-CTOS
 PUSHINT 0
 GETGLOB 15
+ROT
+NEWC
+STU 256
+ROTREV
 PUSHINT 16
-DICTUSET
+DICTUSETB
 SETGLOB 15
 .loc proposal_test.sol, 0
 
@@ -118,20 +128,16 @@ DICTUGET
 NULLSWAPIFNOT
 NIP
 PUSHCONT {
-	.loc proposal_test.sol, 59
+	.loc proposal_test.sol, 61
 	DUP
 	GETGLOB 15
 	PUSHINT 16
 	DICTUGET
+	ZEROSWAPIFNOT
 	PUSHCONT {
-		PUSHSLICE x8_
+		PLDU 256
 	}
-	IFNOT
-	.loc proposal_test.sol, 60
-	PUSHINT 32
-	SDSKIPFIRST
-	.loc proposal_test.sol, 61
-	PLDU 256
+	IF
 	.loc proposal_test.sol, 62
 	GETGLOB 5
 	DUP
@@ -151,7 +157,10 @@ PUSHCONT {
 	PUSHINT 16
 	DICTUDELGET
 	NULLSWAPIFNOT
-	DROP
+	PUSHCONT {
+		PLDU 256
+	}
+	IF
 	SWAP
 	SETGLOB 15
 	.loc proposal_test.sol, 65
@@ -323,62 +332,8 @@ IFREF {
 THROW 0
 
 .macro getSet_31f070d9_internal_macro
-.loc proposal_test.sol, 90
-PUSHINT 0
-.loc proposal_test.sol, 91
-GETGLOB 15
-PUSHINT 16
-DICTUGETNEXT
-NULLSWAPIFNOT
-PUSHCONT {
-	SWAP
-	PAIR
-}
-IF
-.loc proposal_test.sol, 92
-NEWDICT
-.loc proposal_test.sol, 93
-PUSHCONT {
-	OVER
-	ISNULL
-	NOT
-}
-PUSHCONT {
-	.loc proposal_test.sol, 94
-	PUSH2 S1, S1
-	ISNULL
-	THROWIF 63
-	UNPAIR
-	.loc proposal_test.sol, 95
-	PUSHINT 32
-	SDSKIPFIRST
-	.loc proposal_test.sol, 96
-	PLDU 256
-	.loc proposal_test.sol, 97
-	PUSH2 S1, S2
-	ROT
-	NEWC
-	STU 256
-	ROTREV
-	PUSHINT 16
-	DICTUSETB
-	POP S2
-	.loc proposal_test.sol, 98
-	GETGLOB 15
-	PUSHINT 16
-	DICTUGETNEXT
-	NULLSWAPIFNOT
-	PUSHCONT {
-		SWAP
-		PAIR
-	}
-	IF
-	POP S2
-	.loc proposal_test.sol, 0
-}
-WHILE
 .loc proposal_test.sol, 100
-NIP
+GETGLOB 15
 .loc proposal_test.sol, 0
 
 .macro c4_to_c7
@@ -1028,16 +983,16 @@ IFJMPREF {
 		.inline __constructor
 	}
 	DUP
+	PUSHINT 583726491
+	EQUAL
+	IFJMPREF {
+		.inline __setvdict
+	}
+	DUP
 	PUSHINT 629528867
 	EQUAL
 	IFJMPREF {
 		.inline __destroy
-	}
-	DUP
-	PUSHINT 1085330862
-	EQUAL
-	IFJMPREF {
-		.inline __setvdict
 	}
 	DUP
 	PUSHINT 1409149045

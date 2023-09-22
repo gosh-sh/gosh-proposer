@@ -16,7 +16,7 @@
 		{
 			"name": "setvdict",
 			"inputs": [
-				{"name":"data","type":"cell"}
+				{"name":"key","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -59,6 +59,6 @@
 		{"name":"_root","type":"address"},
 		{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"_transactions","type":"tuple[]"},
 		{"name":"_index","type":"uint128"},
-		{"name":"_vdict","type":"optional(cell)"}
+		{"name":"_vdict","type":"map(uint16,uint256)"}
 	]
 }
