@@ -79,6 +79,7 @@ pub async fn filter_and_decode_block_transactions(
     // Parse block transactions
     for transaction_hash in &block.transactions {
         // Load transaction
+        tracing::info!("tx: {}", w3h::to_string(transaction_hash));
         let tx = match web3s
             .eth()
             .transaction(TransactionId::Hash(transaction_hash.to_owned()))
@@ -86,7 +87,7 @@ pub async fn filter_and_decode_block_transactions(
         {
             Ok(Some(tx)) => tx,
             _ => {
-                tracing::trace!("Failed to fetch transaction: {transaction_hash}");
+                tracing::info!("Failed to fetch transaction: {transaction_hash}");
                 continue;
             }
         };
@@ -98,16 +99,16 @@ pub async fn filter_and_decode_block_transactions(
                 .trim_end_matches('"')
                 .trim_start_matches('"')
                 .to_lowercase();
-            tracing::trace!("Txn destination address: {dest}");
+            tracing::info!("Txn destination address: {dest}");
             if dest != eth_contract_address {
-                tracing::trace!(
+                tracing::info!(
                     "Wrong destination address, skip it. `{}` != `{eth_contract_address}`",
                     dest
                 );
                 continue;
             }
         } else {
-            tracing::trace!("No destination address, skip it.");
+            tracing::info!("No destination address, skip it.");
             continue;
         }
 
