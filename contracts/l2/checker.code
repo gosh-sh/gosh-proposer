@@ -10,7 +10,7 @@ IFREF {
 GETGLOB 6
 THROWIF 51
 ENDS
-.loc checker.sol, 28
+.loc checker.sol, 27
 ACCEPT
 .loc checker.sol, 0
 CALLREF {
@@ -27,7 +27,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 41
+.loc checker.sol, 40
 LDREF
 ENDS
 .loc checker.sol, 0
@@ -44,7 +44,7 @@ THROW 0
 .inline __setProposalCode_9dea6101_internal_macro
 
 .macro setProposalCode_9dea6101_internal_macro
-.loc checker.sol, 23
+.loc checker.sol, 22
 GETGLOB 5
 DUP
 ISNULL
@@ -56,10 +56,10 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 100
-.loc checker.sol, 28
+.loc checker.sol, 27
 ACCEPT
-.loc checker.sol, 42
-SETGLOB 13
+.loc checker.sol, 41
+SETGLOB 12
 .loc checker.sol, 0
 
 .macro checkData
@@ -71,7 +71,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 45
+.loc checker.sol, 44
 OVER
 PUSHCONT {
 	LDU 32
@@ -101,8 +101,8 @@ ENDS
 CALLREF {
 	.inline __checkData_4ef37aa1_internal_macro
 }
-CALLREF {
-	.inline __c7_to_c4
+IFREF {
+	.inline __upd_only_time_in_c4
 }
 THROW 0
 
@@ -111,7 +111,7 @@ THROW 0
 .inline __checkData_4ef37aa1_internal_macro
 
 .macro checkData_4ef37aa1_internal_macro
-.loc checker.sol, 23
+.loc checker.sol, 22
 GETGLOB 5
 DUP
 ISNULL
@@ -123,25 +123,22 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 100
-.loc checker.sol, 28
+.loc checker.sol, 27
 ACCEPT
-.loc checker.sol, 29
+.loc checker.sol, 28
 PUSHCONT {
-	.loc checker.sol, 46
+	.loc checker.sol, 45
 	ACCEPT
-	.loc checker.sol, 47
+	.loc checker.sol, 46
 	OVER
 	FIRST
 	PUSHCONT {
-		.loc checker.sol, 48
+		.loc checker.sol, 47
 		DROP2
 		.loc checker.sol, 0
 	}
 	IFNOTJMP
-	.loc checker.sol, 50
-	TRUE
-	SETGLOB 11
-	.loc checker.sol, 51
+	.loc checker.sol, 49
 	PUSHINT 0
 	XCHG S2
 	MYADDR
@@ -164,7 +161,7 @@ PUSHCONT {
 	ENDC
 	PUSHINT 1
 	SENDRAWMSG
-	.loc checker.sol, 45
+	.loc checker.sol, 44
 }
 CALLX
 .loc checker.sol, 0
@@ -178,7 +175,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 54
+.loc checker.sol, 52
 OVER
 PUSHCONT {
 	LDU 32
@@ -219,31 +216,31 @@ THROW 0
 .inline __checkDataIndex_5afae3a4_internal_macro
 
 .macro checkDataIndex_5afae3a4_internal_macro
-.loc checker.sol, 54
+.loc checker.sol, 52
 MYADDR
-.loc checker.sol, 33
+.loc checker.sol, 32
 GETGLOB 9
 OVER
 SDEQ
 THROWIFNOT 100
-.loc checker.sol, 28
+.loc checker.sol, 27
 ACCEPT
-.loc checker.sol, 29
+.loc checker.sol, 28
 ROLLREV 3
 PUSHCONT {
-	.loc checker.sol, 55
+	.loc checker.sol, 53
 	PUSH2 S0, S2
 	FIRST
 	GEQ
 	PUSHCONT {
-		.loc checker.sol, 56
-		GETGLOB 13
-		GETGLOB 10
+		.loc checker.sol, 54
 		GETGLOB 12
+		GETGLOB 10
+		GETGLOB 11
 		CALLREF {
 			.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
 		}
-		.loc checker.sol, 57
+		.loc checker.sol, 55
 		ROTREV
 		DEC
 		UFITS 128
@@ -321,15 +318,15 @@ PUSHCONT {
 		ENDC
 		PUSHINT 1
 		SENDRAWMSG
-		.loc checker.sol, 58
-		GETGLOB 12
+		.loc checker.sol, 56
+		GETGLOB 11
 		INC
 		UFITS 128
-		SETGLOB 12
+		SETGLOB 11
 		.loc checker.sol, 0
 	}
 	IFJMP
-	.loc checker.sol, 61
+	.loc checker.sol, 59
 	PUSH2 S0, S2
 	SECOND
 	PUSHINT 32
@@ -343,28 +340,28 @@ PUSHCONT {
 	}
 	FIRST
 	CTOS
-	.loc checker.sol, 62
+	.loc checker.sol, 60
 	DUP
 	LDU 8
 	POP S2
-	.loc checker.sol, 63
+	.loc checker.sol, 61
 	PUSHINT 247
 	SUB
 	UFITS 8
-	.loc checker.sol, 64
+	.loc checker.sol, 62
 	MULCONST 8
 	UFITS 8
 	SDSKIPFIRST
-	.loc checker.sol, 65
+	.loc checker.sol, 63
 	PUSHINT 8
 	SDSKIPFIRST
-	.loc checker.sol, 66
+	.loc checker.sol, 64
 	PLDU 256
-	.loc checker.sol, 67
+	.loc checker.sol, 65
 	FALSE ; decl return flag
 	PUSH S2
 	PUSHCONT {
-		.loc checker.sol, 76
+		.loc checker.sol, 73
 		PUSH S2
 		DEC
 		UFITS 128
@@ -383,10 +380,7 @@ PUSHCONT {
 		PUSH S2
 		NEQ
 		PUSHCONT {
-			.loc checker.sol, 77
-			FALSE
-			SETGLOB 11
-			.loc checker.sol, 78
+			.loc checker.sol, 74
 			BLKDROP 5
 			PUSHINT 4
 			.loc checker.sol, 0
@@ -395,12 +389,12 @@ PUSHCONT {
 		.loc checker.sol, 0
 	}
 	PUSHCONT {
-		.loc checker.sol, 68
+		.loc checker.sol, 66
 		FALSE ; decl return flag
 		GETGLOB 10
 		ISNULL
 		PUSHCONT {
-			.loc checker.sol, 69
+			.loc checker.sol, 67
 			GETGLOB 10
 			DUP
 			ISNULL
@@ -408,10 +402,7 @@ PUSHCONT {
 			PUSH S3
 			NEQ
 			PUSHCONT {
-				.loc checker.sol, 70
-				FALSE
-				SETGLOB 11
-				.loc checker.sol, 71
+				.loc checker.sol, 68
 				BLKDROP 6
 				PUSHINT 4
 				.loc checker.sol, 0
@@ -427,7 +418,7 @@ PUSHCONT {
 	}
 	IFELSE
 	IFRET
-	.loc checker.sol, 81
+	.loc checker.sol, 77
 	DROP
 	PUSH2 S0, S2
 	SECOND
@@ -456,15 +447,12 @@ PUSHCONT {
 	SECOND
 	NEQ
 	PUSHCONT {
-		.loc checker.sol, 82
-		FALSE
-		SETGLOB 11
-		.loc checker.sol, 83
+		.loc checker.sol, 78
 		BLKDROP 3
 		.loc checker.sol, 0
 	}
 	IFJMP
-	.loc checker.sol, 85
+	.loc checker.sol, 80
 	INC
 	UFITS 128
 	XCHG S2
@@ -488,7 +476,7 @@ PUSHCONT {
 	ENDC
 	PUSHINT 1
 	SENDRAWMSG
-	.loc checker.sol, 54
+	.loc checker.sol, 52
 }
 CALLX
 .loc checker.sol, 0
@@ -503,7 +491,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 88
+.loc checker.sol, 83
 OVER
 PUSHCONT {
 	LDREF
@@ -535,24 +523,24 @@ THROW 0
 .inline __setNewHash_9c26b618_internal_macro
 
 .macro setNewHash_9c26b618_internal_macro
-.loc checker.sol, 88
-GETGLOB 13
+.loc checker.sol, 83
+GETGLOB 12
 GETGLOB 10
 ROT
 CALLREF {
 	.inline __ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
 }
-.loc checker.sol, 33
+.loc checker.sol, 32
 GETGLOB 9
 SDEQ
 THROWIFNOT 100
-.loc checker.sol, 28
+.loc checker.sol, 27
 ACCEPT
-.loc checker.sol, 89
+.loc checker.sol, 84
 GETGLOB 10
 ISNULL
 PUSHCONT {
-	.loc checker.sol, 90
+	.loc checker.sol, 85
 	GETGLOB 10
 	DUP
 	ISNULL
@@ -565,9 +553,9 @@ PUSHCONT {
 	.loc checker.sol, 0
 }
 IFNOT
-.loc checker.sol, 92
+.loc checker.sol, 87
 PUSHINT 0
-GETGLOB 12
+GETGLOB 11
 GETGLOB 10
 MYADDR
 NEWC
@@ -596,12 +584,12 @@ STBREFR
 ENDC
 PUSHINT 1
 SENDRAWMSG
-.loc checker.sol, 93
+.loc checker.sol, 88
 SETGLOB 10
-.loc checker.sol, 94
+.loc checker.sol, 89
 DROP
 PUSHINT 0
-SETGLOB 12
+SETGLOB 11
 .loc checker.sol, 0
 
 .macro destroyTrash
@@ -613,7 +601,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 97
+.loc checker.sol, 92
 OVER
 PUSHCONT {
 	LDREF
@@ -645,19 +633,19 @@ THROW 0
 .inline __destroyTrash_93181e4e_internal_macro
 
 .macro destroyTrash_93181e4e_internal_macro
-.loc checker.sol, 97
+.loc checker.sol, 92
 MYADDR
-.loc checker.sol, 33
+.loc checker.sol, 32
 GETGLOB 9
 OVER
 SDEQ
 THROWIFNOT 100
-.loc checker.sol, 28
+.loc checker.sol, 27
 ACCEPT
-.loc checker.sol, 29
+.loc checker.sol, 28
 ROLLREV 3
 PUSHCONT {
-	.loc checker.sol, 98
+	.loc checker.sol, 93
 	PUSHINT 0
 	FALSE ; decl return flag
 	PUSHCONT {
@@ -665,22 +653,22 @@ PUSHCONT {
 		LESSINT 3
 	}
 	PUSHCONT {
-		.loc checker.sol, 99
+		.loc checker.sol, 94
 		BLKPUSH 2, 2
 		ADD
 		UFITS 128
 		PUSH S4
 		GREATER
 		PUSHCONT {
-			.loc checker.sol, 100
+			.loc checker.sol, 95
 			BLKDROP 5
 			PUSHINT 4
 			RETALT
 			.loc checker.sol, 0
 		}
 		IFJMP
-		.loc checker.sol, 102
-		GETGLOB 13
+		.loc checker.sol, 97
+		GETGLOB 12
 		PUSH S5
 		BLKPUSH 2, 4
 		ADD
@@ -696,7 +684,7 @@ PUSHCONT {
 		ENDC
 		PUSHINT 1
 		SENDRAWMSG
-		.loc checker.sol, 98
+		.loc checker.sol, 93
 		OVER
 		INC
 		UFITS 128
@@ -706,7 +694,7 @@ PUSHCONT {
 	WHILEBRK
 	IFRET
 	DROP
-	.loc checker.sol, 104
+	.loc checker.sol, 99
 	PUSHINT 0
 	SWAP
 	ADDCONST 3
@@ -741,7 +729,7 @@ PUSHCONT {
 	SENDRAWMSG
 	.loc checker.sol, 0
 	DROP2
-	.loc checker.sol, 97
+	.loc checker.sol, 92
 }
 CALLX
 .loc checker.sol, 0
@@ -750,74 +738,29 @@ DROP
 .macro receive_macro
 GETGLOB 6
 THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	.inline __c4_to_c7
-}
-.loc checker.sol, 109
-GETGLOB 9
-MYADDR
-SDEQ
-PUSHCONT {
-	.loc checker.sol, 110
-	FALSE
-	SETGLOB 11
-	.loc checker.sol, 0
-}
-IF
 .loc checker.sol, 0
-CALLREF {
-	.inline __c7_to_c4
+DUP
+IFREF {
+	.inline __upd_only_time_in_c4
 }
 
 .macro on_bounce_macro
 DROP
 GETGLOB 6
 THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	.inline __c4_to_c7
-}
-.loc checker.sol, 116
-GETGLOB 9
-MYADDR
-SDEQ
-PUSHCONT {
-	.loc checker.sol, 117
-	FALSE
-	SETGLOB 11
-	.loc checker.sol, 0
-}
-IF
 .loc checker.sol, 0
-CALLREF {
-	.inline __c7_to_c4
+DUP
+IFREF {
+	.inline __upd_only_time_in_c4
 }
 
 .macro fallback_macro
 GETGLOB 6
 THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	.inline __c4_to_c7
-}
-.loc checker.sol, 122
-GETGLOB 9
-MYADDR
-SDEQ
-PUSHCONT {
-	.loc checker.sol, 123
-	FALSE
-	SETGLOB 11
-	.loc checker.sol, 0
-}
-IF
 .loc checker.sol, 0
-CALLREF {
-	.inline __c7_to_c4
+DUP
+IFREF {
+	.inline __upd_only_time_in_c4
 }
 
 .macro getStatus
@@ -829,15 +772,15 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 128
+.loc checker.sol, 114
 ENDS
 .loc checker.sol, 0
 CALLREF {
 	.inline __getStatus_4e69d560_internal_macro
 }
-PUSH S2
+OVER
 PUSHCONT {
-	PUSH S4
+	PUSH S3
 	CTOS
 	LDU 2
 	LDMSGADDR
@@ -846,10 +789,8 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHINT 98
-	STZEROES
-	REVERSE 2, 1
-	STSLICECONST xe0cd6b5f
+	PUSHINT 2290532176
+	STUR 130
 	XCPU S1, S0
 	ISNULL
 	PUSHCONT {
@@ -862,13 +803,12 @@ PUSHCONT {
 		STU 256
 	}
 	IFELSE
-	STI 1
 	ENDC
 	PUSHINT 0
 	SENDRAWMSG
 }
 PUSHCONT {
-	DROP2
+	DROP
 }
 IFELSE
 IFREF {
@@ -877,9 +817,8 @@ IFREF {
 THROW 0
 
 .macro getStatus_4e69d560_internal_macro
-.loc checker.sol, 129
+.loc checker.sol, 115
 GETGLOB 10
-GETGLOB 11
 .loc checker.sol, 0
 
 .macro c4_to_c7
@@ -896,11 +835,9 @@ PUSHCONT {
 	LDU 256
 }
 IF
-LDI 1
 LDU 128
 LDREF
 ENDS
-SETGLOB 13
 SETGLOB 12
 SETGLOB 11
 SETGLOB 10
@@ -919,10 +856,8 @@ PUSHCONT {
 	PLDDICT ; D
 	NULL
 	PUSHINT 0
-	DUP
 	PUSHREF {
 	}
-	SETGLOB 13
 	SETGLOB 12
 	SETGLOB 11
 	SETGLOB 10
@@ -933,17 +868,14 @@ PUSHCONT {
 	SETGLOB 2
 	PUSHINT 0 ; timestamp
 	SETGLOB 3
-	FALSE
-	SETGLOB 11
 	PUSHINT 0
-	SETGLOB 12
+	SETGLOB 11
 }
 IFREFELSE {
 	.inline __c4_to_c7
 }
 
 .macro c7_to_c4
-GETGLOB 13
 GETGLOB 12
 GETGLOB 11
 GETGLOB 10
@@ -965,7 +897,6 @@ PUSHCONT {
 	STU 256
 }
 IFELSE
-STI 1
 STU 128
 STREF
 ENDC
@@ -1008,30 +939,24 @@ IFJMPREF {
 }
 OVER
 SEMPTY ; isEmpty
-DUP
+IFJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+OVER
+LDUQ 32  ; [funcId] body' ok
 PUSHCONT {
 	DROP
-	OVER
-	LDUQ 32  ; [funcId] body' ok
-	PUSHCONT {
-		DROP
-		CALLREF {
-			.inline __fallback_macro
-		}
-		THROW 0
+	CALLREF {
+		.inline __fallback_macro
 	}
-	IFNOT
-	OVER
-	EQINT 0 ; funcId body' isZero
-	DUP
-	PUSHCONT {
-		BLKDROP2 2, 1
-	}
-	IF
+	THROW 0
 }
 IFNOT
-IFJMPREF {
-	.inline __receive_macro
+OVER
+IFNOTJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
 }
 SWAP
 CALLREF {
@@ -1490,7 +1415,7 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1219851760
+PUSHINT 511512757
 LEQ
 IFJMPREF {
 	DUP
@@ -1498,6 +1423,12 @@ IFJMPREF {
 	EQUAL
 	IFJMPREF {
 		.inline __destroyTrash
+	}
+	DUP
+	PUSHINT 143048528
+	EQUAL
+	IFJMPREF {
+		.inline __getStatus
 	}
 	DUP
 	PUSHINT 382138547
@@ -1511,28 +1442,22 @@ IFJMPREF {
 	IFJMPREF {
 		.inline __setNewHash
 	}
-	DUP
-	PUSHINT 1219851760
-	EQUAL
-	IFJMPREF {
-		.inline __setProposalCode
-	}
 }
 DUP
 PUSHINT 1756716863
 LEQ
 IFJMPREF {
 	DUP
+	PUSHINT 1219851760
+	EQUAL
+	IFJMPREF {
+		.inline __setProposalCode
+	}
+	DUP
 	PUSHINT 1341836578
 	EQUAL
 	IFJMPREF {
 		.inline __checkDataIndex
-	}
-	DUP
-	PUSHINT 1624075103
-	EQUAL
-	IFJMPREF {
-		.inline __getStatus
 	}
 	DUP
 	PUSHINT 1756716863

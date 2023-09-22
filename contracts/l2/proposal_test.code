@@ -30,62 +30,59 @@ ROTREV
 PAIR
 SWAP
 ENDS
-.loc proposal.sol, 21
+.loc proposal_test.sol, 21
 ACCEPT
-.loc proposal.sol, 43
+.loc proposal_test.sol, 43
 ROT
 SETGLOB 10
-.loc proposal.sol, 44
+.loc proposal_test.sol, 44
 SWAP
 SETGLOB 11
-.loc proposal.sol, 45
+.loc proposal_test.sol, 45
 GETGLOB 9
 SETGLOB 12
-.loc proposal.sol, 46
+.loc proposal_test.sol, 46
 SETGLOB 13
-.loc proposal.sol, 47
-PUSHINT 34
-CONFIGOPTPARAM
-.loc proposal.sol, 48
-BLKPUSH 2, 0
-ISNULL
-THROWIF 63
-CTOS
-LDU 8
-LDU 32
-LDU 32
-LDU 16
-LDU 16
-LDU 64
-PLDDICT
-TUPLE 7
-.loc proposal.sol, 49
-INDEX 6
-SETGLOB 15
-.loc proposal.sol, 50
-ISNULL
-NOT
-FALSE
-EQUAL
-PUSHCONT {
-	.loc proposal.sol, 50
-	GETGLOB 12
-	NEWC
-	STSLICECONST x42_
-	STSLICE
-	PUSHINT 111
-	STZEROES
-	ENDC
-	PUSHINT 160
-	SENDRAWMSG
-	.loc proposal.sol, 0
-}
-IF
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 CALLREF {
 	.inline __c7_to_c4
 }
 THROW 0
+
+.macro setvdict
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc proposal_test.sol, 53
+LDREF
+ENDS
+.loc proposal_test.sol, 0
+CALLREF {
+	.inline __setvdict_89eaa25b_internal_macro
+}
+CALLREF {
+	.inline __c7_to_c4
+}
+THROW 0
+
+.globl	setvdict_89eaa25b_internal
+.type	setvdict_89eaa25b_internal, @function
+.inline __setvdict_89eaa25b_internal_macro
+
+.macro setvdict_89eaa25b_internal_macro
+.loc proposal_test.sol, 54
+CTOS
+PUSHINT 0
+GETGLOB 15
+PUSHINT 16
+DICTUSET
+SETGLOB 15
+.loc proposal_test.sol, 0
 
 .macro setVote
 DROP
@@ -96,10 +93,10 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 53
+.loc proposal_test.sol, 57
 LDU 16
 ENDS
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 CALLREF {
 	.inline __setVote_3943acb2_internal_macro
 }
@@ -113,7 +110,7 @@ THROW 0
 .inline __setVote_3943acb2_internal_macro
 
 .macro setVote_3943acb2_internal_macro
-.loc proposal.sol, 54
+.loc proposal_test.sol, 58
 DUP
 GETGLOB 15
 PUSHINT 16
@@ -121,7 +118,7 @@ DICTUGET
 NULLSWAPIFNOT
 NIP
 PUSHCONT {
-	.loc proposal.sol, 55
+	.loc proposal_test.sol, 59
 	DUP
 	GETGLOB 15
 	PUSHINT 16
@@ -130,12 +127,12 @@ PUSHCONT {
 		PUSHSLICE x8_
 	}
 	IFNOT
-	.loc proposal.sol, 56
+	.loc proposal_test.sol, 60
 	PUSHINT 32
 	SDSKIPFIRST
-	.loc proposal.sol, 57
+	.loc proposal_test.sol, 61
 	PLDU 256
-	.loc proposal.sol, 58
+	.loc proposal_test.sol, 62
 	GETGLOB 5
 	DUP
 	ISNULL
@@ -146,9 +143,9 @@ PUSHCONT {
 	IF
 	EQUAL
 	THROWIFNOT 100
-	.loc proposal.sol, 59
+	.loc proposal_test.sol, 63
 	ACCEPT
-	.loc proposal.sol, 60
+	.loc proposal_test.sol, 64
 	DUP
 	GETGLOB 15
 	PUSHINT 16
@@ -157,13 +154,13 @@ PUSHCONT {
 	DROP
 	SWAP
 	SETGLOB 15
-	.loc proposal.sol, 61
+	.loc proposal_test.sol, 65
 	DROP
-	.loc proposal.sol, 62
+	.loc proposal_test.sol, 66
 	GETGLOB 15
 	DICTEMPTY
 	PUSHCONT {
-		.loc proposal.sol, 63
+		.loc proposal_test.sol, 67
 		GETGLOB 14
 		GETGLOB 11
 		GETGLOB 10
@@ -194,13 +191,13 @@ PUSHCONT {
 		ENDC
 		PUSHINT 1
 		SENDRAWMSG
-		.loc proposal.sol, 0
+		.loc proposal_test.sol, 0
 	}
 	IF
-	.loc proposal.sol, 0
+	.loc proposal_test.sol, 0
 }
 IF
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 DROP
 
 .macro destroy
@@ -212,9 +209,9 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 68
+.loc proposal_test.sol, 72
 ENDS
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 CALLREF {
 	.inline __destroy_83197ef0_internal_macro
 }
@@ -228,14 +225,14 @@ THROW 0
 .inline __destroy_83197ef0_internal_macro
 
 .macro destroy_83197ef0_internal_macro
-.loc proposal.sol, 26
+.loc proposal_test.sol, 26
 GETGLOB 9
 GETGLOB 12
 SDEQ
 THROWIFNOT 100
-.loc proposal.sol, 21
+.loc proposal_test.sol, 21
 ACCEPT
-.loc proposal.sol, 69
+.loc proposal_test.sol, 73
 GETGLOB 12
 NEWC
 STSLICECONST x42_
@@ -245,7 +242,7 @@ STZEROES
 ENDC
 PUSHINT 160
 SENDRAWMSG
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 
 .macro receive_macro
 GETGLOB 6
@@ -255,7 +252,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 CALLREF {
 	.inline __c7_to_c4
 }
@@ -264,7 +261,7 @@ CALLREF {
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 DUP
 IFREF {
 	.inline __upd_only_time_in_c4
@@ -278,7 +275,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 CALLREF {
 	.inline __c7_to_c4
 }
@@ -292,9 +289,9 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 85
+.loc proposal_test.sol, 89
 ENDS
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 CALLREF {
 	.inline __getSet_31f070d9_internal_macro
 }
@@ -326,9 +323,9 @@ IFREF {
 THROW 0
 
 .macro getSet_31f070d9_internal_macro
-.loc proposal.sol, 86
+.loc proposal_test.sol, 90
 PUSHINT 0
-.loc proposal.sol, 87
+.loc proposal_test.sol, 91
 GETGLOB 15
 PUSHINT 16
 DICTUGETNEXT
@@ -338,26 +335,26 @@ PUSHCONT {
 	PAIR
 }
 IF
-.loc proposal.sol, 88
+.loc proposal_test.sol, 92
 NEWDICT
-.loc proposal.sol, 89
+.loc proposal_test.sol, 93
 PUSHCONT {
 	OVER
 	ISNULL
 	NOT
 }
 PUSHCONT {
-	.loc proposal.sol, 90
+	.loc proposal_test.sol, 94
 	PUSH2 S1, S1
 	ISNULL
 	THROWIF 63
 	UNPAIR
-	.loc proposal.sol, 91
+	.loc proposal_test.sol, 95
 	PUSHINT 32
 	SDSKIPFIRST
-	.loc proposal.sol, 92
+	.loc proposal_test.sol, 96
 	PLDU 256
-	.loc proposal.sol, 93
+	.loc proposal_test.sol, 97
 	PUSH2 S1, S2
 	ROT
 	NEWC
@@ -366,7 +363,7 @@ PUSHCONT {
 	PUSHINT 16
 	DICTUSETB
 	POP S2
-	.loc proposal.sol, 94
+	.loc proposal_test.sol, 98
 	GETGLOB 15
 	PUSHINT 16
 	DICTUGETNEXT
@@ -377,12 +374,12 @@ PUSHCONT {
 	}
 	IF
 	POP S2
-	.loc proposal.sol, 0
+	.loc proposal_test.sol, 0
 }
 WHILE
-.loc proposal.sol, 96
+.loc proposal_test.sol, 100
 NIP
-.loc proposal.sol, 0
+.loc proposal_test.sol, 0
 
 .macro c4_to_c7
 PUSHROOT
@@ -1021,22 +1018,33 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 108915254
-EQUAL
-IFJMPREF {
-	.inline __constructor
-}
-DUP
-PUSHINT 629528867
-EQUAL
-IFJMPREF {
-	.inline __destroy
-}
-DUP
 PUSHINT 1409149045
-EQUAL
+LEQ
 IFJMPREF {
-	.inline __setVote
+	DUP
+	PUSHINT 108915254
+	EQUAL
+	IFJMPREF {
+		.inline __constructor
+	}
+	DUP
+	PUSHINT 629528867
+	EQUAL
+	IFJMPREF {
+		.inline __destroy
+	}
+	DUP
+	PUSHINT 1085330862
+	EQUAL
+	IFJMPREF {
+		.inline __setvdict
+	}
+	DUP
+	PUSHINT 1409149045
+	EQUAL
+	IFJMPREF {
+		.inline __setVote
+	}
 }
 DUP
 PUSHINT 1903197803

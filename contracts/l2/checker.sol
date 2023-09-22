@@ -13,7 +13,6 @@ import "proposal.sol";
 
 contract Checker {
     optional(uint256) _prevhash;
-    bool _status = false;
 
     uint128 _index = 0;
 
@@ -42,12 +41,11 @@ contract Checker {
         _proposalCode = code;
     }
 
-    function checkData(BlockData[] data, TransactionBatch[] transactions) public onlyOwner accept {
+    function checkData(BlockData[] data, TransactionBatch[] transactions) public view onlyOwner accept {
         tvm.accept();
         if (data.length == 0) {
             return;
         }
-        _status = true;
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, 0);
     }
 
@@ -67,19 +65,16 @@ contract Checker {
         if (index == 0) {
             if (_prevhash.hasValue()) {
                 if (_prevhash.get() != newhash) {
-                    _status = false;     
                     return;
                 }
             }
         }
         else {
             if (data[index - 1].hash != newhash) {
-                _status = false;     
                 return;
             }
         }
-        if (gosh.keccak256(data[index].data) != data[index].hash) { 
-            _status = false;
+        if (gosh.keccak256(data[index].data) != data[index].hash) {
             return; 
         }
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
@@ -105,27 +100,18 @@ contract Checker {
     }
 
     //Fallback/Receive
-    receive() external {
-        if (msg.sender == this) {
-            _status = false;
-        }
+    receive() external pure {
     }
     
-    onBounce(TvmSlice body) external {
+    onBounce(TvmSlice body) external pure {
         body;
-        if (msg.sender == this) {
-            _status = false;
-        }
     }
     
-    fallback() external {
-        if (msg.sender == this) {
-            _status = false;
-        }
+    fallback() external pure {
     }
 
     //Getter 
-    function getStatus() external view returns(optional(uint256) prevhash, bool status) {
-        return (_prevhash, _status);
+    function getStatus() external view returns(optional(uint256) prevhash) {
+        return _prevhash;
     }
 }
