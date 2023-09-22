@@ -29,18 +29,22 @@ contract Proposal {
     optional(uint256) _hash;
     uint256 _newhash;
     address _root;
-    TransactionBatch _transactions;
+    TransactionBatch[] _transactions;
     uint128 static _index;
     
     constructor(
         optional(uint256) hash,
         uint256 newhash,
-        TransactionBatch transactions
+        TransactionBatch[] transactions
     ) accept {
         _hash = hash;
         _newhash = newhash;
         _root = msg.sender;
         _transactions = transactions;
+    }
+
+    function destroy() public senderIs(_root) accept {
+        selfdestruct(_root);
     }
 
     

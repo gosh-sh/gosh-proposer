@@ -21,6 +21,8 @@ struct TransactionBatch {
     uint256 hash;
 }
 
+uint16 constant BATCH_SIZE = 3;
+
 uint16 constant ERR_WRONG_SENDER = 100;
 uint16 constant ERR_WRONG_HASH = 101;
 
