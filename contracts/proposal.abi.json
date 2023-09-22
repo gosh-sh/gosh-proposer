@@ -8,7 +8,7 @@
 			"inputs": [
 				{"name":"hash","type":"optional(uint256)"},
 				{"name":"newhash","type":"uint256"},
-				{"components":[{"name":"dest","type":"address[]"},{"name":"value","type":"uint128[]"}],"name":"transactions","type":"tuple"}
+				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple"}
 			],
 			"outputs": [
 			]
@@ -26,7 +26,7 @@
 		{"name":"_hash","type":"optional(uint256)"},
 		{"name":"_newhash","type":"uint256"},
 		{"name":"_root","type":"address"},
-		{"components":[{"name":"dest","type":"address[]"},{"name":"value","type":"uint128[]"}],"name":"_transactions","type":"tuple"},
+		{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"_transactions","type":"tuple"},
 		{"name":"_index","type":"uint128"}
 	]
 }

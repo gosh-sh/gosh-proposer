@@ -16,6 +16,12 @@ namespace tvm {
 static constexpr unsigned ROOT_TIMESTAMP_DELAY = 1800;
 using root_replay_protection_t = replay_attack_protection::timestamp<ROOT_TIMESTAMP_DELAY>;
 
+struct TransactionBatch {
+  uint256 pubkey;
+  uint128 tokens;
+  uint256 hash;
+};
+
 // ===== Root Token Contract ===== //
 /** \interface IRootTokenContract
  *  \brief Tip3 token root contract interface.
@@ -79,14 +85,12 @@ __interface IRootTokenContract {
 
   [[internal, external, answer_id]]
   void grantbatch(
-    dict_array<address> dest,   ///< Token wallet address
-    dict_array<uint128> tokens ///< Amount of tokens to be granted.
+    dict_array<TransactionBatch> transactions ///< Amount of tokens to be granted.
   ) = 1014;
 
   [[internal, answer_id]]
   void grantbatchindex(
-    dict_array<address> dest,   ///< Token wallet address
-    dict_array<uint128> tokens, ///< Amount of tokens to be granted.
+    dict_array<TransactionBatch> transactions, ///< Amount of tokens to be granted.
     uint128 index
   ) = 1015; 
 
