@@ -82,6 +82,8 @@ PUSHCONT {
 	LDREF
 	ENDS
 	CTOS
+	LDMSGADDR
+	LDU 128
 }
 PUSHCONT {
 	LDU 32
@@ -89,19 +91,16 @@ PUSHCONT {
 	ROTREV
 	PAIR
 	SWAP
+	LDMSGADDR
+	LDU 128
+	LDREF
+	ENDS
+	CTOS
 }
 IFELSE
-LDU 32
-LDDICT
-ROTREV
-PAIR
-SWAP
-LDU 32
-LDDICT
-ROTREV
-PAIR
-XCHG S1, S2
-PAIR
+LDU 256
+ROLLREV 3
+TRIPLE
 SWAP
 ENDS
 .loc checker.sol, 0
@@ -155,26 +154,27 @@ PUSHCONT {
 	NEWC
 	STSLICECONST x62_
 	STSLICE
-	PUSHINT 12042311241760164903241885269213816626727589065833094
-	STUR 175
+	PUSHINT 2803819077499249229031122585109857988247553
+	STUR 143
+	ROLLREV 3
+	NEWC
+	STSLICECONST x53dbad18
 	SWAP
 	UNPAIR
 	XCHG S2
 	STU 32
 	STDICT
 	SWAP
-	UNPAIR
-	ROTREV
-	UNPAIR
-	XCHG S2
-	STU 32
-	STDICT
-	SWAP
-	UNPAIR
-	XCHG S2
-	STU 32
-	STDICT
+	UNTRIPLE
+	REVERSE 4, 0
+	STSLICE
 	STU 128
+	ROTREV
+	NEWC
+	STU 256
+	STU 128
+	STBREFR
+	STBREFR
 	ENDC
 	PUSHINT 1
 	SENDRAWMSG
@@ -203,6 +203,15 @@ PUSHCONT {
 	LDREF
 	ENDS
 	CTOS
+	LDMSGADDR
+	LDU 128
+	LDU 256
+	ROLLREV 3
+	TRIPLE
+	SWAP
+	LDREF
+	ENDS
+	CTOS
 }
 PUSHCONT {
 	LDU 32
@@ -210,20 +219,17 @@ PUSHCONT {
 	ROTREV
 	PAIR
 	SWAP
+	LDMSGADDR
+	LDU 128
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+	ROLLREV 3
+	TRIPLE
+	SWAP
 }
 IFELSE
-LDU 32
-LDDICT
-ROTREV
-PAIR
-SWAP
-LDU 32
-LDDICT
-ROTREV
-PAIR
-XCHG S1, S2
-PAIR
-SWAP
 LDU 128
 ENDS
 .loc checker.sol, 0
@@ -319,7 +325,7 @@ PUSHCONT {
 		STSLICECONST 1
 		ROLLREV 3
 		NEWC
-		STSLICECONST x6db962cf
+		STSLICECONST x2b18e392
 		XCPU S1, S0
 		ISNULL
 		PUSHCONT {
@@ -334,17 +340,13 @@ PUSHCONT {
 		IFELSE
 		STU 256
 		SWAP
-		UNPAIR
-		ROTREV
-		UNPAIR
+		UNTRIPLE
 		XCHG S2
-		STU 32
-		STDICT
-		SWAP
-		UNPAIR
-		XCHG S2
-		STU 32
-		STDICT
+		NEWC
+		STSLICE
+		STU 128
+		STU 256
+		STBREFR
 		STBREFR
 		ENDC
 		PUSHINT 1
@@ -500,26 +502,27 @@ PUSHCONT {
 	NEWC
 	STSLICECONST x62_
 	STSLICE
-	PUSHINT 12042311241760164903241885269213816626727589065833094
-	STUR 175
+	PUSHINT 2803819077499249229031122585109857988247553
+	STUR 143
+	ROLLREV 3
+	NEWC
+	STSLICECONST x53dbad18
 	SWAP
 	UNPAIR
 	XCHG S2
 	STU 32
 	STDICT
 	SWAP
-	UNPAIR
-	ROTREV
-	UNPAIR
-	XCHG S2
-	STU 32
-	STDICT
-	SWAP
-	UNPAIR
-	XCHG S2
-	STU 32
-	STDICT
+	UNTRIPLE
+	REVERSE 4, 0
+	STSLICE
 	STU 128
+	ROTREV
+	NEWC
+	STU 256
+	STU 128
+	STBREFR
+	STBREFR
 	ENDC
 	PUSHINT 1
 	SENDRAWMSG
@@ -950,13 +953,13 @@ CALLREF {
 .inline __ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
 
 .macro ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
-.loc checkerLib.sol, 28
+.loc checkerLib.sol, 29
 PUSH S2
 ROTREV
 CALLREF {
 	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
 }
-.loc checkerLib.sol, 29
+.loc checkerLib.sol, 30
 HASHCU
 PUSHINT 0
 NEWC
@@ -972,11 +975,11 @@ CTOS
 .inline __ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
 
 .macro ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
-.loc checkerLib.sol, 28
+.loc checkerLib.sol, 29
 CALLREF {
 	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
 }
-.loc checkerLib.sol, 29
+.loc checkerLib.sol, 30
 HASHCU
 PUSHINT 0
 NEWC
@@ -992,13 +995,13 @@ CTOS
 .inline __ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
 
 .macro ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
-.loc checkerLib.sol, 33
+.loc checkerLib.sol, 34
 PUSH S2
 ROT
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 }
-.loc checkerLib.sol, 34
+.loc checkerLib.sol, 35
 PUSHINT 0
 NEWC
 STU 256
@@ -1030,12 +1033,12 @@ ENDC
 .inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
 
 .macro ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
-.loc checkerLib.sol, 33
+.loc checkerLib.sol, 34
 ROTREV
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 }
-.loc checkerLib.sol, 34
+.loc checkerLib.sol, 35
 PUSHINT 0
 NEWC
 STU 256
@@ -1067,7 +1070,7 @@ ENDC
 .inline __ProposalLib_with_obj_buildProposalCode_abd62b3f_macro
 
 .macro ProposalLib_with_obj_buildProposalCode_abd62b3f_macro
-.loc checkerLib.sol, 47
+.loc checkerLib.sol, 48
 NEWC
 XCPU S1, S0
 ISNULL
@@ -1081,7 +1084,7 @@ PUSHCONT {
 	STU 256
 }
 IFELSE
-.loc checkerLib.sol, 48
+.loc checkerLib.sol, 49
 OVER
 CTOS
 SWAP
@@ -1198,7 +1201,7 @@ CALLREF {
 .inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 
 .macro ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
-.loc checkerLib.sol, 47
+.loc checkerLib.sol, 48
 NEWC
 XCPU S1, S0
 ISNULL
@@ -1212,7 +1215,7 @@ PUSHCONT {
 	STU 256
 }
 IFELSE
-.loc checkerLib.sol, 48
+.loc checkerLib.sol, 49
 SWAP
 CTOS
 SWAP
@@ -1330,22 +1333,22 @@ PUSHINT 1521032302
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 295971410
+	PUSHINT 1219851760
 	EQUAL
 	IFJMPREF {
-		.inline __checkData
+		.inline __setProposalCode
 	}
 	DUP
-	PUSHINT 873773702
+	PUSHINT 1406905624
 	EQUAL
 	IFJMPREF {
 		.inline __checkDataIndex
 	}
 	DUP
-	PUSHINT 1219851760
+	PUSHINT 1466677752
 	EQUAL
 	IFJMPREF {
-		.inline __setProposalCode
+		.inline __checkData
 	}
 	DUP
 	PUSHINT 1521032302

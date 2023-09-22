@@ -16,8 +16,9 @@ struct BlockData {
 }
 
 struct TransactionBatch {
-    address[] dest;
-    uint128[] value;
+    address dest;
+    uint128 value;
+    uint256 hash;
 }
 
 uint16 constant ERR_WRONG_SENDER = 100;
