@@ -1,0 +1,747 @@
+.version sol 0.71.0
+
+.macro constructor
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7_with_init_storage
+}
+GETGLOB 6
+THROWIF 51
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDI 1
+SWAP
+NULLROTRIFNOT
+PUSHCONT {
+	LDU 256
+}
+IF
+LDU 256
+LDU 32
+LDDICT
+ROTREV
+PAIR
+SWAP
+LDU 32
+LDDICT
+ROTREV
+PAIR
+XCHG S1, S2
+PAIR
+SWAP
+ENDS
+.loc proposal.sol, 20
+ACCEPT
+.loc proposal.sol, 40
+ROT
+SETGLOB 10
+.loc proposal.sol, 41
+SWAP
+SETGLOB 11
+.loc proposal.sol, 42
+GETGLOB 9
+SETGLOB 12
+.loc proposal.sol, 43
+SETGLOB 13
+.loc proposal.sol, 0
+CALLREF {
+	.inline __c7_to_c4
+}
+THROW 0
+
+.macro receive_macro
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc proposal.sol, 0
+CALLREF {
+	.inline __c7_to_c4
+}
+
+.macro on_bounce_macro
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc proposal.sol, 0
+DUP
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+
+.macro fallback_macro
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc proposal.sol, 0
+CALLREF {
+	.inline __c7_to_c4
+}
+
+.macro c4_to_c7
+PUSHROOT
+CTOS
+LDU 256 ; pubkey c4
+LDU 64 ; pubkey timestamp c4
+LDU 1 ; ctor flag
+NIP
+LDI 1
+SWAP
+NULLROTRIFNOT
+PUSHCONT {
+	LDU 256
+}
+IF
+LDU 256
+LDREF
+ENDS
+CTOS
+LDMSGADDR
+LDU 32
+LDDICT
+ROTREV
+PAIR
+SWAP
+LDU 32
+LDDICT
+ROTREV
+PAIR
+XCHG S1, S2
+PAIR
+SWAP
+LDU 128
+ENDS
+SETGLOB 14
+SETGLOB 13
+SETGLOB 12
+SETGLOB 11
+SETGLOB 10
+SETGLOB 3
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS
+SBITS
+GTINT 1
+PUSHCONT {
+	PUSHINT 0
+	PUSHROOT
+	CTOS
+	PLDDICT ; D
+	NULL
+	PUSHINT 0
+	PUSHREFSLICE {
+		.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+	}
+	PUSHINT 0
+	NEWDICT
+	PAIR
+	DUP
+	PAIR
+	PUSHINT 1
+	PUSH S5
+	PUSHINT 64
+	DICTUGET
+	ZEROSWAPIFNOT
+	PUSHCONT {
+		PLDU 128
+	}
+	IF
+	SETGLOB 14
+	SETGLOB 13
+	SETGLOB 12
+	SETGLOB 11
+	SETGLOB 10
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+}
+IFREFELSE {
+	.inline __c4_to_c7
+}
+
+.macro c7_to_c4
+GETGLOB 14
+GETGLOB 13
+GETGLOB 12
+GETGLOB 11
+GETGLOB 10
+GETGLOB 3
+GETGLOB 2
+NEWC
+STU 256
+STU 64
+STONE
+XCPU S1, S0
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	SWAP
+	STSLICECONST 1
+	STU 256
+}
+IFELSE
+STU 256
+ROLLREV 3
+NEWC
+STSLICE
+SWAP
+UNPAIR
+ROTREV
+UNPAIR
+XCHG S2
+STU 32
+STDICT
+SWAP
+UNPAIR
+XCHG S2
+STU 32
+STDICT
+STU 128
+STBREFR
+ENDC
+POPROOT
+
+.macro upd_only_time_in_c4
+PUSHROOT
+CTOS
+LDU 256
+LDU 64
+NIP
+GETGLOB 3
+ROT
+NEWC
+STU 256
+STU 64
+STSLICE
+ENDC
+POPROOT
+
+.internal-alias :main_internal, 0
+.internal :main_internal
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
+PUSH S2
+CTOS
+LDU 4 ; bounced tail
+LDMSGADDR ; bounced src tail
+DROP
+SETGLOB 9
+MODPOW2 1
+IFJMPREF {
+	OVER
+	LDSLICE 32
+	NIP
+	.inline __on_bounce_macro
+}
+OVER
+SEMPTY ; isEmpty
+IFJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+OVER
+LDUQ 32  ; [funcId] body' ok
+PUSHCONT {
+	DROP
+	CALLREF {
+		.inline __fallback_macro
+	}
+	THROW 0
+}
+IFNOT
+OVER
+IFNOTJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+SWAP
+CALLREF {
+	.inline __public_function_selector
+}
+DROP2
+CALLREF {
+	.inline __fallback_macro
+}
+
+.internal-alias :main_external, -1
+.internal :main_external
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
+PUSHREFSLICE {
+	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+}
+SETGLOB 9
+OVER
+CALLREF {
+	.inline __c4_to_c7_with_init_storage
+}
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHPOW2 9
+	LDSLICEX
+	DUP
+	MYADDR
+	NEWC
+	STSLICE
+	STSLICE
+	ENDC
+	HASHCU
+	SWAP
+	LDU 1 ; signatureSlice hashMsgSlice hasPubkey msgSlice
+	SWAP
+	PUSHCONT {
+		LDU 256 ; signatureSlice hashMsgSlice pubkey msgSlice
+		XCHG S3
+		SWAP
+	}
+	PUSHCONT {
+		XCHG S2
+		GETGLOB 2
+	}
+	IFELSE
+	DUP
+	SETGLOB 5
+	CHKSIGNU
+	THROWIFNOT 40
+}
+PUSHCONT {
+	LDU 1 ; hasPubkey msgSlice
+	SWAP
+	THROWIF 58
+}
+IFELSE
+LDU 64 ; timestamp msgSlice
+SWAP
+.inline __replay_protection_macro
+LDU 32 ; expireAt msgSlice
+SWAP
+NOW ; msgSlice expireAt now
+GREATER ; msgSlice expireAt>now
+THROWIFNOT 57
+LDU 32 ; funcId body
+SWAP
+CALLREF {
+	.inline __public_function_selector
+}
+DROP2
+CALLREF {
+	.inline __fallback_macro
+}
+
+.globl	ProposalLib_with_obj_calculateProposalAddress_4a06fd0c
+.type	ProposalLib_with_obj_calculateProposalAddress_4a06fd0c, @function
+.inline __ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
+
+.macro ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
+.loc checkerLib.sol, 28
+PUSH S2
+ROTREV
+CALLREF {
+	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+}
+.loc checkerLib.sol, 29
+HASHCU
+PUSHINT 0
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_no_obj_calculateProposalAddress_4a06fd0c
+.type	ProposalLib_no_obj_calculateProposalAddress_4a06fd0c, @function
+.inline __ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
+
+.macro ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
+.loc checkerLib.sol, 28
+CALLREF {
+	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+}
+.loc checkerLib.sol, 29
+HASHCU
+PUSHINT 0
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1
+.type	ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1, @function
+.inline __ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
+
+.macro ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
+.loc checkerLib.sol, 33
+PUSH S2
+ROT
+CALLREF {
+	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
+}
+.loc checkerLib.sol, 34
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+NEWDICT
+PUSHINT 64
+DICTUSETB
+ROT
+NEWC
+STU 128
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STDICT
+ENDC
+SWAP
+NEWC
+STSLICECONST x2_
+STDICT
+STDICT
+STZERO
+ENDC
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1
+.type	ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1, @function
+.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+
+.macro ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+.loc checkerLib.sol, 33
+ROTREV
+CALLREF {
+	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
+}
+.loc checkerLib.sol, 34
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+NEWDICT
+PUSHINT 64
+DICTUSETB
+ROT
+NEWC
+STU 128
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STDICT
+ENDC
+SWAP
+NEWC
+STSLICECONST x2_
+STDICT
+STDICT
+STZERO
+ENDC
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_with_obj_buildProposalCode_abd62b3f
+.type	ProposalLib_with_obj_buildProposalCode_abd62b3f, @function
+.inline __ProposalLib_with_obj_buildProposalCode_abd62b3f_macro
+
+.macro ProposalLib_with_obj_buildProposalCode_abd62b3f_macro
+.loc checkerLib.sol, 47
+NEWC
+XCPU S1, S0
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	SWAP
+	STSLICECONST 1
+	STU 256
+}
+IFELSE
+.loc checkerLib.sol, 48
+OVER
+CTOS
+SWAP
+ENDC
+
+CALLREF {
+	PUSH S1
+	PUSHSLICE x8adb35
+	SDEQ
+	PUSHREFCONT {
+		SWAP      ; salt sliceCode
+		LDREF
+		LDREF
+		DROP         ; salt selfCallCode usualSelector
+		XCHG S1, S2  ; selfCallCode salt usualSelector
+		CTOS         ; selfCallCode salt usualSelector
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+						; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4BDF2C04E
+			SDBEGINSX
+			DROP
+						; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4BDF2C04E ; DICTUGETJMPZ THROW 78
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+
+		}
+		NEWC        ; selfCallCode usualBuilder mainBuilder
+		STSLICECONST x8adb35
+		XCHG S1, S2 ; usualBuilder selfCallCode mainBuilder
+		STREF
+		STBREF
+		ENDC
+	}
+	PUSHREFCONT {
+		SWAP
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+						; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4BDF2C04E
+			SDBEGINSX
+			DROP
+						; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4BDF2C04E ; DICTUGETJMPZ THROW 78
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+
+		}
+		ENDC
+	}
+	IFELSE
+}
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_no_obj_buildProposalCode_abd62b3f
+.type	ProposalLib_no_obj_buildProposalCode_abd62b3f, @function
+.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
+
+.macro ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
+.loc checkerLib.sol, 47
+NEWC
+XCPU S1, S0
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	SWAP
+	STSLICECONST 1
+	STU 256
+}
+IFELSE
+.loc checkerLib.sol, 48
+SWAP
+CTOS
+SWAP
+ENDC
+
+CALLREF {
+	PUSH S1
+	PUSHSLICE x8adb35
+	SDEQ
+	PUSHREFCONT {
+		SWAP      ; salt sliceCode
+		LDREF
+		LDREF
+		DROP         ; salt selfCallCode usualSelector
+		XCHG S1, S2  ; selfCallCode salt usualSelector
+		CTOS         ; selfCallCode salt usualSelector
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+						; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4BDF2C04E
+			SDBEGINSX
+			DROP
+						; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4BDF2C04E ; DICTUGETJMPZ THROW 78
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+
+		}
+		NEWC        ; selfCallCode usualBuilder mainBuilder
+		STSLICECONST x8adb35
+		XCHG S1, S2 ; usualBuilder selfCallCode mainBuilder
+		STREF
+		STBREF
+		ENDC
+	}
+	PUSHREFCONT {
+		SWAP
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+						; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4BDF2C04E
+			SDBEGINSX
+			DROP
+						; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4BDF2C04E ; DICTUGETJMPZ THROW 78
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+
+		}
+		ENDC
+	}
+	IFELSE
+}
+.loc checkerLib.sol, 0
+
+.macro public_function_selector
+DUP
+PUSHINT 1840865999
+EQUAL
+IFJMPREF {
+	.inline __constructor
+}
+

@@ -8,17 +8,16 @@ pragma ever-solidity >=0.66.0;
 pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
-struct UnknownData {
-    bytes data;
-    uint256 hash;
-}
-
-uint16 constant ERR_WRONG_SENDER = 100;
-uint16 constant ERR_WRONG_HASH = 101;
+import "checkerLib.sol";
+import "proposal.sol";
 
 contract Checker {
     optional(uint256) _prevhash;
     bool _status = false;
+
+    uint128 _index = 0;
+
+    TvmCell _proposalCode;
 
     modifier onlyOwner {
         require (msg.pubkey() == tvm.pubkey(), ERR_WRONG_SENDER) ;
@@ -39,20 +38,24 @@ contract Checker {
     ) accept {
     }
 
-    function checkData(UnknownData[] data) public onlyOwner accept {
+    function setProposalCode(TvmCell code) public onlyOwner accept {
+        _proposalCode = code;
+    }
+
+    function checkData(BlockData[] data, TransactionBatch transactions) public onlyOwner accept {
         tvm.accept();
         if (data.length == 0) {
-            this.isCorrect{value: 0.2 ton, flag: 1}(true); 
             return;
         }
         _status = true;
-        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, 0);
+        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, 0);
     }
 
-    function checkDataIndex(UnknownData[] data, uint128 index) public senderIs(this) accept {
+    function checkDataIndex(BlockData[] data, TransactionBatch transactions, uint128 index) public senderIs(this) accept {
         if (index >=  data.length) { 
-            _prevhash = data[index - 1].hash;
-            this.isCorrect{value: 0.2 ton, flag: 1}(true); 
+            TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _index);
+            new Proposal{stateInit: s1, value: 5 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
+            _index += 1;        
             return; 
         }
         TvmSlice dataslice = TvmSlice(data[index].data);
@@ -64,33 +67,34 @@ contract Checker {
         if (index == 0) {
             if (_prevhash.hasValue()) {
                 if (_prevhash.get() != newhash) {
-                    this.isCorrect{value: 0.2 ton, flag: 1}(false);      
+                    _status = false;     
                     return;
                 }
             }
         }
         else {
             if (data[index - 1].hash != newhash) {
-                this.isCorrect{value: 0.2 ton, flag: 1}(false);      
+                _status = false;     
+                return;
             }
         }
         if (gosh.keccak256(data[index].data) != data[index].hash) { 
-            this.isCorrect{value: 0.2 ton, flag: 1}(false); 
+            _status = false;
             return; 
         }
-        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, index + 1);
+        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
     }
 
-    function isCorrect(bool res) public senderIs(this) accept {
-        _status = false;
-        res;
-        return;
+    function setNewHash(uint256 prevhash, uint256 newhash) public {
+        if (_prevhash.hasValue()) {
+            require(_prevhash.get() == prevhash, ERR_WRONG_HASH);
+        }
+        _prevhash = newhash;
     }
 
     //Fallback/Receive
     receive() external {
         if (msg.sender == this) {
-            this.isCorrect{value: 0.2 ton, flag: 1}(false); 
             _status = false;
         }
     }
@@ -98,14 +102,12 @@ contract Checker {
     onBounce(TvmSlice body) external {
         body;
         if (msg.sender == this) {
-            this.isCorrect{value: 0.2 ton, flag: 1}(false); 
             _status = false;
         }
     }
     
     fallback() external {
         if (msg.sender == this) {
-            this.isCorrect{value: 0.2 ton, flag: 1}(false); 
             _status = false;
         }
     }
