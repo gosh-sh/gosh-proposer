@@ -37,7 +37,7 @@ uint16 constant ERR_WRONG_SENDER = 100;
 uint16 constant ERR_WRONG_HASH = 101;
 
 interface ARootToken {
-    function  grantbatch(TransactionBatch[] transactions) external;
+    function  grantbatch(uint32 _answer_id, TransactionBatch[] transactions) external;
 }
 
 library ProposalLib {
