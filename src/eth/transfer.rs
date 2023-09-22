@@ -13,9 +13,9 @@ const DEFAULT_DENOMINATOR: f64 = 100.0;
 
 #[derive(Debug, Serialize)]
 pub struct Transfer {
-    owner: String,
-    value: String,
-    tx_hash: String,
+    pubkey: String,
+    tokens: u128,
+    hash: String,
 }
 
 fn decode_transfer(
@@ -41,9 +41,9 @@ fn decode_transfer(
 
     // TODO: we may need to check function name
 
-    let owner_address = input_str[11..75].to_string();
+    let owner_pubkey = input_str[11..75].to_string();
     let eth_value = wei_to_eth(tx.value);
-    tracing::info!("Transfer owner: {owner_address}, amount: {eth_value}");
+    tracing::info!("Transfer owner: {owner_pubkey}, amount: {eth_value}");
 
     tracing::info!(
         "[{}] ({} -> {}) value {}, gas {}, gas price {}",
@@ -56,12 +56,12 @@ fn decode_transfer(
     );
 
     let tx_hash = w3h::to_string(&tx.hash);
-    let value = w3h::to_string(&tx.value);
+    let value = u128::from_str_radix(&w3h::to_string(&tx.value), 16)?;
 
     let res = Transfer {
-        tx_hash,
-        owner: owner_address,
-        value,
+        hash: tx_hash,
+        pubkey: owner_pubkey,
+        tokens: value,
     };
 
     tracing::info!("Valid transfer: {:?}", res);
@@ -116,5 +116,6 @@ pub async fn filter_and_decode_block_transactions(
             Err(_) => {}
         }
     }
+    tracing::info!("block {} transfers: {:?}", w3h::to_string(&block.hash), res);
     Ok(res)
 }

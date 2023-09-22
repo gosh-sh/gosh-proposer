@@ -16,7 +16,7 @@ pub async fn propose_blocks(
 ) -> anyhow::Result<()> {
     let checker_address = env::var("CHECKER_ADDRESS")?;
     let client = create_client()?;
-    let abi_path = "contracts/checker.abi.json";
+    let abi_path = "contracts/l2/checker.abi.json";
     let key_path = "tests/keys.json";
     let key_pair = load_keys(key_path)?;
 
@@ -49,7 +49,6 @@ pub async fn propose_blocks(
         "data": json_blocks,
         "transactions": all_transfers,
     });
-    tracing::info!("args: {args:?}");
 
     call_function(
         &client,

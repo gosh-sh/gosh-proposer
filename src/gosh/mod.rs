@@ -94,7 +94,7 @@ pub async fn call_function(
     function_name: &str,
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<()> {
-    tracing::trace!("call_function: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
+    tracing::info!("call_function: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
 
     let call_set = match args {
         Some(value) => CallSet::some_with_function_and_input(function_name, value),
@@ -136,7 +136,7 @@ pub async fn call_function(
         ..
     } = sdk_result?;
     let call_result: CallResult = serde_json::from_value(transaction)?;
-    tracing::trace!("trx id: {}", call_result.trx_id);
+    tracing::info!("trx id: {}", call_result.trx_id);
     match call_result.status {
         3 => Ok(()),
         code => anyhow::bail!("Call ended with error code: {code}"),
