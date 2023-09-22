@@ -21,6 +21,16 @@ struct TransactionBatch {
     uint256 hash;
 }
 
+struct ValidatorSet { 
+    uint8 tag; 
+    uint32 utime_since;
+    uint32 utime_until;
+    uint16 total;
+    uint16 main;
+    uint64 total_weight;
+    mapping(uint16 => TvmSlice) vdict;
+}
+
 uint16 constant BATCH_SIZE = 3;
 
 uint16 constant ERR_WRONG_SENDER = 100;
