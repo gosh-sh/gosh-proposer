@@ -1,0 +1,64 @@
+{
+	"ABI version": 2,
+	"version": "2.3",
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"hash","type":"optional(uint256)"},
+				{"name":"newhash","type":"uint256"},
+				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setvdict",
+			"inputs": [
+				{"name":"data","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setVote",
+			"inputs": [
+				{"name":"id","type":"uint16"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "destroy",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getSet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"map(uint16,uint256)"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"_index","type":"uint128"}
+	],
+	"events": [
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"_hash","type":"optional(uint256)"},
+		{"name":"_newhash","type":"uint256"},
+		{"name":"_root","type":"address"},
+		{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"_transactions","type":"tuple[]"},
+		{"name":"_index","type":"uint128"},
+		{"name":"_vdict","type":"optional(cell)"}
+	]
+}

@@ -11,7 +11,7 @@ pragma AbiHeader pubkey;
 import "checkerLib.sol";
 import "checker.sol";
 
-contract Proposal {
+contract Proposal_Test {
     modifier onlyOwner {
         require (msg.pubkey() == tvm.pubkey(), ERR_WRONG_SENDER) ;
         _;
@@ -44,10 +44,14 @@ contract Proposal {
         _newhash = newhash;
         _root = msg.sender;
         _transactions = transactions;
-        (optional(TvmCell) data) = tvm.rawConfigParam(34);
-        ValidatorSet vset = data.get().toSlice().load(ValidatorSet);
-        _vdict = vset.vdict;
-        if (data.hasValue() == false) { selfdestruct(_root); }
+//        (optional(TvmCell) data) = tvm.rawConfigParam(34);
+//        ValidatorSet vset = data.get().toSlice().load(ValidatorSet);
+//        _vdict = vset.vdict;
+//        if (data.hasValue() == false) { selfdestruct(_root); }
+    }
+
+    function setvdict(TvmCell data) public {
+        _vdict[0] = data.toSlice();
     }
 
     function setVote(uint16 id) public {
