@@ -78,8 +78,11 @@
     "name": "grantbatch",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
-    { "name":"dest", "type":"address[]" },
-    { "name":"tokens", "type":"uint128[]" }
+    { "components":[
+      { "name":"pubkey", "type":"uint256" },
+      { "name":"tokens", "type":"uint128" },
+      { "name":"hash", "type":"uint256" }
+    ], "name":"transactions", "type":"tuple[]" }
     ],
     "outputs": [
     ],
@@ -89,8 +92,11 @@
     "name": "grantbatchindex",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
-    { "name":"dest", "type":"address[]" },
-    { "name":"tokens", "type":"uint128[]" },
+    { "components":[
+      { "name":"pubkey", "type":"uint256" },
+      { "name":"tokens", "type":"uint128" },
+      { "name":"hash", "type":"uint256" }
+    ], "name":"transactions", "type":"tuple[]" },
     { "name":"index", "type":"uint128" }
     ],
     "outputs": [

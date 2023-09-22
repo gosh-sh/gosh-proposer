@@ -144,20 +144,18 @@ public:
   }
 
   void grantbatch(
-    dict_array<address> dest,
-    dict_array<uint128> tokens
+    dict_array<TransactionBatch> transactions
   ) {
     require(checker_ == int_sender(), error_code::message_sender_is_not_my_owner);
     IRootTokenContractPtr dest_handle(tvm_myaddr());
-    dest_handle(Evers(1e9), 1).grantbatchindex(dest, tokens, uint128(0));
+    dest_handle(Evers(1e9), 1).grantbatchindex(transactions, uint128(0));
   }
 
   void grantbatchindex(
-    dict_array<address> dest,
-    dict_array<uint128> tokens,
+    dict_array<TransactionBatch> transactions,
     uint128 index
   ) {
-    require(total_granted_ + tokens.get_at(unsigned(index)) <= total_supply_, error_code::not_enough_balance);
+    require(total_granted_ + transactions.get_at(unsigned(index)).tokens <= total_supply_, error_code::not_enough_balance);
     require(tvm_myaddr() == int_sender(), error_code::message_sender_is_not_my_owner);
 
     tvm_accept();
@@ -170,14 +168,16 @@ public:
     } else {
       answer_addr = address{tvm_myaddr()};
     }
-    total_granted_ += tokens.get_at(unsigned(index));
-    ITONTokenWalletPtr dest_handle(dest.get_at(unsigned(index)));
+    total_granted_ += transactions.get_at(unsigned(index)).tokens;
+    address_opt owner;
+    auto [wallet_init, dest_addr] = calc_wallet_init(transactions.get_at(unsigned(index)).pubkey, owner);
+    ITONTokenWalletPtr dest_handle(dest_addr);
     opt<cell> notify;
-    dest_handle(Evers(evers.get()), 1).acceptMint(tokens.get_at(unsigned(index)), answer_addr, 0u128, notify);
+    dest_handle(Evers(evers.get()), 1).acceptMint(transactions.get_at(unsigned(index)).tokens, answer_addr, 0u128, notify);
     
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());
     index += 1;
-    dest_handle_next(Evers(1e9), 1).grantbatchindex(dest, tokens, uint128(index));
+    dest_handle_next(Evers(1e9), 1).grantbatchindex(transactions, uint128(index));
   } 
 
   void grant(

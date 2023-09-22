@@ -16,7 +16,7 @@ struct BlockData {
 }
 
 struct TransactionBatch {
-    address dest;
+    uint256 pubkey;
     uint128 value;
     uint256 hash;
 }
