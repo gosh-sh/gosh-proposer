@@ -89,7 +89,7 @@ contract Checker {
         if (_prevhash.hasValue()) {
             require(_prevhash.get() == prevhash.get(), ERR_WRONG_HASH);
         }
-        ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(transactions);
+        ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, transactions);
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _index, 0);
         _prevhash = newhash;
         _index = 0;
