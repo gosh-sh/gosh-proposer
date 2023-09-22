@@ -9,6 +9,7 @@ pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
 import "checkerLib.sol";
+import "checker.sol";
 
 contract Proposal {
     modifier onlyOwner {
@@ -32,7 +33,7 @@ contract Proposal {
     TransactionBatch[] _transactions;
     uint128 static _index;
 
-    bool[] _acceptmask;
+    mapping(uint16 => TvmSlice) _vdict;
     
     constructor(
         optional(uint256) hash,
@@ -44,8 +45,21 @@ contract Proposal {
         _root = msg.sender;
         _transactions = transactions;
         (optional(TvmCell) data) = tvm.rawConfigParam(34);
-        Common.ValidatorSet vset = data.get().toSlice().load(Common.ValidatorSet);
+        ValidatorSet vset = data.get().toSlice().load(ValidatorSet);
+        _vdict = vset.vdict;
         if (data.hasValue() == false) { selfdestruct(_root); }
+    }
+
+    function setVote(uint16 id) public {
+        if (_vdict.exists(id)) {
+            uint256 pub = _vdict[id].load(uint256);
+            require(pub == msg.pubkey(), ERR_WRONG_SENDER);
+            tvm.accept();
+            delete _vdict[id];
+            if (_vdict.empty()) {
+                Checker(_root).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index);
+            }
+        }
     }
 
     function destroy() public senderIs(_root) accept {
@@ -65,4 +79,16 @@ contract Proposal {
     }
 
     //Getter 
+    function getSet() external view returns (mapping(uint16 => uint256)) {
+        uint16 key;
+        optional(uint16, TvmSlice) res = _vdict.next(key);
+        mapping(uint16 => uint256) result;
+        while (res.hasValue()) {
+            (uint16 newkey, TvmSlice data) = res.get();
+            uint256 pub = data.load(uint256);
+            result[newkey] = pub;
+            res = _vdict.next(newkey);
+        }
+        return result;
+    }
 }

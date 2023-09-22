@@ -14,10 +14,26 @@
 			]
 		},
 		{
+			"name": "setVote",
+			"inputs": [
+				{"name":"id","type":"uint16"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "destroy",
 			"inputs": [
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "getSet",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"map(uint16,uint256)"}
 			]
 		}
 	],
@@ -35,6 +51,6 @@
 		{"name":"_root","type":"address"},
 		{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"_transactions","type":"tuple[]"},
 		{"name":"_index","type":"uint128"},
-		{"name":"_acceptmask","type":"bool[]"}
+		{"name":"_vdict","type":"optional(cell)"}
 	]
 }

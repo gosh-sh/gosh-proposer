@@ -40,8 +40,9 @@
 		{
 			"name": "setNewHash",
 			"inputs": [
-				{"name":"prevhash","type":"uint256"},
-				{"name":"newhash","type":"uint256"}
+				{"name":"prevhash","type":"optional(uint256)"},
+				{"name":"newhash","type":"uint256"},
+				{"name":"index","type":"uint128"}
 			],
 			"outputs": [
 			]
