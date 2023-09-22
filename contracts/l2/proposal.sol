@@ -60,7 +60,7 @@ contract Proposal {
             optional(TvmSlice) deleted = _vdict.getDel(id);
             deleted;
             if (_vdict.empty()) {
-                Checker(_root).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index);
+                Checker(_root).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index, _transactions);
             }
         }
     }

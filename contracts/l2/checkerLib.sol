@@ -36,6 +36,10 @@ uint16 constant BATCH_SIZE = 3;
 uint16 constant ERR_WRONG_SENDER = 100;
 uint16 constant ERR_WRONG_HASH = 101;
 
+interface ARootToken {
+    function  grantbatch(TransactionBatch[] transactions) external;
+}
+
 library ProposalLib {
     function calculateProposalAddress(TvmCell code, optional(uint256) hash, uint128 index) public returns(address) {
         TvmCell s1 = composeProposalStateInit(code, hash, index);
