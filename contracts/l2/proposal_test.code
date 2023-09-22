@@ -82,6 +82,8 @@ THROW 0
 .inline __setvdict_dfb7c4b0_internal_macro
 
 .macro setvdict_dfb7c4b0_internal_macro
+.loc proposal_test.sol, 21
+ACCEPT
 .loc proposal_test.sol, 54
 PUSHINT 0
 GETGLOB 15
@@ -170,6 +172,7 @@ PUSHCONT {
 	DICTEMPTY
 	PUSHCONT {
 		.loc proposal_test.sol, 67
+		GETGLOB 13
 		GETGLOB 14
 		GETGLOB 11
 		GETGLOB 10
@@ -179,9 +182,9 @@ PUSHCONT {
 		STSLICE
 		PUSHINT 2803819077499249229031122585109857988247553
 		STUR 143
-		ROLLREV 3
+		ROLLREV 4
 		NEWC
-		STSLICECONST x1e7d10b5
+		STSLICECONST x48901aa2
 		XCPU S1, S0
 		ISNULL
 		PUSHCONT {
@@ -196,6 +199,11 @@ PUSHCONT {
 		IFELSE
 		STU 256
 		STU 128
+		SWAP
+		UNPAIR
+		XCHG S2
+		STU 32
+		STDICT
 		STBREFR
 		ENDC
 		PUSHINT 1
@@ -597,13 +605,13 @@ CALLREF {
 .inline __ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
 
 .macro ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
-.loc checkerLib.sol, 41
+.loc checkerLib.sol, 45
 PUSH S2
 ROTREV
 CALLREF {
 	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
 }
-.loc checkerLib.sol, 42
+.loc checkerLib.sol, 46
 HASHCU
 PUSHINT 0
 NEWC
@@ -619,11 +627,11 @@ CTOS
 .inline __ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
 
 .macro ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
-.loc checkerLib.sol, 41
+.loc checkerLib.sol, 45
 CALLREF {
 	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
 }
-.loc checkerLib.sol, 42
+.loc checkerLib.sol, 46
 HASHCU
 PUSHINT 0
 NEWC
@@ -639,13 +647,13 @@ CTOS
 .inline __ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
 
 .macro ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
-.loc checkerLib.sol, 46
+.loc checkerLib.sol, 50
 PUSH S2
 ROT
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 }
-.loc checkerLib.sol, 47
+.loc checkerLib.sol, 51
 PUSHINT 0
 NEWC
 STU 256
@@ -677,12 +685,12 @@ ENDC
 .inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
 
 .macro ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
-.loc checkerLib.sol, 46
+.loc checkerLib.sol, 50
 ROTREV
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 }
-.loc checkerLib.sol, 47
+.loc checkerLib.sol, 51
 PUSHINT 0
 NEWC
 STU 256
@@ -714,7 +722,7 @@ ENDC
 .inline __ProposalLib_with_obj_buildProposalCode_abd62b3f_macro
 
 .macro ProposalLib_with_obj_buildProposalCode_abd62b3f_macro
-.loc checkerLib.sol, 60
+.loc checkerLib.sol, 64
 NEWC
 XCPU S1, S0
 ISNULL
@@ -728,7 +736,7 @@ PUSHCONT {
 	STU 256
 }
 IFELSE
-.loc checkerLib.sol, 61
+.loc checkerLib.sol, 65
 OVER
 CTOS
 SWAP
@@ -845,7 +853,7 @@ CALLREF {
 .inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 
 .macro ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
-.loc checkerLib.sol, 60
+.loc checkerLib.sol, 64
 NEWC
 XCPU S1, S0
 ISNULL
@@ -859,7 +867,7 @@ PUSHCONT {
 	STU 256
 }
 IFELSE
-.loc checkerLib.sol, 61
+.loc checkerLib.sol, 65
 SWAP
 CTOS
 SWAP
