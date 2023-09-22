@@ -20,6 +20,10 @@ fix:
 run:
 	cargo run --release
 
+.PHONY: check
+check:
+	cargo check --release
+
 .PHONY: debug_run
 debug_run:
 	GOSH_LOG=trace cargo run --releaes

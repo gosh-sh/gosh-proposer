@@ -1,109 +1,120 @@
 use crate::eth::helper::wei_to_eth;
 use std::collections::BTreeMap;
-use std::env;
-use web3::helpers as w3h;
-use web3::types::{Transaction, H160, U64};
+
+use crate::eth::block::FullBlock;
+use serde::Serialize;
+use web3::transports::WebSocket;
+use web3::types::{Transaction, TransactionId, H256, U64};
+use web3::{helpers as w3h, Web3};
 
 const INPUT_CHUNK_SIZE: usize = 64; // Number of bytes in one function argument
 const ADDRESS_PREFIX_SIZE: usize = 24; // Number of leading zeros in address argument
 const DEFAULT_DENOMINATOR: f64 = 100.0;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Transfer {
-    from: String,
-    to: String,
-    value: f64,
+    owner: String,
+    value: String,
+    tx_hash: String,
 }
 
-pub fn decode_transfer(
+fn decode_transfer(
     tx: Transaction,
     code_sig_lookup: &BTreeMap<String, Vec<String>>,
 ) -> anyhow::Result<Transfer> {
-    // Token name
-    let eth_token_name = env::var("ETH_TOKEN_NAME")?;
-
     // Decode function call
+    tracing::trace!("Decode transaction: {}", w3h::to_string(&tx.hash));
     let input_str: String = w3h::to_string(&tx.input);
-    if input_str.len() < 12 {
+    if input_str.len() < 75 {
+        tracing::trace!("Transaction body is too short");
         anyhow::bail!("Transaction body is too short");
     }
-    tracing::trace!("{} input_str: {input_str}", w3h::to_string(&tx.hash));
+    tracing::trace!("input_str: {input_str}");
     let func_code = input_str[3..11].to_string();
     let func_signature: String = match code_sig_lookup.get(&func_code) {
         Some(func_sig) => format!("{:?}", func_sig),
         _ => {
             tracing::trace!("Function not found.");
-            "[unknown]".to_string()
+            anyhow::bail!("Function not found.");
         }
     };
 
-    let chunks = input_str[11..]
-        .chars()
-        .collect::<Vec<char>>()
-        .chunks(INPUT_CHUNK_SIZE)
-        .map(|c| c.iter().collect::<String>())
-        .collect::<Vec<String>>();
+    // TODO: we may need to check function name
 
-    let destination_address = match chunks.get(0) {
-        Some(chars) => {
-            if chars.len() == INPUT_CHUNK_SIZE {
-                let mut address = chars.clone();
-                address.drain(0..ADDRESS_PREFIX_SIZE);
-                format!("0x{address}")
-            } else {
-                String::from("Unknown")
-            }
-        }
-        None => {
-            tracing::trace!("Failed to decode transfer destination");
-            String::from("Unknown")
-        }
-    };
-
-    let token_value = match chunks.get(1) {
-        Some(chars) => {
-            if chars.len() == INPUT_CHUNK_SIZE {
-                chars.clone()
-            } else {
-                String::from("Unknown")
-            }
-        }
-        None => {
-            tracing::trace!("Failed to decode transfer destination");
-            String::from("Unknown")
-        }
-    };
-    let token_value = u64::from_str_radix(&token_value, 16)? as f64 / DEFAULT_DENOMINATOR;
-
-    tracing::info!("Transfer destination: {destination_address}, amount: {token_value}");
-
-    // Decode address fields
-    let from_addr = tx.from.unwrap_or(H160::zero());
-    let to_addr = tx.to.unwrap_or(H160::zero());
-
-    // Decode eth value
+    let owner_address = input_str[11..75].to_string();
     let eth_value = wei_to_eth(tx.value);
+    tracing::info!("Transfer owner: {owner_address}, amount: {eth_value}");
 
     tracing::info!(
-        "[{}] ({} -> {}) from {}, to {}, value {}, gas {}, gas price {}",
+        "[{}] ({} -> {}) value {}, gas {}, gas price {}",
         tx.transaction_index.unwrap_or(U64::from(0)),
-        &eth_token_name,
+        "ETH",
         &func_signature,
-        w3h::to_string(&from_addr),
-        w3h::to_string(&to_addr),
         eth_value,
         tx.gas,
         tx.gas_price.unwrap(),
     );
 
-    let source_address = w3h::to_string(&from_addr)
-        .trim()
-        .trim_end_matches('"')
-        .trim_start_matches('"')
-        .to_string();
-    Ok(Transfer {
-        from: source_address,
-        to: destination_address,
-        value: token_value,
-    })
+    let tx_hash = w3h::to_string(&tx.hash);
+    let value = w3h::to_string(&tx.value);
+
+    let res = Transfer {
+        tx_hash,
+        owner: owner_address,
+        value,
+    };
+
+    tracing::info!("Valid transfer: {:?}", res);
+
+    Ok(res)
+}
+
+pub async fn filter_and_decode_block_transactions(
+    web3s: &Web3<WebSocket>,
+    block: &FullBlock<H256>,
+    eth_contract_address: &str,
+    code_sig_lookup: &BTreeMap<String, Vec<String>>,
+) -> anyhow::Result<Vec<Transfer>> {
+    let mut res = vec![];
+    // Parse block transactions
+    for transaction_hash in &block.transactions {
+        // Load transaction
+        let tx = match web3s
+            .eth()
+            .transaction(TransactionId::Hash(transaction_hash.to_owned()))
+            .await
+        {
+            Ok(Some(tx)) => tx,
+            _ => {
+                tracing::trace!("Failed to fetch transaction: {transaction_hash}");
+                continue;
+            }
+        };
+
+        // Check that transaction destination is equal to the specified address
+        if let Some(address) = tx.to {
+            let dest = w3h::to_string(&address)
+                .trim()
+                .trim_end_matches('"')
+                .trim_start_matches('"')
+                .to_lowercase();
+            tracing::trace!("Txn destination address: {dest}");
+            if dest != eth_contract_address {
+                tracing::trace!(
+                    "Wrong destination address, skip it. `{}` != `{eth_contract_address}`",
+                    dest
+                );
+                continue;
+            }
+        } else {
+            tracing::trace!("No destination address, skip it.");
+            continue;
+        }
+
+        match decode_transfer(tx, code_sig_lookup) {
+            Ok(transfer) => res.push(transfer),
+            Err(_) => {}
+        }
+    }
+    Ok(res)
 }

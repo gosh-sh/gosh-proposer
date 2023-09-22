@@ -1,20 +1,17 @@
 use rlp::RlpStream;
 use sha3::{Digest, Keccak256};
-use web3::types::{Block, H256, U256};
-use std::str::FromStr;
-use tracing_subscriber::fmt::format::Full;
+use web3::types::H256;
+
 use crate::eth::block::FullBlock;
 
 pub fn serialize_block(block: FullBlock<H256>) -> anyhow::Result<Vec<u8>> {
     tracing::info!("serialize block: {:?}", block);
     let list_len = match block.base_fee_per_gas {
-        Some(_) => {
-            match block.withdrawals_root {
-                Some(_) => 17,
-                None => 16,
-            }
-        }
-        None => 15
+        Some(_) => match block.withdrawals_root {
+            Some(_) => 17,
+            None => 16,
+        },
+        None => 15,
     };
     let mut rlp_stream = RlpStream::new_list(list_len);
     rlp_stream.append(&block.parent_hash);
@@ -40,7 +37,9 @@ pub fn serialize_block(block: FullBlock<H256>) -> anyhow::Result<Vec<u8>> {
     }
     let out = rlp_stream.out().to_vec();
 
-    let out_str = out.iter().fold(String::new(), |acc, el| format!("{acc}{:02x}", el));
+    let out_str = out
+        .iter()
+        .fold(String::new(), |acc, el| format!("{acc}{:02x}", el));
     tracing::info!("encode input: {out_str}");
 
     let mut hasher = Keccak256::new();

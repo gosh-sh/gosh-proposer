@@ -9,9 +9,9 @@ use ton_client::{ClientConfig, ClientContext};
 
 pub type EverClient = Arc<ClientContext>;
 static DEFAULT_BLOCKCHAIN_TIMEOUT: Duration = Duration::from_secs(15 * 60);
-static MESSAGE_PROCESSING_TIMEOUT: &'static str = "GOSH_MESSAGE_PROCESSING_TIMEOUT_SEC";
-static WAIT_FOR_TIMEOUT: &'static str = "GOSH_WAIT_FOR_TIMEOUT_SEC";
-static QUERY_TIMEOUT: &'static str = "GOSH_QUERY_TIMEOUT_SEC";
+static MESSAGE_PROCESSING_TIMEOUT: &str = "GOSH_MESSAGE_PROCESSING_TIMEOUT_SEC";
+static WAIT_FOR_TIMEOUT: &str = "GOSH_WAIT_FOR_TIMEOUT_SEC";
+static QUERY_TIMEOUT: &str = "GOSH_QUERY_TIMEOUT_SEC";
 
 pub fn create_client() -> anyhow::Result<EverClient> {
     let endpoints = env::var("GOSH_ENDPOINTS")?
@@ -137,6 +137,6 @@ pub async fn default_callback(pe: ProcessingEvent) {
 
 pub fn load_keys(path: &str) -> anyhow::Result<KeyPair> {
     let data_str = std::fs::read_to_string(path)?;
-    Ok(serde_json::from_str(&data_str)
-        .map_err(|e| anyhow::format_err!("Failed to load key pair from {path}: {e}"))?)
+    serde_json::from_str(&data_str)
+        .map_err(|e| anyhow::format_err!("Failed to load key pair from {path}: {e}"))
 }

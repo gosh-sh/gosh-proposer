@@ -102,9 +102,7 @@ pub async fn call_function(
     };
 
     let signer = match keys {
-        Some(key_pair) => Signer::Keys {
-            keys: key_pair.to_owned(),
-        },
+        Some(key_pair) => Signer::Keys { keys: key_pair },
         None => Signer::None,
     };
 
