@@ -85,9 +85,9 @@ contract Checker {
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
     }
 
-    function setNewHash(uint256 prevhash, uint256 newhash) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, _index)) accept{
+    function setNewHash(optional(uint256) prevhash, uint256 newhash, uint128 index) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index)) accept{
         if (_prevhash.hasValue()) {
-            require(_prevhash.get() == prevhash, ERR_WRONG_HASH);
+            require(_prevhash.get() == prevhash.get(), ERR_WRONG_HASH);
         }
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _index, 0);
         _prevhash = newhash;
