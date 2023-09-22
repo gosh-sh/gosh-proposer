@@ -2,16 +2,16 @@ use crate::eth::helper::get_signatures_table;
 use crate::eth::transfer::decode_transfer;
 use chrono::{DateTime, NaiveDateTime, Utc};
 use std::env;
-use web3::helpers as w3h;
+use web3::{helpers as w3h, Transport};
 use web3::transports::WebSocket;
-use web3::types::{
-    Address, Block, BlockId, BlockNumber, Bytes, TransactionId, H256, U256, U64
-};
+use web3::types::{Block, BlockId, BlockNumber, TransactionId, H256, U256, U64};
 use web3::Web3;
+use crate::eth::block::FullBlock;
 
 pub mod helper;
 pub mod proof;
 mod transfer;
+pub mod block;
 
 #[derive(Debug)]
 pub struct StorageProofValue {
@@ -111,31 +111,46 @@ pub async fn read_eth_blocks() -> anyhow::Result<()> {
 }
 
 // Read Ethereum block with specified block id
-pub async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Result<Block<H256>> {
-    let block = web3s
-        .eth()
-        .block(block_id)
-        .await
-        .and_then(|val| Ok(val.unwrap()))?;
+pub async fn read_block(web3s: &Web3<WebSocket>, block_id: BlockId) -> anyhow::Result<FullBlock<H256>> {
+    tracing::info!("Reading block: {block_id:?}");
+    let include_txs = w3h::serialize(&false);
+    let block = match block_id {
+        BlockId::Hash(hash) => {
+            let hash = w3h::serialize(&hash);
+            web3s.transport().execute("eth_getBlockByHash", vec![hash, include_txs])
+        }
+        BlockId::Number(num) => {
+            let num = w3h::serialize(&num);
+            web3s.transport().execute("eth_getBlockByNumber", vec![num, include_txs])
+        }
+    }.await?;
 
-    let timestamp = block.timestamp.as_u64() as i64;
-    let naive = NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap();
-    let utc_dt: DateTime<Utc> = DateTime::from_naive_utc_and_offset(naive, Utc);
+    tracing::info!("{}", serde_json::to_string_pretty(&block)?);
+    Ok(serde_json::from_value(block)?)
+}
 
-    tracing::info!(
-        "[{}] block num {}, block hash {}, parent {}, transactions: {}, gas used {}, gas limit {}, base fee {}, difficulty {}, total difficulty {}",
-        utc_dt.format("%Y-%m-%d %H:%M:%S"),
-        block.number.unwrap(),
-        block.hash.unwrap(),
-        block.parent_hash,
-        block.transactions.len(),
-        block.gas_used,
-        block.gas_limit,
-        block.base_fee_per_gas.unwrap_or(U256::from(0)),
-        block.difficulty,
-        block.total_difficulty.unwrap_or(U256::from(0))
-    );
-    Ok(block)
+mod test {
+    use super::proof::serialize_block;
+    use super::read_block;
+    use crate::helper::tracing::init_default_tracing;
+    use std::env;
+    use web3::transports::WebSocket;
+    use web3::types::{BlockId, BlockNumber, U64};
+    use web3::Web3;
+
+    #[tokio::test]
+    pub async fn test_hash() -> anyhow::Result<()> {
+        dotenv::dotenv().ok();
+        init_default_tracing();
+        let block_id = BlockId::Number(BlockNumber::Number(
+            U64::from_str_radix("400000", 10).unwrap(),
+        ));
+        let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+        let web3s = Web3::new(websocket);
+        let block = read_block(&web3s, block_id).await?;
+        serialize_block(block)?;
+        Ok(())
+    }
 }
 
 async fn get_storage_proof(

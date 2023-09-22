@@ -1,10 +1,22 @@
 use rlp::RlpStream;
 use sha3::{Digest, Keccak256};
-use web3::types::{Block, H256};
+use web3::types::{Block, H256, U256};
+use std::str::FromStr;
+use tracing_subscriber::fmt::format::Full;
+use crate::eth::block::FullBlock;
 
-pub fn serialize_block(block: Block<H256>) -> anyhow::Result<Vec<u8>> {
+pub fn serialize_block(block: FullBlock<H256>) -> anyhow::Result<Vec<u8>> {
     tracing::info!("serialize block: {:?}", block);
-    let mut rlp_stream = RlpStream::new_list(15);
+    let list_len = match block.base_fee_per_gas {
+        Some(_) => {
+            match block.withdrawals_root {
+                Some(_) => 17,
+                None => 16,
+            }
+        }
+        None => 15
+    };
+    let mut rlp_stream = RlpStream::new_list(list_len);
     rlp_stream.append(&block.parent_hash);
     rlp_stream.append(&block.uncles_hash);
     rlp_stream.append(&block.author);
@@ -20,7 +32,16 @@ pub fn serialize_block(block: Block<H256>) -> anyhow::Result<Vec<u8>> {
     rlp_stream.append(&block.extra_data.0);
     rlp_stream.append(&block.mix_hash.unwrap());
     rlp_stream.append(&block.nonce.unwrap());
+    if block.base_fee_per_gas.is_some() {
+        rlp_stream.append(&block.base_fee_per_gas.unwrap());
+    }
+    if block.withdrawals_root.is_some() {
+        rlp_stream.append(&block.withdrawals_root.unwrap());
+    }
     let out = rlp_stream.out().to_vec();
+
+    let out_str = out.iter().fold(String::new(), |acc, el| format!("{acc}{:02x}", el));
+    tracing::info!("encode input: {out_str}");
 
     let mut hasher = Keccak256::new();
     hasher.update(&out);
