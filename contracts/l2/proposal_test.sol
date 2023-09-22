@@ -33,7 +33,7 @@ contract Proposal_Test {
     TransactionBatch[] _transactions;
     uint128 static _index;
 
-    mapping(uint16 => TvmSlice) _vdict;
+    mapping(uint16 => uint256) _vdict;
     
     constructor(
         optional(uint256) hash,
@@ -50,18 +50,18 @@ contract Proposal_Test {
 //        if (data.hasValue() == false) { selfdestruct(_root); }
     }
 
-    function setvdict(TvmCell data) public {
-        _vdict[0] = data.toSlice();
+    function setvdict(uint256 key) public {
+        _vdict[0] = key;
     }
 
     function setVote(uint16 id) public {
         if (_vdict.exists(id)) {
-            TvmSlice data = _vdict[id];
-            data.skip(4 * 8);
-            uint256 pub = data.load(uint256);
+//            TvmSlice data = _vdict[id];
+//            data.skip(4 * 8);
+            uint256 pub = _vdict[id];
             require(pub == msg.pubkey(), ERR_WRONG_SENDER);
             tvm.accept();
-            optional(TvmSlice) deleted = _vdict.getDel(id);
+            optional(uint256) deleted = _vdict.getDel(id);
             deleted;
             if (_vdict.empty()) {
                 Checker(_root).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index);
@@ -87,7 +87,7 @@ contract Proposal_Test {
 
     //Getter 
     function getSet() external view returns (mapping(uint16 => uint256)) {
-        uint16 key;
+/*        uint16 key;
         optional(uint16, TvmSlice) res = _vdict.next(key);
         mapping(uint16 => uint256) result;
         while (res.hasValue()) {
@@ -96,7 +96,7 @@ contract Proposal_Test {
             uint256 pub = data.load(uint256);
             result[newkey] = pub;
             res = _vdict.next(newkey);
-        }
-        return result;
+        }*/
+        return _vdict;
     }
 }
