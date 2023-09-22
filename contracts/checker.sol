@@ -42,7 +42,7 @@ contract Checker {
         _proposalCode = code;
     }
 
-    function checkData(BlockData[] data, TransactionBatch transactions) public onlyOwner accept {
+    function checkData(BlockData[] data, TransactionBatch[] transactions) public onlyOwner accept {
         tvm.accept();
         if (data.length == 0) {
             return;
@@ -51,10 +51,10 @@ contract Checker {
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, 0);
     }
 
-    function checkDataIndex(BlockData[] data, TransactionBatch transactions, uint128 index) public senderIs(this) accept {
+    function checkDataIndex(BlockData[] data, TransactionBatch[] transactions, uint128 index) public senderIs(this) accept {
         if (index >=  data.length) { 
             TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _index);
-            new Proposal{stateInit: s1, value: 5 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
+            new Proposal{stateInit: s1, value: 10 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
             _index += 1;        
             return; 
         }
@@ -85,11 +85,23 @@ contract Checker {
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
     }
 
-    function setNewHash(uint256 prevhash, uint256 newhash) public {
+    function setNewHash(uint256 prevhash, uint256 newhash) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, _index)) accept{
         if (_prevhash.hasValue()) {
             require(_prevhash.get() == prevhash, ERR_WRONG_HASH);
         }
+        this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _index, 0);
         _prevhash = newhash;
+        _index = 0;
+    }
+
+    function destroyTrash(optional(uint256) prevhash, uint128 indexmax, uint128 index) public view senderIs(this) accept {
+        for (uint128 i = 0; i < BATCH_SIZE; i++) {
+            if (index + i > indexmax) {
+                return;
+            }
+            Proposal(ProposalLib.calculateProposalAddress(_proposalCode, prevhash, index + i)).destroy{value: 0.1 ton, flag: 1}();
+        }
+        this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, index + BATCH_SIZE, 0);
     }
 
     //Fallback/Receive
