@@ -52,7 +52,9 @@ contract Proposal {
 
     function setVote(uint16 id) public {
         if (_vdict.exists(id)) {
-            uint256 pub = _vdict[id].load(uint256);
+            TvmSlice data = _vdict[id];
+            data.skip(4 * 8);
+            uint256 pub = data.load(uint256);
             require(pub == msg.pubkey(), ERR_WRONG_SENDER);
             tvm.accept();
             delete _vdict[id];
@@ -85,6 +87,7 @@ contract Proposal {
         mapping(uint16 => uint256) result;
         while (res.hasValue()) {
             (uint16 newkey, TvmSlice data) = res.get();
+            data.skip(4 * 8);
             uint256 pub = data.load(uint256);
             result[newkey] = pub;
             res = _vdict.next(newkey);

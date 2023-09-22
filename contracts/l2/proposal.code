@@ -124,19 +124,18 @@ PUSHCONT {
 	.loc proposal.sol, 55
 	DUP
 	GETGLOB 15
-	DUP2
 	PUSHINT 16
 	DICTUGET
 	PUSHCONT {
 		PUSHSLICE x8_
 	}
 	IFNOT
-	LDU 256
-	SWAP2
-	PUSHINT 16
-	DICTUSET
-	SETGLOB 15
 	.loc proposal.sol, 56
+	PUSHINT 32
+	SDSKIPFIRST
+	.loc proposal.sol, 57
+	PLDU 256
+	.loc proposal.sol, 58
 	GETGLOB 5
 	DUP
 	ISNULL
@@ -147,9 +146,9 @@ PUSHCONT {
 	IF
 	EQUAL
 	THROWIFNOT 100
-	.loc proposal.sol, 57
+	.loc proposal.sol, 59
 	ACCEPT
-	.loc proposal.sol, 58
+	.loc proposal.sol, 60
 	DUP
 	GETGLOB 15
 	PUSHINT 16
@@ -157,10 +156,10 @@ PUSHCONT {
 	DROP
 	DUP
 	SETGLOB 15
-	.loc proposal.sol, 59
+	.loc proposal.sol, 61
 	DICTEMPTY
 	PUSHCONT {
-		.loc proposal.sol, 60
+		.loc proposal.sol, 62
 		GETGLOB 14
 		GETGLOB 11
 		GETGLOB 10
@@ -209,7 +208,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 65
+.loc proposal.sol, 67
 ENDS
 .loc proposal.sol, 0
 CALLREF {
@@ -232,7 +231,7 @@ SDEQ
 THROWIFNOT 100
 .loc proposal.sol, 21
 ACCEPT
-.loc proposal.sol, 66
+.loc proposal.sol, 68
 GETGLOB 12
 NEWC
 STSLICECONST x42_
@@ -289,7 +288,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 82
+.loc proposal.sol, 84
 ENDS
 .loc proposal.sol, 0
 CALLREF {
@@ -323,9 +322,9 @@ IFREF {
 THROW 0
 
 .macro getSet_31f070d9_internal_macro
-.loc proposal.sol, 83
+.loc proposal.sol, 85
 PUSHINT 0
-.loc proposal.sol, 84
+.loc proposal.sol, 86
 GETGLOB 15
 PUSHINT 16
 DICTUGETNEXT
@@ -335,23 +334,26 @@ PUSHCONT {
 	PAIR
 }
 IF
-.loc proposal.sol, 85
+.loc proposal.sol, 87
 NEWDICT
-.loc proposal.sol, 86
+.loc proposal.sol, 88
 PUSHCONT {
 	OVER
 	ISNULL
 	NOT
 }
 PUSHCONT {
-	.loc proposal.sol, 87
+	.loc proposal.sol, 89
 	PUSH2 S1, S1
 	ISNULL
 	THROWIF 63
 	UNPAIR
-	.loc proposal.sol, 88
+	.loc proposal.sol, 90
+	PUSHINT 32
+	SDSKIPFIRST
+	.loc proposal.sol, 91
 	PLDU 256
-	.loc proposal.sol, 89
+	.loc proposal.sol, 92
 	PUSH2 S1, S2
 	ROT
 	NEWC
@@ -360,7 +362,7 @@ PUSHCONT {
 	PUSHINT 16
 	DICTUSETB
 	POP S2
-	.loc proposal.sol, 90
+	.loc proposal.sol, 93
 	GETGLOB 15
 	PUSHINT 16
 	DICTUGETNEXT
@@ -374,7 +376,7 @@ PUSHCONT {
 	.loc proposal.sol, 0
 }
 WHILE
-.loc proposal.sol, 92
+.loc proposal.sol, 95
 NIP
 .loc proposal.sol, 0
 
