@@ -31,6 +31,8 @@ contract Proposal {
     address _root;
     TransactionBatch[] _transactions;
     uint128 static _index;
+
+    bool[] _acceptmask;
     
     constructor(
         optional(uint256) hash,
@@ -41,6 +43,9 @@ contract Proposal {
         _newhash = newhash;
         _root = msg.sender;
         _transactions = transactions;
+        (optional(TvmCell) data) = tvm.rawConfigParam(34);
+        Common.ValidatorSet vset = data.get().toSlice().load(Common.ValidatorSet);
+        if (data.hasValue() == false) { selfdestruct(_root); }
     }
 
     function destroy() public senderIs(_root) accept {

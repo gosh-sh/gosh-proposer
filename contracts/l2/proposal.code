@@ -32,17 +32,39 @@ SWAP
 ENDS
 .loc proposal.sol, 20
 ACCEPT
-.loc proposal.sol, 40
+.loc proposal.sol, 42
 ROT
 SETGLOB 10
-.loc proposal.sol, 41
+.loc proposal.sol, 43
 SWAP
 SETGLOB 11
-.loc proposal.sol, 42
+.loc proposal.sol, 44
 GETGLOB 9
 SETGLOB 12
-.loc proposal.sol, 43
+.loc proposal.sol, 45
 SETGLOB 13
+.loc proposal.sol, 46
+PUSHINT 34
+CONFIGOPTPARAM
+.loc proposal.sol, 47
+ISNULL
+NOT
+FALSE
+EQUAL
+PUSHCONT {
+	.loc proposal.sol, 47
+	GETGLOB 12
+	NEWC
+	STSLICECONST x42_
+	STSLICE
+	PUSHINT 111
+	STZEROES
+	ENDC
+	PUSHINT 160
+	SENDRAWMSG
+	.loc proposal.sol, 0
+}
+IF
 .loc proposal.sol, 0
 CALLREF {
 	.inline __c7_to_c4
@@ -58,7 +80,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal.sol, 46
+.loc proposal.sol, 50
 ENDS
 .loc proposal.sol, 0
 CALLREF {
@@ -81,7 +103,7 @@ SDEQ
 THROWIFNOT 100
 .loc proposal.sol, 20
 ACCEPT
-.loc proposal.sol, 47
+.loc proposal.sol, 51
 GETGLOB 12
 NEWC
 STSLICECONST x42_
@@ -154,7 +176,13 @@ ROTREV
 PAIR
 SWAP
 LDU 128
+LDU 32
+LDDICT
+ROTREV
+PAIR
+SWAP
 ENDS
+SETGLOB 15
 SETGLOB 14
 SETGLOB 13
 SETGLOB 12
@@ -190,6 +218,10 @@ PUSHCONT {
 		PLDU 128
 	}
 	IF
+	PUSHINT 0
+	NEWDICT
+	PAIR
+	SETGLOB 15
 	SETGLOB 14
 	SETGLOB 13
 	SETGLOB 12
@@ -208,6 +240,7 @@ IFREFELSE {
 }
 
 .macro c7_to_c4
+GETGLOB 15
 GETGLOB 14
 GETGLOB 13
 GETGLOB 12
@@ -232,7 +265,7 @@ PUSHCONT {
 }
 IFELSE
 STU 256
-ROLLREV 3
+ROLLREV 4
 NEWC
 STSLICE
 SWAP
@@ -241,6 +274,11 @@ XCHG S2
 STU 32
 STDICT
 STU 128
+SWAP
+UNPAIR
+XCHG S2
+STU 32
+STDICT
 STBREFR
 ENDC
 POPROOT
