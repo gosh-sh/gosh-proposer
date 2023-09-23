@@ -12,6 +12,9 @@ import "checkerLib.sol";
 import "checker.sol";
 
 contract Proposal_Test {
+    
+    string constant _version = "1.0.0";
+
     modifier onlyOwner {
         require (msg.pubkey() == tvm.pubkey(), ERR_WRONG_SENDER) ;
         _;
@@ -90,9 +93,9 @@ contract Proposal_Test {
         return (_hash, _newhash, _transactions, _index);
     }
 
-    function getContract() external pure returns(string) {
-        return "Proposal";
-    } 
+    function getVersion() external pure returns(string, string) {
+        return ("proposal_test", _version);
+    }
 
     function getSet() external view returns (mapping(uint16 => uint256)) {
 /*        uint16 key;

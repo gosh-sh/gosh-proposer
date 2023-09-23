@@ -163,7 +163,7 @@ public:
     unsigned msg_flags = 0;
     address answer_addr;
     if constexpr (Internal) {
-      tvm_rawreserve(tvm_balance() - int_value().get() * 3, rawreserve_flag::up_to);
+      tvm_rawreserve(tvm_balance() - int_value().get() * 4, rawreserve_flag::up_to);
       answer_addr = int_sender();
     } else {
       answer_addr = address{tvm_myaddr()};
@@ -173,6 +173,7 @@ public:
     auto [wallet_init, dest_addr] = calc_wallet_init(transactions.get_at(unsigned(index)).pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest_addr);
     opt<cell> notify;
+    dest_handle.deploy(wallet_init, Evers(evers.get()));
     dest_handle(Evers(evers.get()), 1).acceptMint(transactions.get_at(unsigned(index)).tokens, answer_addr, 0u128, notify);
     
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());

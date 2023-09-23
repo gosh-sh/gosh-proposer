@@ -67,11 +67,12 @@
 			]
 		},
 		{
-			"name": "getContract",
+			"name": "getVersion",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"value0","type":"string"}
+				{"name":"value0","type":"string"},
+				{"name":"value1","type":"string"}
 			]
 		},
 		{
