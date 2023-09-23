@@ -174,7 +174,7 @@ public:
     auto [wallet_init, dest_addr] = calc_wallet_init(transactions.get_at(unsigned(index)).pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest_addr);
     opt<cell> notify;
-    dest_handle.deploy(wallet_init, Evers(evers.get()));
+    dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
     dest_handle(Evers(evers.get()), 1).acceptMint(transactions.get_at(unsigned(index)).tokens, answer_addr, 0u128, notify);
     
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());

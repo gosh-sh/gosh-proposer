@@ -960,18 +960,10 @@ IFREF {
 	.inline __c4_to_c7
 }
 .loc checker.sol, 131
-OVER
-PUSHCONT {
-	LDREF
-	ENDS
-	CTOS
-}
-IF
-LDU 128
 ENDS
 .loc checker.sol, 0
 CALLREF {
-	.inline __getAllProposalAddr_8e80c1ca_internal_macro
+	.inline __getAllProposalAddr_4579dbb3_internal_macro
 }
 OVER
 PUSHCONT {
@@ -984,7 +976,7 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHINT 2598219817
+	PUSHINT 3534752271
 	STUR 130
 	SWAP
 	UNPAIR
@@ -1004,7 +996,7 @@ IFREF {
 }
 THROW 0
 
-.macro getAllProposalAddr_8e80c1ca_internal_macro
+.macro getAllProposalAddr_4579dbb3_internal_macro
 .loc checker.sol, 132
 PUSHINT 0
 NEWDICT
@@ -1012,7 +1004,8 @@ PAIR
 .loc checker.sol, 133
 PUSHINT 0
 PUSHCONT {
-	PUSH2 S0, S2
+	DUP
+	GETGLOB 12
 	LESS
 }
 PUSHCONT {
@@ -1040,8 +1033,6 @@ PUSHCONT {
 }
 WHILE
 DROP
-.loc checker.sol, 136
-NIP
 .loc checker.sol, 0
 
 .macro getStatus
@@ -1718,7 +1709,7 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 644885799
+PUSHINT 711548487
 LEQ
 IFJMPREF {
 	DUP
@@ -1734,28 +1725,22 @@ IFJMPREF {
 		.inline __checkData
 	}
 	DUP
-	PUSHINT 450736169
-	EQUAL
-	IFJMPREF {
-		.inline __getAllProposalAddr
-	}
-	DUP
 	PUSHINT 644885799
 	EQUAL
 	IFJMPREF {
 		.inline __setRootContract
 	}
-}
-DUP
-PUSHINT 1217403554
-LEQ
-IFJMPREF {
 	DUP
 	PUSHINT 711548487
 	EQUAL
 	IFJMPREF {
 		.inline __getStatus
 	}
+}
+DUP
+PUSHINT 1219851760
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 838069379
 	EQUAL
@@ -1774,22 +1759,28 @@ IFJMPREF {
 	IFJMPREF {
 		.inline __setNewHash
 	}
-}
-DUP
-PUSHINT 1756716863
-LEQ
-IFJMPREF {
 	DUP
 	PUSHINT 1219851760
 	EQUAL
 	IFJMPREF {
 		.inline __setProposalCode
 	}
+}
+DUP
+PUSHINT 1756716863
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 1341836578
 	EQUAL
 	IFJMPREF {
 		.inline __checkDataIndex
+	}
+	DUP
+	PUSHINT 1387268623
+	EQUAL
+	IFJMPREF {
+		.inline __getAllProposalAddr
 	}
 	DUP
 	PUSHINT 1756716863
