@@ -18,16 +18,16 @@ fix:
 
 .PHONY: run
 run:
-	cargo run --release
+	cargo run -p gosh_proposer --release
 
 .PHONY: check
 check:
-	cargo check --release
+	cargo check -p gosh_proposer --release
 
 .PHONY: debug_run
 debug_run:
-	GOSH_LOG=trace cargo run --releaes
+	GOSH_LOG=trace cargo run -p gosh_proposer --releaes
 
 .PHONY: test
 test:
-	cargo test --release
+	cargo test -p gosh_proposer --release

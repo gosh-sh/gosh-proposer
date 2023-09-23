@@ -1,0 +1,29 @@
+[workspace]
+members = [
+    #
+    "common",
+    "gosh-proposer",
+    "proposal-checker",
+]
+resolver = "2"
+
+[workspace.dependencies]
+anyhow = "1.0.75"
+dotenv = "0.15.0"
+serde_json = "1.0.107"
+tokio = { version = "1.32.0", features = ["full"] }
+tracing = "0.1.37"
+
+[workspace.dependencies.web3]
+default-features = false
+features = ["http-rustls-tls", "ws-tokio", "signing", "ipc-tokio", "ws-tls-tokio"]
+version = "0.19.0"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+opt-level = "z"
+lto = false
+incremental = false

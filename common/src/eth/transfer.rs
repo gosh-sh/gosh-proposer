@@ -15,7 +15,7 @@ const DEFAULT_DENOMINATOR: f64 = 100.0;
 #[derive(Debug, Serialize)]
 pub struct Transfer {
     pubkey: String,
-    tokens: u128,
+    value: u128,
     hash: String,
 }
 
@@ -41,14 +41,14 @@ fn decode_transfer(
     };
 
     let function_name = env::var("ETH_FUNCTION_NAME")?;
-    if function_name != func_signature {
-        tracing::info!("Wrong function name: {function_name} != {func_signature}");
+    if function_name != func_signature.replace('"', "") {
+        tracing::trace!("Wrong function name: {function_name} != {func_signature}");
         anyhow::bail!("Wrong function name: {function_name} != {func_signature}");
     }
 
     let owner_pubkey = input_str[11..75].to_string();
     let eth_value = wei_to_eth(tx.value);
-    tracing::info!("Transfer owner: {owner_pubkey}, amount: {eth_value}");
+    tracing::trace!("Transfer owner: {owner_pubkey}, amount: {eth_value}");
 
     tracing::info!(
         "[{}] ({} -> {}) value {}, gas {}, gas price {}",
@@ -60,14 +60,15 @@ fn decode_transfer(
         tx.gas_price.unwrap(),
     );
 
-    tracing::info!("value: {}", w3h::to_string(&tx.value));
-    let tx_hash = w3h::to_string(&tx.hash);
-    let value = u128::from_str_radix(&w3h::to_string(&tx.value), 10)?;
+    let tx_value = w3h::to_string(&tx.value).replace('"', "").trim_start_matches("0x").to_string();
 
+    let tx_hash = w3h::to_string(&tx.hash).replace('"', "");
+    let value = u128::from_str_radix(&tx_value, 16);
+    let value = value?;
     let res = Transfer {
         hash: tx_hash,
         pubkey: owner_pubkey,
-        tokens: value,
+        value,
     };
 
     tracing::info!("Valid transfer: {:?}", res);
