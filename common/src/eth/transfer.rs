@@ -48,7 +48,7 @@ fn decode_transfer(
 
     let owner_pubkey = input_str[11..75].to_string();
     let eth_value = wei_to_eth(tx.value);
-    tracing::trace!("Transfer owner: {owner_pubkey}, amount: {eth_value}");
+    tracing::trace!("Transfer owner: 0x{owner_pubkey}, amount: {eth_value}");
 
     tracing::info!(
         "[{}] ({} -> {}) value {}, gas {}, gas price {}",
@@ -67,7 +67,7 @@ fn decode_transfer(
     let value = value?;
     let res = Transfer {
         hash: tx_hash,
-        pubkey: owner_pubkey,
+        pubkey: format!("0x{owner_pubkey}"),
         value,
     };
 
