@@ -155,6 +155,7 @@ public:
     dict_array<TransactionBatch> transactions,
     uint128 index
   ) {
+    total_supply_ += transactions.get_at(unsigned(index)).tokens;
     require(total_granted_ + transactions.get_at(unsigned(index)).tokens <= total_supply_, error_code::not_enough_balance);
     require(tvm_myaddr() == int_sender(), error_code::message_sender_is_not_my_owner);
 
