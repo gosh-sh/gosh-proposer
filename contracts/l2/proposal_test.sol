@@ -32,7 +32,7 @@ contract Proposal_Test {
 
     optional(uint256) _hash;
     uint256 _newhash;
-    address static _root;
+    address _root;
     TransactionBatch[] _transactions;
     uint128 static _index;
 
@@ -45,7 +45,7 @@ contract Proposal_Test {
     ) accept {
         _hash = hash;
         _newhash = newhash;
-        require (_root == msg.sender, ERR_WRONG_SENDER);
+        _root = msg.sender;
         _transactions = transactions;
 //        (optional(TvmCell) data) = tvm.rawConfigParam(34);
 //        ValidatorSet vset = data.get().toSlice().load(ValidatorSet);

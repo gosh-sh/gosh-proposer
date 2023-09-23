@@ -100,7 +100,6 @@ struct details_info {
  *  Must be implemented in contracts receiving lend ownership or transfer notifications.
  */
 __interface ITONTokenWalletNotify {
-  
 
   /// Notification that target contract has received temporary (lend) ownership
   ///  of specified tokens amount in the wallet.
@@ -133,12 +132,6 @@ using ITONTokenWalletNotifyPtr = handle<ITONTokenWalletNotify>;
  *  \brief TON Token wallet contract interface.
  */
 __interface ITONTokenWallet {
-
-  TIP3_EXTERNAL
-  [[internal, answer_id]]
-  void burn_tokens(
-    uint128 tokens
-  ) = 1003;
 
   /// Lock tokens in tip3 wallet contract.
   TIP3_EXTERNAL
