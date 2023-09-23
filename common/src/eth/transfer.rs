@@ -12,14 +12,14 @@ const INPUT_CHUNK_SIZE: usize = 64; // Number of bytes in one function argument
 const ADDRESS_PREFIX_SIZE: usize = 24; // Number of leading zeros in address argument
 const DEFAULT_DENOMINATOR: f64 = 100.0;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Eq, PartialEq, Serialize)]
 pub struct Transfer {
-    pubkey: String,
-    value: u128,
-    hash: String,
+    pub pubkey: String,
+    pub value: u128,
+    pub hash: String,
 }
 
-fn decode_transfer(
+pub fn decode_transfer(
     tx: Transaction,
     code_sig_lookup: &BTreeMap<String, Vec<String>>,
 ) -> anyhow::Result<Transfer> {

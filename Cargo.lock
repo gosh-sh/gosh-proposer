@@ -1812,6 +1812,17 @@ dependencies = [
 [[package]]
 name = "proposal-checker"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "common",
+ "dotenv",
+ "serde",
+ "serde_json",
+ "tokio",
+ "ton_client",
+ "ton_sdk",
+ "web3",
+]
 
 [[package]]
 name = "psl-types"
