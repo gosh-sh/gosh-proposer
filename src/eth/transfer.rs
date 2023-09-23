@@ -1,5 +1,6 @@
 use crate::eth::helper::wei_to_eth;
 use std::collections::BTreeMap;
+use std::env;
 
 use crate::eth::block::FullBlock;
 use serde::Serialize;
@@ -39,7 +40,11 @@ fn decode_transfer(
         }
     };
 
-    // TODO: we may need to check function name
+    let function_name = env::var("ETH_FUNCTION_NAME")?;
+    if function_name != func_signature {
+        tracing::info!("Wrong function name: {function_name} != {func_signature}");
+        anyhow::bail!("Wrong function name: {function_name} != {func_signature}");
+    }
 
     let owner_pubkey = input_str[11..75].to_string();
     let eth_value = wei_to_eth(tx.value);
@@ -56,7 +61,7 @@ fn decode_transfer(
     );
 
     let tx_hash = w3h::to_string(&tx.hash);
-    let value = u128::from_str_radix(&w3h::to_string(&tx.value), 16)?;
+    let value = u128::from_str_radix(&w3h::to_string(&tx.value), 10)?;
 
     let res = Transfer {
         hash: tx_hash,
