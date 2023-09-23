@@ -115,6 +115,18 @@
     "id": "0x3f8"
   },
   {
+    "name": "burn_tokens",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"owner", "type":"optional(address)" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3f9"
+  },
+  {
     "name": "mint",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },

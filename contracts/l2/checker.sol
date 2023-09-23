@@ -59,7 +59,7 @@ contract Checker {
 
     function checkDataIndex(BlockData[] data, TransactionBatch[] transactions, uint128 index) public senderIs(this) accept {
         if (index >=  data.length) { 
-            TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _index);
+            TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _index, this);
             new Proposal{stateInit: s1, value: 10 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
             _index += 1;        
             return; 
@@ -88,7 +88,7 @@ contract Checker {
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
     }
 
-    function setNewHash(optional(uint256) prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index)) accept{
+    function setNewHash(optional(uint256) prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
         if (_prevhash.hasValue()) {
             require(_prevhash.get() == prevhash.get(), ERR_WRONG_HASH);
         }
@@ -103,7 +103,7 @@ contract Checker {
             if (index + i > indexmax) {
                 return;
             }
-            Proposal(ProposalLib.calculateProposalAddress(_proposalCode, prevhash, index + i)).destroy{value: 0.1 ton, flag: 1}();
+            Proposal(ProposalLib.calculateProposalAddress(_proposalCode, prevhash, index + i, this)).destroy{value: 0.1 ton, flag: 1}();
         }
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, index + BATCH_SIZE, 0);
     }
@@ -125,13 +125,13 @@ contract Checker {
     }
 
     function getProposalAddr(uint128 index) external view returns(address) {
-        return ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index);
+        return ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this);
     }
 
     function getAllProposalAddr() external view returns(address[]) {
         address[] result;
         for (uint128 i = 0; i < _index; i++){
-            result.push(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, i));
+            result.push(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, i, this));
         }
         return result;
     }

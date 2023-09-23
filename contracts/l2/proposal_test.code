@@ -39,8 +39,10 @@ SETGLOB 10
 SWAP
 SETGLOB 11
 .loc proposal_test.sol, 48
+GETGLOB 12
 GETGLOB 9
-SETGLOB 12
+SDEQ
+THROWIFNOT 100
 .loc proposal_test.sol, 49
 SETGLOB 13
 .loc proposal_test.sol, 0
@@ -514,13 +516,20 @@ PUSHCONT {
 	PLDDICT ; D
 	NULL
 	PUSHINT 0
-	PUSHREFSLICE {
-		.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+	PUSHINT 1
+	PUSH S3
+	PUSHINT 64
+	DICTUGET
+	PUSHCONT {
+		PUSHREFSLICE {
+			.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+		}
 	}
+	IFNOT
 	PUSHINT 0
 	NEWDICT
 	PAIR
-	PUSHINT 1
+	PUSHINT 2
 	PUSH S5
 	PUSHINT 64
 	DICTUGET
@@ -722,16 +731,16 @@ CALLREF {
 	.inline __fallback_macro
 }
 
-.globl	ProposalLib_with_obj_calculateProposalAddress_4a06fd0c
-.type	ProposalLib_with_obj_calculateProposalAddress_4a06fd0c, @function
-.inline __ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
+.globl	ProposalLib_with_obj_calculateProposalAddress_6ef99c4c
+.type	ProposalLib_with_obj_calculateProposalAddress_6ef99c4c, @function
+.inline __ProposalLib_with_obj_calculateProposalAddress_6ef99c4c_macro
 
-.macro ProposalLib_with_obj_calculateProposalAddress_4a06fd0c_macro
+.macro ProposalLib_with_obj_calculateProposalAddress_6ef99c4c_macro
 .loc checkerLib.sol, 45
-PUSH S2
-ROTREV
+PUSH S3
+ROLLREV 3
 CALLREF {
-	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+	.inline __ProposalLib_no_obj_composeProposalStateInit_93a3ab8e_macro
 }
 .loc checkerLib.sol, 46
 HASHCU
@@ -744,14 +753,14 @@ ENDC
 CTOS
 .loc checkerLib.sol, 0
 
-.globl	ProposalLib_no_obj_calculateProposalAddress_4a06fd0c
-.type	ProposalLib_no_obj_calculateProposalAddress_4a06fd0c, @function
-.inline __ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
+.globl	ProposalLib_no_obj_calculateProposalAddress_6ef99c4c
+.type	ProposalLib_no_obj_calculateProposalAddress_6ef99c4c, @function
+.inline __ProposalLib_no_obj_calculateProposalAddress_6ef99c4c_macro
 
-.macro ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
+.macro ProposalLib_no_obj_calculateProposalAddress_6ef99c4c_macro
 .loc checkerLib.sol, 45
 CALLREF {
-	.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+	.inline __ProposalLib_no_obj_composeProposalStateInit_93a3ab8e_macro
 }
 .loc checkerLib.sol, 46
 HASHCU
@@ -764,14 +773,14 @@ ENDC
 CTOS
 .loc checkerLib.sol, 0
 
-.globl	ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1
-.type	ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1, @function
-.inline __ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
+.globl	ProposalLib_with_obj_composeProposalStateInit_93a3ab8e
+.type	ProposalLib_with_obj_composeProposalStateInit_93a3ab8e, @function
+.inline __ProposalLib_with_obj_composeProposalStateInit_93a3ab8e_macro
 
-.macro ProposalLib_with_obj_composeProposalStateInit_a8bb8ed1_macro
+.macro ProposalLib_with_obj_composeProposalStateInit_93a3ab8e_macro
 .loc checkerLib.sol, 50
-PUSH S2
-ROT
+PUSH S3
+ROLL 3
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 }
@@ -783,13 +792,18 @@ PUSHINT 0
 NEWDICT
 PUSHINT 64
 DICTUSETB
-ROT
+ROLL 3
 NEWC
 STU 128
-PUSHINT 1
+PUSHINT 2
 ROT
 PUSHINT 64
 DICTUSETB
+ROT
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSET
 NEWC
 STDICT
 ENDC
@@ -802,13 +816,13 @@ STZERO
 ENDC
 .loc checkerLib.sol, 0
 
-.globl	ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1
-.type	ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1, @function
-.inline __ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+.globl	ProposalLib_no_obj_composeProposalStateInit_93a3ab8e
+.type	ProposalLib_no_obj_composeProposalStateInit_93a3ab8e, @function
+.inline __ProposalLib_no_obj_composeProposalStateInit_93a3ab8e_macro
 
-.macro ProposalLib_no_obj_composeProposalStateInit_a8bb8ed1_macro
+.macro ProposalLib_no_obj_composeProposalStateInit_93a3ab8e_macro
 .loc checkerLib.sol, 50
-ROTREV
+SWAP2
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_abd62b3f_macro
 }
@@ -820,13 +834,18 @@ PUSHINT 0
 NEWDICT
 PUSHINT 64
 DICTUSETB
-ROT
+ROLL 3
 NEWC
 STU 128
-PUSHINT 1
+PUSHINT 2
 ROT
 PUSHINT 64
 DICTUSETB
+ROT
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSET
 NEWC
 STDICT
 ENDC

@@ -8,6 +8,16 @@
   ],
   "functions": [
   {
+    "name": "burn_tokens",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3eb"
+  },
+  {
     "name": "lock",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
