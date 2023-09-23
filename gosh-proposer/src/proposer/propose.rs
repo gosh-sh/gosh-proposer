@@ -1,9 +1,9 @@
-use crate::eth::block::FullBlock;
-use crate::eth::encoder::serialize_block;
-use crate::eth::helper::get_signatures_table;
-use crate::eth::transfer::filter_and_decode_block_transactions;
-use crate::gosh::call_function;
-use crate::gosh::helper::{create_client, load_keys};
+use common::eth::block::FullBlock;
+use common::eth::encoder::serialize_block;
+use common::eth::helper::get_signatures_table;
+use common::eth::transfer::filter_and_decode_block_transactions;
+use common::gosh::call_function;
+use common::gosh::helper::{create_client, load_keys};
 use serde_json::json;
 use std::env;
 use web3::transports::WebSocket;

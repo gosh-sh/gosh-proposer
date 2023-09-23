@@ -1,6 +1,6 @@
 [package]
 resolver = "2"
-name = "gosh_proposer"
+name = "common"
 version = "0.1.0"
 edition = "2021"
 

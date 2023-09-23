@@ -33,7 +33,7 @@ fn decode_transfer(
     tracing::trace!("input_str: {input_str}");
     let func_code = input_str[3..11].to_string();
     let func_signature: String = match code_sig_lookup.get(&func_code) {
-        Some(func_sig) => format!("{:?}", func_sig),
+        Some(func_sig) => format!("{:?}", func_sig.get(0).ok_or(anyhow::format_err!("Failed to decode function signature"))?),
         _ => {
             tracing::trace!("Function not found.");
             anyhow::bail!("Function not found.");
@@ -60,6 +60,7 @@ fn decode_transfer(
         tx.gas_price.unwrap(),
     );
 
+    tracing::info!("value: {}", w3h::to_string(&tx.value));
     let tx_hash = w3h::to_string(&tx.hash);
     let value = u128::from_str_radix(&w3h::to_string(&tx.value), 10)?;
 

@@ -1,9 +1,6 @@
-mod eth;
-mod gosh;
-mod helper;
 mod proposer;
 
-use crate::helper::tracing::init_default_tracing;
+use common::helper::tracing::init_default_tracing;
 use crate::proposer::propose_eth_blocks;
 
 #[tokio::main]

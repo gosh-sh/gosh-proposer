@@ -1,6 +1,6 @@
-/.vscode
-/.idea
+**/.vscode
+**/.idea
 
-/target
-.env
-*.log
+**/target
+**/.env
+**/*.log

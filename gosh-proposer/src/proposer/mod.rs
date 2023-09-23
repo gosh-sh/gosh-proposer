@@ -1,4 +1,4 @@
-use crate::eth::read_block;
+use common::eth::read_block;
 use crate::proposer::propose::propose_blocks;
 use std::env;
 use web3::transports::WebSocket;
