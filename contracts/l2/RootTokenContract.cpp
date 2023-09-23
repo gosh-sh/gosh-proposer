@@ -143,6 +143,15 @@ public:
     return dest;
   }
 
+  void burn_tokens(uint256 pubkey, address_opt owner, uint128 tokens) {
+    auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
+    require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
+    require(total_granted_ >= tokens, error_code::not_enough_balance);
+    require(total_supply_ >= tokens, error_code::not_enough_balance);
+    total_supply_ -= tokens;
+    total_granted_ -= tokens;
+  }
+
   void grantbatch(
     dict_array<TransactionBatch> transactions
   ) {
