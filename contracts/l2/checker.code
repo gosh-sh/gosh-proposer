@@ -1007,7 +1007,7 @@ PAIR
 PUSHINT 0
 PUSHCONT {
 	PUSH2 S0, S2
-	LEQ
+	LESS
 }
 PUSHCONT {
 	.loc checker.sol, 131

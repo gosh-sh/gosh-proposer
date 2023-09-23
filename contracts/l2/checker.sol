@@ -127,7 +127,7 @@ contract Checker {
 
     function getAllProposalAddr(uint128 index) external view returns(address[]) {
         address[] result;
-        for (uint128 i = 0; i <= index; i++){
+        for (uint128 i = 0; i < index; i++){
             result.push(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, i));
         }
         return result;
