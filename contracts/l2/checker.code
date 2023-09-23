@@ -836,20 +836,15 @@ IFREF {
 	.inline __upd_only_time_in_c4
 }
 
-.macro getStatus
+.macro getContract
 DROP
 GETGLOB 6
 THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	.inline __c4_to_c7
-}
 .loc checker.sol, 120
 ENDS
 .loc checker.sol, 0
 CALLREF {
-	.inline __getStatus_4e69d560_internal_macro
+	.inline __getContract_958f85bd_internal_macro
 }
 OVER
 PUSHCONT {
@@ -862,20 +857,9 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHINT 2290532176
+	PUSHINT 2259574773
 	STUR 130
-	XCPU S1, S0
-	ISNULL
-	PUSHCONT {
-		DROP
-		STSLICECONST 0
-	}
-	PUSHCONT {
-		SWAP
-		STSLICECONST 1
-		STU 256
-	}
-	IFELSE
+	STREF
 	ENDC
 	PUSHINT 0
 	SENDRAWMSG
@@ -889,9 +873,233 @@ IFREF {
 }
 THROW 0
 
-.macro getStatus_4e69d560_internal_macro
+.macro getContract_958f85bd_internal_macro
 .loc checker.sol, 121
+PUSHREF {
+	.blob x436865636b6572
+}
+.loc checker.sol, 0
+
+.macro getProposalAddr
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc checker.sol, 124
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 128
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __getProposalAddr_d14daba4_internal_macro
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST xb1f3ec83
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getProposalAddr_d14daba4_internal_macro
+.loc checker.sol, 125
+GETGLOB 13
 GETGLOB 10
+ROT
+CALLREF {
+	.inline __ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
+}
+.loc checker.sol, 0
+
+.macro getAllProposalAddr
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc checker.sol, 128
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 128
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __getAllProposalAddr_8e80c1ca_internal_macro
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 2598219817
+	STUR 130
+	SWAP
+	UNPAIR
+	XCHG S2
+	STU 32
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getAllProposalAddr_8e80c1ca_internal_macro
+.loc checker.sol, 129
+PUSHINT 0
+NEWDICT
+PAIR
+.loc checker.sol, 130
+PUSHINT 0
+PUSHCONT {
+	PUSH2 S0, S2
+	LESS
+}
+PUSHCONT {
+	.loc checker.sol, 131
+	OVER
+	GETGLOB 13
+	GETGLOB 10
+	PUSH S3
+	CALLREF {
+		.inline __ProposalLib_no_obj_calculateProposalAddress_4a06fd0c_macro
+	}
+	SWAP
+	UNPAIR
+	OVER
+	INC
+	ROLLREV 3
+	PUSHINT 32
+	DICTUSET
+	PAIR
+	POP S2
+	.loc checker.sol, 130
+	INC
+	UFITS 128
+	.loc checker.sol, 0
+}
+WHILE
+DROP
+.loc checker.sol, 133
+NIP
+.loc checker.sol, 0
+
+.macro getStatus
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc checker.sol, 136
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __getStatus_4e69d560_internal_macro
+}
+PUSH S2
+PUSHCONT {
+	PUSH S4
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	XCHG S2
+	NEWC
+	STSLICECONST xaa695e47
+	XCPU S1, S0
+	ISNULL
+	PUSHCONT {
+		DROP
+		STSLICECONST 0
+	}
+	PUSHCONT {
+		SWAP
+		STSLICECONST 1
+		STU 256
+	}
+	IFELSE
+	STU 128
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP2
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getStatus_4e69d560_internal_macro
+.loc checker.sol, 137
+GETGLOB 10
+GETGLOB 12
 .loc checker.sol, 0
 
 .macro c4_to_c7
@@ -1504,20 +1712,20 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 644885799
+PUSHINT 450736169
 LEQ
 IFJMPREF {
+	DUP
+	PUSHINT 112091125
+	EQUAL
+	IFJMPREF {
+		.inline __getContract
+	}
 	DUP
 	PUSHINT 130823053
 	EQUAL
 	IFJMPREF {
 		.inline __destroyTrash
-	}
-	DUP
-	PUSHINT 143048528
-	EQUAL
-	IFJMPREF {
-		.inline __getStatus
 	}
 	DUP
 	PUSHINT 382138547
@@ -1526,22 +1734,45 @@ IFJMPREF {
 		.inline __checkData
 	}
 	DUP
+	PUSHINT 450736169
+	EQUAL
+	IFJMPREF {
+		.inline __getAllProposalAddr
+	}
+}
+DUP
+PUSHINT 1217403554
+LEQ
+IFJMPREF {
+	DUP
 	PUSHINT 644885799
 	EQUAL
 	IFJMPREF {
 		.inline __setRootContract
 	}
-}
-DUP
-PUSHINT 1756716863
-LEQ
-IFJMPREF {
+	DUP
+	PUSHINT 711548487
+	EQUAL
+	IFJMPREF {
+		.inline __getStatus
+	}
+	DUP
+	PUSHINT 838069379
+	EQUAL
+	IFJMPREF {
+		.inline __getProposalAddr
+	}
 	DUP
 	PUSHINT 1217403554
 	EQUAL
 	IFJMPREF {
 		.inline __setNewHash
 	}
+}
+DUP
+PUSHINT 1756716863
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 1219851760
 	EQUAL

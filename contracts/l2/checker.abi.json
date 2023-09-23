@@ -67,11 +67,38 @@
 			]
 		},
 		{
+			"name": "getContract",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"string"}
+			]
+		},
+		{
+			"name": "getProposalAddr",
+			"inputs": [
+				{"name":"index","type":"uint128"}
+			],
+			"outputs": [
+				{"name":"value0","type":"address"}
+			]
+		},
+		{
+			"name": "getAllProposalAddr",
+			"inputs": [
+				{"name":"index","type":"uint128"}
+			],
+			"outputs": [
+				{"name":"value0","type":"address[]"}
+			]
+		},
+		{
 			"name": "getStatus",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"prevhash","type":"optional(uint256)"}
+				{"name":"prevhash","type":"optional(uint256)"},
+				{"name":"index","type":"uint128"}
 			]
 		}
 	],

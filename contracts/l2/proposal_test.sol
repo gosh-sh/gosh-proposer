@@ -86,6 +86,14 @@ contract Proposal_Test {
     }
 
     //Getter 
+    function getDetails() external view returns(optional(uint256) hash, uint256 newhash, TransactionBatch[] transactions, uint128 index){
+        return (_hash, _newhash, _transactions, _index);
+    }
+
+    function getContract() external pure returns(string) {
+        return "Proposal";
+    } 
+
     function getSet() external view returns (mapping(uint16 => uint256)) {
 /*        uint16 key;
         optional(uint16, TvmSlice) res = _vdict.next(key);
