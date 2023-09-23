@@ -12,6 +12,9 @@ import "checkerLib.sol";
 import "proposal.sol";
 
 contract Checker {
+
+    string constant _version = "1.0.0";
+
     optional(uint256) _prevhash;
 
     address _root;
@@ -117,9 +120,9 @@ contract Checker {
     }
 
     //Getter 
-    function getContract() external pure returns(string) {
-        return "Checker";
-    } 
+    function getVersion() external pure returns(string, string) {
+        return ("checker", _version);
+    }
 
     function getProposalAddr(uint128 index) external view returns(address) {
         return ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index);

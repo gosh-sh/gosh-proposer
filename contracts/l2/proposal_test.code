@@ -30,18 +30,18 @@ ROTREV
 PAIR
 SWAP
 ENDS
-.loc proposal_test.sol, 21
+.loc proposal_test.sol, 24
 ACCEPT
-.loc proposal_test.sol, 43
+.loc proposal_test.sol, 46
 ROT
 SETGLOB 10
-.loc proposal_test.sol, 44
+.loc proposal_test.sol, 47
 SWAP
 SETGLOB 11
-.loc proposal_test.sol, 45
+.loc proposal_test.sol, 48
 GETGLOB 9
 SETGLOB 12
-.loc proposal_test.sol, 46
+.loc proposal_test.sol, 49
 SETGLOB 13
 .loc proposal_test.sol, 0
 CALLREF {
@@ -58,7 +58,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal_test.sol, 53
+.loc proposal_test.sol, 56
 OVER
 PUSHCONT {
 	LDREF
@@ -82,9 +82,9 @@ THROW 0
 .inline __setvdict_dfb7c4b0_internal_macro
 
 .macro setvdict_dfb7c4b0_internal_macro
-.loc proposal_test.sol, 21
+.loc proposal_test.sol, 24
 ACCEPT
-.loc proposal_test.sol, 54
+.loc proposal_test.sol, 57
 PUSHINT 0
 GETGLOB 15
 ROT
@@ -105,7 +105,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal_test.sol, 57
+.loc proposal_test.sol, 60
 LDU 16
 ENDS
 .loc proposal_test.sol, 0
@@ -122,7 +122,7 @@ THROW 0
 .inline __setVote_3943acb2_internal_macro
 
 .macro setVote_3943acb2_internal_macro
-.loc proposal_test.sol, 58
+.loc proposal_test.sol, 61
 DUP
 GETGLOB 15
 PUSHINT 16
@@ -130,7 +130,7 @@ DICTUGET
 NULLSWAPIFNOT
 NIP
 PUSHCONT {
-	.loc proposal_test.sol, 61
+	.loc proposal_test.sol, 64
 	DUP
 	GETGLOB 15
 	PUSHINT 16
@@ -140,7 +140,7 @@ PUSHCONT {
 		PLDU 256
 	}
 	IF
-	.loc proposal_test.sol, 62
+	.loc proposal_test.sol, 65
 	GETGLOB 5
 	DUP
 	ISNULL
@@ -151,9 +151,9 @@ PUSHCONT {
 	IF
 	EQUAL
 	THROWIFNOT 100
-	.loc proposal_test.sol, 63
+	.loc proposal_test.sol, 66
 	ACCEPT
-	.loc proposal_test.sol, 64
+	.loc proposal_test.sol, 67
 	DUP
 	GETGLOB 15
 	PUSHINT 16
@@ -165,13 +165,13 @@ PUSHCONT {
 	IF
 	SWAP
 	SETGLOB 15
-	.loc proposal_test.sol, 65
+	.loc proposal_test.sol, 68
 	DROP
-	.loc proposal_test.sol, 66
+	.loc proposal_test.sol, 69
 	GETGLOB 15
 	DICTEMPTY
 	PUSHCONT {
-		.loc proposal_test.sol, 67
+		.loc proposal_test.sol, 70
 		GETGLOB 13
 		GETGLOB 14
 		GETGLOB 11
@@ -226,7 +226,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal_test.sol, 72
+.loc proposal_test.sol, 75
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
@@ -242,14 +242,14 @@ THROW 0
 .inline __destroy_83197ef0_internal_macro
 
 .macro destroy_83197ef0_internal_macro
-.loc proposal_test.sol, 26
+.loc proposal_test.sol, 29
 GETGLOB 9
 GETGLOB 12
 SDEQ
 THROWIFNOT 100
-.loc proposal_test.sol, 21
+.loc proposal_test.sol, 24
 ACCEPT
-.loc proposal_test.sol, 73
+.loc proposal_test.sol, 76
 GETGLOB 12
 NEWC
 STSLICECONST x42_
@@ -306,7 +306,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal_test.sol, 89
+.loc proposal_test.sol, 92
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
@@ -362,26 +362,26 @@ IFREF {
 THROW 0
 
 .macro getDetails_fbbf93a0_internal_macro
-.loc proposal_test.sol, 90
+.loc proposal_test.sol, 93
 GETGLOB 10
 GETGLOB 11
 GETGLOB 13
 GETGLOB 14
 .loc proposal_test.sol, 0
 
-.macro getContract
+.macro getVersion
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc proposal_test.sol, 93
+.loc proposal_test.sol, 96
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
-	.inline __getContract_958f85bd_internal_macro
+	.inline __getVersion_0d8e6e2c_internal_macro
 }
-OVER
+PUSH S2
 PUSHCONT {
-	PUSH S3
+	PUSH S4
 	CTOS
 	LDU 2
 	LDMSGADDR
@@ -390,15 +390,18 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHINT 2259574773
-	STUR 130
+	PUSHINT 98
+	STZEROES
+	REVERSE 2, 1
+	STSLICECONST xbfd85655
+	STREF
 	STREF
 	ENDC
 	PUSHINT 0
 	SENDRAWMSG
 }
 PUSHCONT {
-	DROP
+	DROP2
 }
 IFELSE
 IFREF {
@@ -406,10 +409,13 @@ IFREF {
 }
 THROW 0
 
-.macro getContract_958f85bd_internal_macro
-.loc proposal_test.sol, 94
+.macro getVersion_0d8e6e2c_internal_macro
+.loc proposal_test.sol, 97
 PUSHREF {
-	.blob x50726f706f73616c
+	.blob x70726f706f73616c5f74657374
+}
+PUSHREF {
+	.blob x312e302e30
 }
 .loc proposal_test.sol, 0
 
@@ -422,7 +428,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal_test.sol, 97
+.loc proposal_test.sol, 100
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
@@ -456,7 +462,7 @@ IFREF {
 THROW 0
 
 .macro getSet_31f070d9_internal_macro
-.loc proposal_test.sol, 108
+.loc proposal_test.sol, 111
 GETGLOB 15
 .loc proposal_test.sol, 0
 
@@ -1097,7 +1103,7 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 583726491
+PUSHINT 629528867
 LEQ
 IFJMPREF {
 	DUP
@@ -1105,12 +1111,6 @@ IFJMPREF {
 	EQUAL
 	IFJMPREF {
 		.inline __constructor
-	}
-	DUP
-	PUSHINT 112091125
-	EQUAL
-	IFJMPREF {
-		.inline __getContract
 	}
 	DUP
 	PUSHINT 436238672
@@ -1124,16 +1124,22 @@ IFJMPREF {
 	IFJMPREF {
 		.inline __setvdict
 	}
+	DUP
+	PUSHINT 629528867
+	EQUAL
+	IFJMPREF {
+		.inline __destroy
+	}
 }
 DUP
 PUSHINT 1903197803
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 629528867
+	PUSHINT 1071142485
 	EQUAL
 	IFJMPREF {
-		.inline __destroy
+		.inline __getVersion
 	}
 	DUP
 	PUSHINT 1409149045
