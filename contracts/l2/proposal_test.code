@@ -297,7 +297,7 @@ CALLREF {
 	.inline __c7_to_c4
 }
 
-.macro getSet
+.macro getDetails
 DROP
 GETGLOB 6
 THROWIFNOT 76
@@ -307,6 +307,122 @@ IFREF {
 	.inline __c4_to_c7
 }
 .loc proposal_test.sol, 89
+ENDS
+.loc proposal_test.sol, 0
+CALLREF {
+	.inline __getDetails_fbbf93a0_internal_macro
+}
+PUSH S4
+PUSHCONT {
+	PUSH S6
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	REVERSE 5, 0
+	NEWC
+	STSLICECONST x9a007950
+	XCPU S1, S0
+	ISNULL
+	PUSHCONT {
+		DROP
+		STSLICECONST 0
+	}
+	PUSHCONT {
+		SWAP
+		STSLICECONST 1
+		STU 256
+	}
+	IFELSE
+	STU 256
+	SWAP
+	UNPAIR
+	XCHG S2
+	STU 32
+	STDICT
+	STU 128
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	BLKDROP 4
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getDetails_fbbf93a0_internal_macro
+.loc proposal_test.sol, 90
+GETGLOB 10
+GETGLOB 11
+GETGLOB 13
+GETGLOB 14
+.loc proposal_test.sol, 0
+
+.macro getContract
+DROP
+GETGLOB 6
+THROWIFNOT 76
+.loc proposal_test.sol, 93
+ENDS
+.loc proposal_test.sol, 0
+CALLREF {
+	.inline __getContract_958f85bd_internal_macro
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 2259574773
+	STUR 130
+	STREF
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getContract_958f85bd_internal_macro
+.loc proposal_test.sol, 94
+PUSHREF {
+	.blob x50726f706f73616c
+}
+.loc proposal_test.sol, 0
+
+.macro getSet
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc proposal_test.sol, 97
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
@@ -340,7 +456,7 @@ IFREF {
 THROW 0
 
 .macro getSet_31f070d9_internal_macro
-.loc proposal_test.sol, 100
+.loc proposal_test.sol, 108
 GETGLOB 15
 .loc proposal_test.sol, 0
 
@@ -981,7 +1097,7 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1409149045
+PUSHINT 583726491
 LEQ
 IFJMPREF {
 	DUP
@@ -991,11 +1107,28 @@ IFJMPREF {
 		.inline __constructor
 	}
 	DUP
+	PUSHINT 112091125
+	EQUAL
+	IFJMPREF {
+		.inline __getContract
+	}
+	DUP
+	PUSHINT 436238672
+	EQUAL
+	IFJMPREF {
+		.inline __getDetails
+	}
+	DUP
 	PUSHINT 583726491
 	EQUAL
 	IFJMPREF {
 		.inline __setvdict
 	}
+}
+DUP
+PUSHINT 1903197803
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 629528867
 	EQUAL
@@ -1008,11 +1141,11 @@ IFJMPREF {
 	IFJMPREF {
 		.inline __setVote
 	}
-}
-DUP
-PUSHINT 1903197803
-EQUAL
-IFJMPREF {
-	.inline __getSet
+	DUP
+	PUSHINT 1903197803
+	EQUAL
+	IFJMPREF {
+		.inline __getSet
+	}
 }
 

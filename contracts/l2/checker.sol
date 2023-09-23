@@ -117,7 +117,23 @@ contract Checker {
     }
 
     //Getter 
-    function getStatus() external view returns(optional(uint256) prevhash) {
-        return _prevhash;
+    function getContract() external pure returns(string) {
+        return "Checker";
+    } 
+
+    function getProposalAddr(uint128 index) external view returns(address) {
+        return ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index);
+    }
+
+    function getAllProposalAddr(uint128 index) external view returns(address[]) {
+        address[] result;
+        for (uint128 i = 0; i <= index; i++){
+            result.push(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, i));
+        }
+        return result;
+    }
+
+    function getStatus() external view returns(optional(uint256) prevhash, uint128 index) {
+        return (_prevhash, _index);
     }
 }

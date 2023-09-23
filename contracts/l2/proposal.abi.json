@@ -29,6 +29,25 @@
 			]
 		},
 		{
+			"name": "getDetails",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"hash","type":"optional(uint256)"},
+				{"name":"newhash","type":"uint256"},
+				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"},
+				{"name":"index","type":"uint128"}
+			]
+		},
+		{
+			"name": "getContract",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"string"}
+			]
+		},
+		{
 			"name": "getSet",
 			"inputs": [
 			],
