@@ -12,11 +12,11 @@ gosh-cli -j deployx --abi ../contracts/l2/checker.abi.json --keys keys.json ../c
 PROP_CODE=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/proposal_test.tvc | jq .code | cut -d '"' -f 2)
 gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $ADDRESS -m setProposalCode --code $PROP_CODE
 echo "address=$ADDRESS"
-ADDRESS_ROOT=$(gosh-cli -j genaddr --save --abi ../contracts/l2/RootTokenContract.abi.json --genkey keys.json ../contracts/l2/RootTokenContract.tvc | jq .raw_address | cut -d '"' -f 2)
+ADDRESS_ROOT=$(gosh-cli -j genaddr --save --abi ../contracts/l2/RootTokenContract.abi --setkey keys.json ../contracts/l2/RootTokenContract.tvc | jq .raw_address | cut -d '"' -f 2)
 echo "address=$ADDRESS_ROOT"
 gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $ADDRESS -m setRootContract --root $ADDRESS_ROOT
 PROP_CODE_WALLET=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/TONTokenWallet.tvc | jq .code | cut -d '"' -f 2)
 PUBKEY=$(cat keys.json | jq  -r .public)
-gosh-cli -j deployx --abi ../contracts/l2/RootTokenContract.abi.json --keys keys.json ../contracts/l2/RootTokenContract.tvc --name "geth" --symbol "gth" --decimals 18 --root_pubkey $PUBKEY --root_owner null --total_supply 0 --checker $ADDRESS
-gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi.json --keys keys.json --addr $ADDRESS_ROOT -m setWalletCode --code $PROP_CODE_WALLET
+gosh-cli -j deployx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json ../contracts/l2/RootTokenContract.tvc --name "geth" --symbol "gth" --decimals 18 --root_pubkey $PUBKEY --root_owner null --total_supply 0 --checker $ADDRESS
+gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json --addr $ADDRESS_ROOT -m setWalletCode --code $PROP_CODE_WALLET
 
