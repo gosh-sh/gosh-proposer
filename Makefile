@@ -16,9 +16,13 @@ fmt:
 fix:
 	cargo clippy --fix --allow-dirty
 
-.PHONY: run
-run:
+.PHONY: run_proposer
+run_proposer:
 	cargo run -p gosh_proposer --release
+
+.PHONY: run_checker
+run_proposer:
+	cargo run -p l2-proposal-checker --release
 
 .PHONY: check
 check:

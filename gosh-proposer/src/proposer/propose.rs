@@ -10,15 +10,17 @@ use web3::transports::WebSocket;
 use web3::types::H256;
 use web3::Web3;
 
+const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
+const KEY_PATH: &str = "tests/keys.json";
+
+
 pub async fn propose_blocks(
     web3s: &Web3<WebSocket>,
     blocks: Vec<FullBlock<H256>>,
 ) -> anyhow::Result<()> {
     let checker_address = env::var("CHECKER_ADDRESS")?;
     let client = create_client()?;
-    let abi_path = "contracts/l2/checker.abi.json";
-    let key_path = "tests/keys.json";
-    let key_pair = load_keys(key_path)?;
+    let key_pair = load_keys(KEY_PATH)?;
 
     // ELOCK contract address
     let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")?.to_lowercase();
@@ -53,7 +55,7 @@ pub async fn propose_blocks(
     call_function(
         &client,
         &checker_address,
-        abi_path,
+        CHECKER_ABI_PATH,
         Some(key_pair),
         "checkData",
         Some(args),

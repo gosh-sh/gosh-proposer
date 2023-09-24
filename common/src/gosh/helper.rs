@@ -59,10 +59,13 @@ pub struct CallResult {
     #[serde(rename = "id")]
     pub trx_id: String,
     pub status: u8,
+    #[serde(rename = "total_fees")]
     #[serde(with = "ton_sdk::json_helper::uint")]
-    total_fees: u64,
-    in_msg: String,
-    out_msgs: Vec<String>,
+    _total_fees: u64,
+    #[serde(rename = "in_msg")]
+    _in_msg: String,
+    #[serde(rename = "out_msgs")]
+    _out_msgs: Vec<String>,
 }
 
 fn processing_event_to_string(pe: ProcessingEvent) -> String {

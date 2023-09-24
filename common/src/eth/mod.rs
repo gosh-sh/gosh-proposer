@@ -51,7 +51,7 @@ pub async fn read_block(
     Ok(serde_json::from_value(block)?)
 }
 
-async fn get_storage_proof(
+async fn _get_storage_proof(
     web3s: &Web3<WebSocket>,
     account: Address,
     block_num: Option<BlockNumber>,

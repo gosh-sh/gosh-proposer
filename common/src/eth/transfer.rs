@@ -3,28 +3,16 @@ use std::collections::BTreeMap;
 use std::env;
 
 use crate::eth::block::FullBlock;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use web3::transports::WebSocket;
-use web3::types::{Transaction, TransactionId, H256, U64, BlockId};
+use web3::types::{Transaction, TransactionId, H256, U64};
 use web3::{helpers as w3h, Web3};
 
-const INPUT_CHUNK_SIZE: usize = 64; // Number of bytes in one function argument
-const ADDRESS_PREFIX_SIZE: usize = 24; // Number of leading zeros in address argument
-const DEFAULT_DENOMINATOR: f64 = 100.0;
-
-#[derive(Debug, Eq, PartialEq, Serialize)]
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Transfer {
     pub pubkey: String,
     pub value: u128,
     pub hash: String,
-}
-
-#[derive(Debug)]
-pub struct TransferProposal {
-    pub address: String,
-    pub from_block: BlockId,
-    pub till_block: BlockId,
-    pub xfer: Transfer,
 }
 
 pub fn decode_transfer(
