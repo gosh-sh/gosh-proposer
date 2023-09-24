@@ -35,7 +35,7 @@ contract Proposal {
     address static _root;
     TransactionBatch[] _transactions;
     uint128 static _index;
-
+    uint128 _need;
     mapping(uint16 => TvmSlice) _vdict;
     
     constructor(
@@ -50,6 +50,8 @@ contract Proposal {
         (optional(TvmCell) data) = tvm.rawConfigParam(34);
         ValidatorSet vset = data.get().toSlice().load(ValidatorSet);
         _vdict = vset.vdict;
+        _need =  uint128(_vdict.keys().length);
+        _need = _need - _need * 34 / 100;
         if (data.hasValue() == false) { selfdestruct(_root); }
     }
 
@@ -62,7 +64,8 @@ contract Proposal {
             tvm.accept();
             optional(TvmSlice) deleted = _vdict.getDel(id);
             deleted;
-            if (_vdict.empty()) {
+            _need -= 1;
+            if (_need == 0) {
                 Checker(_root).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index, _transactions);
             }
         }
@@ -85,8 +88,8 @@ contract Proposal {
     }
 
     //Getter 
-    function getDetails() external view returns(optional(uint256) hash, uint256 newhash, TransactionBatch[] transactions, uint128 index){
-        return (_hash, _newhash, _transactions, _index);
+    function getDetails() external view returns(optional(uint256) hash, uint256 newhash, TransactionBatch[] transactions, uint128 index, uint128 need){
+        return (_hash, _newhash, _transactions, _index, _need);
     }
 
     function getVersion() external pure returns(string, string) {
