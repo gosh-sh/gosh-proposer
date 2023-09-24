@@ -1,7 +1,13 @@
 {
   "abi": [
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "startBlock",
+          "type": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
@@ -19,6 +25,118 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "proposalKey",
+          "type": "uint256"
+        }
+      ],
+      "name": "getProposal",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "fromBlock",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tillB",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address payable",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "trxHash",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Elock.Transfer[]",
+          "name": "transfers",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getProposalList",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "proposalKeys",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "lastProcessedBlock",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "fromBlock",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tillBlock",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address payable",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "trxHash",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Elock.Transfer[]",
+          "name": "transfers",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "startWithdrawalProposal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "totalSupply",
       "outputs": [
@@ -33,12 +151,25 @@
     },
     {
       "inputs": [],
-      "name": "trxCount",
+      "name": "trxDepositCount",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "uint128",
           "name": "",
-          "type": "uint256"
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "trxWithdrawCount",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "",
+          "type": "uint128"
         }
       ],
       "stateMutability": "view",
@@ -46,21 +177,26 @@
     }
   ],
   "bytecode": {
-    "object": "0x608060405234801561001057600080fd5b50610121806100206000396000f3fe60806040526004361060305760003560e01c806318160ddd1460355780637d2674f114605b578063b6b55f2514606f575b600080fd5b348015604057600080fd5b50604960005481565b60405190815260200160405180910390f35b348015606657600080fd5b50604960015481565b607e607a36600460ad565b6080565b005b60643411608c57600080fd5b6000805434018155600180549091829160a590839060c5565b909155505050565b60006020828403121560be57600080fd5b5035919050565b8082018082111560e557634e487b7160e01b600052601160045260246000fd5b9291505056fea2646970667358221220243d37b0dd4344fc27c66c584bc993d8531294940e28ccf631aff77a7665437c64736f6c63430008150033",
-    "sourceMap": "26:307:18:-:0;;;124:16;;;;;;;;;;26:307;;;;;;",
+    "object": "0x608060405234801561001057600080fd5b5060405161070c38038061070c83398101604081905261002f91610041565b4340600255600381905560045561005a565b60006020828403121561005357600080fd5b5051919050565b6106a3806100696000396000f3fe60806040526004361061007b5760003560e01c8063939947b81161004e578063939947b814610119578063a08ca9d714610140578063b6b55f2514610162578063c7f758a81461017557600080fd5b806318160ddd1461008057806324c37d6e146100a957806333de61d2146100e1578063346750f3146100f7575b600080fd5b34801561008c57600080fd5b5061009660005481565b6040519081526020015b60405180910390f35b3480156100b557600080fd5b506001546100c9906001600160801b031681565b6040516001600160801b0390911681526020016100a0565b3480156100ed57600080fd5b5061009660045481565b34801561010357600080fd5b5061010c6101a4565b6040516100a0919061046f565b34801561012557600080fd5b506001546100c990600160801b90046001600160801b031681565b34801561014c57600080fd5b5061016061015b3660046104b3565b6101fc565b005b610160610170366004610536565b610353565b34801561018157600080fd5b50610195610190366004610536565b6103ab565b6040516100a09392919061054f565b606060068054806020026020016040519081016040528092919081815260200182805480156101f257602002820191906000526020600020905b8154815260200190600101908083116101de575b5050505050905090565b6004541561021257600454841461021257600080fd5b6040805160208082018790528183018690528251808303840181526060909201835281518282012060008181526005909252929020549091901561029c5760405162461bcd60e51b815260206004820152601760248201527f50726f706f73616c20616c726561647920657869737473000000000000000000604482015260640160405180910390fd5b600081815260056020526040812087815560018101879055905b8481101561031757816002018686838181106102d4576102d46105c1565b83546001810185556000948552602090942060609091029290920192600302909101905061030282826105d7565b5050808061030f9061062d565b9150506102b6565b5050600680546001810182556000919091527ff652222313e28459528d920b65115c16c04f3efc82aaedc97be59f3f377c0d3f01555050505050565b6064341161036057600080fd5b600080543401815560018054909182916103849083906001600160801b0316610646565b92506101000a8154816001600160801b0302191690836001600160801b0316021790555050565b60008181526005602090815260408083208151606081810184528254825260018301548286015260028301805485518188028101880187528181528897939688969490860193919290879084015b8282101561044e576000848152602090819020604080516060810182526003860290920180546001600160a01b03168352600180820154848601526002909101549183019190915290835290920191016103f9565b50505091525050805160208201516040909201519097919650945092505050565b6020808252825182820181905260009190848201906040850190845b818110156104a75783518352928401929184019160010161048b565b50909695505050505050565b600080600080606085870312156104c957600080fd5b8435935060208501359250604085013567ffffffffffffffff808211156104ef57600080fd5b818701915087601f83011261050357600080fd5b81358181111561051257600080fd5b88602060608302850101111561052757600080fd5b95989497505060200194505050565b60006020828403121561054857600080fd5b5035919050565b600060608083018684526020868186015260408381870152828751808552608088019150838901945060005b818110156105b157855180516001600160a01b03168452858101518685015284015184840152948401949186019160010161057b565b50909a9950505050505050505050565b634e487b7160e01b600052603260045260246000fd5b81356001600160a01b0381168082146105ef57600080fd5b82546001600160a01b0319161782555060208201356001820155604090910135600290910155565b634e487b7160e01b600052601160045260246000fd5b60006001820161063f5761063f610617565b5060010190565b6001600160801b0381811683821601908082111561066657610666610617565b509291505056fea264697066735822122026a07a942cb78377ebb6c98060bb925029f4ab9c93784baa7b49ff8cc0e2464664736f6c63430008150033",
+    "sourceMap": "26:2192:18:-:0;;;624:178;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;702:12;692:23;666:15;:50;726:15;:28;;;764:18;:31;26:2192;;14:184:20;84:6;137:2;125:9;116:7;112:23;108:32;105:52;;;153:1;150;143:12;105:52;-1:-1:-1;176:16:20;;14:184;-1:-1:-1;14:184:20:o;:::-;26:2192:18;;;;;;",
     "linkReferences": {}
   },
   "deployedBytecode": {
-    "object": "0x60806040526004361060305760003560e01c806318160ddd1460355780637d2674f114605b578063b6b55f2514606f575b600080fd5b348015604057600080fd5b50604960005481565b60405190815260200160405180910390f35b348015606657600080fd5b50604960015481565b607e607a36600460ad565b6080565b005b60643411608c57600080fd5b6000805434018155600180549091829160a590839060c5565b909155505050565b60006020828403121560be57600080fd5b5035919050565b8082018082111560e557634e487b7160e01b600052601160045260246000fd5b9291505056fea2646970667358221220243d37b0dd4344fc27c66c584bc993d8531294940e28ccf631aff77a7665437c64736f6c63430008150033",
-    "sourceMap": "26:307:18:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;47:26;;;;;;;;;;;;;;;;;;;160:25:20;;;148:2;133:18;47:26:18;;;;;;;86:23;;;;;;;;;;;;;;;;146:185;;;;;;:::i;:::-;;:::i;:::-;;;224:7;212:9;:19;204:28;;;;;;267:11;:24;;282:9;267:24;;;-1:-1:-1;311:13:18;;-1:-1:-1;;;;311:13:18;;-1:-1:-1;;311:13:18;:::i;:::-;;;;-1:-1:-1;;;146:185:18:o;196:180:20:-;255:6;308:2;296:9;287:7;283:23;279:32;276:52;;;324:1;321;314:12;276:52;-1:-1:-1;347:23:20;;196:180;-1:-1:-1;196:180:20:o;381:222::-;446:9;;;467:10;;;464:133;;;519:10;514:3;510:20;507:1;500:31;554:4;551:1;544:15;582:4;579:1;572:15;464:133;381:222;;;;:::o",
+    "object": "0x60806040526004361061007b5760003560e01c8063939947b81161004e578063939947b814610119578063a08ca9d714610140578063b6b55f2514610162578063c7f758a81461017557600080fd5b806318160ddd1461008057806324c37d6e146100a957806333de61d2146100e1578063346750f3146100f7575b600080fd5b34801561008c57600080fd5b5061009660005481565b6040519081526020015b60405180910390f35b3480156100b557600080fd5b506001546100c9906001600160801b031681565b6040516001600160801b0390911681526020016100a0565b3480156100ed57600080fd5b5061009660045481565b34801561010357600080fd5b5061010c6101a4565b6040516100a0919061046f565b34801561012557600080fd5b506001546100c990600160801b90046001600160801b031681565b34801561014c57600080fd5b5061016061015b3660046104b3565b6101fc565b005b610160610170366004610536565b610353565b34801561018157600080fd5b50610195610190366004610536565b6103ab565b6040516100a09392919061054f565b606060068054806020026020016040519081016040528092919081815260200182805480156101f257602002820191906000526020600020905b8154815260200190600101908083116101de575b5050505050905090565b6004541561021257600454841461021257600080fd5b6040805160208082018790528183018690528251808303840181526060909201835281518282012060008181526005909252929020549091901561029c5760405162461bcd60e51b815260206004820152601760248201527f50726f706f73616c20616c726561647920657869737473000000000000000000604482015260640160405180910390fd5b600081815260056020526040812087815560018101879055905b8481101561031757816002018686838181106102d4576102d46105c1565b83546001810185556000948552602090942060609091029290920192600302909101905061030282826105d7565b5050808061030f9061062d565b9150506102b6565b5050600680546001810182556000919091527ff652222313e28459528d920b65115c16c04f3efc82aaedc97be59f3f377c0d3f01555050505050565b6064341161036057600080fd5b600080543401815560018054909182916103849083906001600160801b0316610646565b92506101000a8154816001600160801b0302191690836001600160801b0316021790555050565b60008181526005602090815260408083208151606081810184528254825260018301548286015260028301805485518188028101880187528181528897939688969490860193919290879084015b8282101561044e576000848152602090819020604080516060810182526003860290920180546001600160a01b03168352600180820154848601526002909101549183019190915290835290920191016103f9565b50505091525050805160208201516040909201519097919650945092505050565b6020808252825182820181905260009190848201906040850190845b818110156104a75783518352928401929184019160010161048b565b50909695505050505050565b600080600080606085870312156104c957600080fd5b8435935060208501359250604085013567ffffffffffffffff808211156104ef57600080fd5b818701915087601f83011261050357600080fd5b81358181111561051257600080fd5b88602060608302850101111561052757600080fd5b95989497505060200194505050565b60006020828403121561054857600080fd5b5035919050565b600060608083018684526020868186015260408381870152828751808552608088019150838901945060005b818110156105b157855180516001600160a01b03168452858101518685015284015184840152948401949186019160010161057b565b50909a9950505050505050505050565b634e487b7160e01b600052603260045260246000fd5b81356001600160a01b0381168082146105ef57600080fd5b82546001600160a01b0319161782555060208201356001820155604090910135600290910155565b634e487b7160e01b600052601160045260246000fd5b60006001820161063f5761063f610617565b5060010190565b6001600160801b0381811683821601908082111561066657610666610617565b509291505056fea264697066735822122026a07a942cb78377ebb6c98060bb925029f4ab9c93784baa7b49ff8cc0e2464664736f6c63430008150033",
+    "sourceMap": "26:2192:18:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;47:26;;;;;;;;;;;;;;;;;;;160:25:20;;;148:2;133:18;47:26:18;;;;;;;;86:30;;;;;;;;;;-1:-1:-1;86:30:18;;;;-1:-1:-1;;;;;86:30:18;;;;;;-1:-1:-1;;;;;360:47:20;;;342:66;;330:2;315:18;86:30:18;196:218:20;245:33:18;;;;;;;;;;;;;;;;1823:116;;;;;;;;;;;;;:::i;:::-;;;;;;;:::i;129:31::-;;;;;;;;;;-1:-1:-1;129:31:18;;;;-1:-1:-1;;;129:31:18;;-1:-1:-1;;;;;129:31:18;;;1022:795;;;;;;;;;;-1:-1:-1;1022:795:18;;;;;:::i;:::-;;:::i;:::-;;808:208;;;;;;:::i;:::-;;:::i;1945:271::-;;;;;;;;;;-1:-1:-1;1945:271:18;;;;;:::i;:::-;;:::i;:::-;;;;;;;;;:::i;1823:116::-;1871:29;1919:13;1912:20;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1823:116;:::o;1022:795::-;1175:18;;:22;1171:102;;1243:18;;1229:9;1221:40;1213:49;;;;;;1308:52;;;;;;;3224:19:20;;;3259:12;;;3252:28;;;1308:52:18;;;;;;;;;3296:12:20;;;;1308:52:18;;1400:21;;;;;;-1:-1:-1;1441:24:18;;;:11;:24;;;;;;:34;1308:52;;1400:21;1441:39;1433:75;;;;-1:-1:-1;;;1433:75:18;;3521:2:20;1433:75:18;;;3503:21:20;3560:2;3540:18;;;3533:30;3599:25;3579:18;;;3572:53;3642:18;;1433:75:18;;;;;;;;1519:27;1549:24;;;:11;:24;;;;;1583;;;1617:12;;;:24;;;1549;1651:119;1675:24;;;1651:119;;;1724:2;:12;;1742:9;;1752:5;1742:16;;;;;;;:::i;:::-;1724:35;;;;;;;-1:-1:-1;1724:35:18;;;;;;;1742:16;;;;;;;;;1724:35;;;;;;-1:-1:-1;1724:35:18;1742:16;1724:35;;:::i;:::-;;;1701:7;;;;;:::i;:::-;;;;1651:119;;;-1:-1:-1;;1779:13:18;:31;;;;;;;-1:-1:-1;1779:31:18;;;;;;;-1:-1:-1;;;;;1022:795:18:o;808:208::-;886:7;874:9;:19;866:28;;;;;;945:11;:24;;960:9;945:24;;;-1:-1:-1;989:20:18;;-1:-1:-1;;;;989:20:18;;-1:-1:-1;;;;;;;989:20:18;;:::i;:::-;;;;;;;;-1:-1:-1;;;;;989:20:18;;;;;-1:-1:-1;;;;;989:20:18;;;;;;808:208;:::o;1945:271::-;2012:17;2120:24;;;:11;:24;;;;;;;;2089:55;;2046:27;2089:55;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2012:17;;2046:27;;2012:17;;2120:24;2089:55;;;;;;;2012:17;;2089:55;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;2089:55:18;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;2089:55:18;;-1:-1:-1;;2162:14:18;;2178;;;;2194;;;;;2162;;2178;;-1:-1:-1;2194:14:18;-1:-1:-1;1945:271:18;-1:-1:-1;;;1945:271:18:o;419:632:20:-;590:2;642:21;;;712:13;;615:18;;;734:22;;;561:4;;590:2;813:15;;;;787:2;772:18;;;561:4;856:169;870:6;867:1;864:13;856:169;;;931:13;;919:26;;1000:15;;;;965:12;;;;892:1;885:9;856:169;;;-1:-1:-1;1042:3:20;;419:632;-1:-1:-1;;;;;;419:632:20:o;1056:781::-;1189:6;1197;1205;1213;1266:2;1254:9;1245:7;1241:23;1237:32;1234:52;;;1282:1;1279;1272:12;1234:52;1318:9;1305:23;1295:33;;1375:2;1364:9;1360:18;1347:32;1337:42;;1430:2;1419:9;1415:18;1402:32;1453:18;1494:2;1486:6;1483:14;1480:34;;;1510:1;1507;1500:12;1480:34;1548:6;1537:9;1533:22;1523:32;;1593:7;1586:4;1582:2;1578:13;1574:27;1564:55;;1615:1;1612;1605:12;1564:55;1655:2;1642:16;1681:2;1673:6;1670:14;1667:34;;;1697:1;1694;1687:12;1667:34;1751:7;1746:2;1740;1732:6;1728:15;1724:2;1720:24;1716:33;1713:46;1710:66;;;1772:1;1769;1762:12;1710:66;1056:781;;;;-1:-1:-1;;1803:2:20;1795:11;;-1:-1:-1;;;1056:781:20:o;1842:180::-;1901:6;1954:2;1942:9;1933:7;1929:23;1925:32;1922:52;;;1970:1;1967;1960:12;1922:52;-1:-1:-1;1993:23:20;;1842:180;-1:-1:-1;1842:180:20:o;2027:1035::-;2279:4;2308:2;2348;2337:9;2333:18;2378:6;2367:9;2360:25;2404:2;2442:6;2437:2;2426:9;2422:18;2415:34;2468:2;2506;2501;2490:9;2486:18;2479:30;2529:6;2564;2558:13;2595:6;2587;2580:22;2633:3;2622:9;2618:19;2611:26;;2672:2;2664:6;2660:15;2646:29;;2693:1;2703:333;2717:6;2714:1;2711:13;2703:333;;;2776:13;;2818:9;;-1:-1:-1;;;;;2814:35:20;2802:48;;2890:11;;;2884:18;2870:12;;;2863:40;2943:11;;2937:18;2923:12;;;2916:40;3011:15;;;;2976:12;;;;2846:1;2732:9;2703:333;;;-1:-1:-1;3053:3:20;;2027:1035;-1:-1:-1;;;;;;;;;;2027:1035:20:o;3671:127::-;3732:10;3727:3;3723:20;3720:1;3713:31;3763:4;3760:1;3753:15;3787:4;3784:1;3777:15;3803:488;3959:19;;-1:-1:-1;;;;;3997:33:20;;4049:15;;;4039:43;;4078:1;4075;4068:12;4039:43;4111:11;;-1:-1:-1;;;;;;4107:54:20;4104:62;4091:76;;-1:-1:-1;4221:2:20;4210:14;;4197:28;-1:-1:-1;4183:12:20;;4176:50;4280:2;4269:14;;;4256:28;4252:1;4242:12;;;4235:50;3803:488::o;4296:127::-;4357:10;4352:3;4348:20;4345:1;4338:31;4388:4;4385:1;4378:15;4412:4;4409:1;4402:15;4428:135;4467:3;4488:17;;;4485:43;;4508:18;;:::i;:::-;-1:-1:-1;4555:1:20;4544:13;;4428:135::o;4568:197::-;-1:-1:-1;;;;;4690:10:20;;;4702;;;4686:27;;4725:11;;;4722:37;;;4739:18;;:::i;:::-;4722:37;4568:197;;;;:::o",
     "linkReferences": {}
   },
   "methodIdentifiers": {
     "deposit(uint256)": "b6b55f25",
+    "getProposal(uint256)": "c7f758a8",
+    "getProposalList()": "346750f3",
+    "lastProcessedBlock()": "33de61d2",
+    "startWithdrawalProposal(uint256,uint256,(address,uint256,uint256)[])": "a08ca9d7",
     "totalSupply()": "18160ddd",
-    "trxCount()": "7d2674f1"
+    "trxDepositCount()": "24c37d6e",
+    "trxWithdrawCount()": "939947b8"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.21+commit.d9974bed\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pubkey\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"trxCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Elock.sol\":\"Elock\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\"]},\"sources\":{\"src/Elock.sol\":{\"keccak256\":\"0xa225302c4634e99826461081cea9472f33b3fb125a04c2d2c85379c20f92c6e2\",\"urls\":[\"bzz-raw://d462ce110e7facf81b84e05937c89fa8a31bc07c796ee3bbcf0f5ef4fbae1258\",\"dweb:/ipfs/QmQVAXXqEMD9LNmbv6dpMR6AeaCAa2Du36CLrDEUmXwANz\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.21+commit.d9974bed\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"startBlock\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pubkey\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalKey\",\"type\":\"uint256\"}],\"name\":\"getProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"fromBlock\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tillB\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address payable\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"trxHash\",\"type\":\"uint256\"}],\"internalType\":\"struct Elock.Transfer[]\",\"name\":\"transfers\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getProposalList\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"proposalKeys\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastProcessedBlock\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"fromBlock\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tillBlock\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address payable\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"trxHash\",\"type\":\"uint256\"}],\"internalType\":\"struct Elock.Transfer[]\",\"name\":\"transfers\",\"type\":\"tuple[]\"}],\"name\":\"startWithdrawalProposal\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"trxDepositCount\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"trxWithdrawCount\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/Elock.sol\":\"Elock\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\"]},\"sources\":{\"src/Elock.sol\":{\"keccak256\":\"0x40f6391cadf87937c9d5570e862e0ad05535b7d70ed122ad4ebfbee207d2844e\",\"urls\":[\"bzz-raw://5af5157b90736fbc73177a9d6efa4c8017a1627fe49d7554013542099384c722\",\"dweb:/ipfs/QmTCd5KKyju1nDqDukB79HW5FR2SJ8ztbkbxT3hURoNAj5\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
       "version": "0.8.21+commit.d9974bed"
@@ -69,7 +205,13 @@
     "output": {
       "abi": [
         {
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "startBlock",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "constructor"
         },
@@ -84,6 +226,117 @@
           "stateMutability": "payable",
           "type": "function",
           "name": "deposit"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "proposalKey",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getProposal",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "fromBlock",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tillB",
+              "type": "uint256"
+            },
+            {
+              "internalType": "struct Elock.Transfer[]",
+              "name": "transfers",
+              "type": "tuple[]",
+              "components": [
+                {
+                  "internalType": "address payable",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "trxHash",
+                  "type": "uint256"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getProposalList",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "proposalKeys",
+              "type": "uint256[]"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "lastProcessedBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "fromBlock",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tillBlock",
+              "type": "uint256"
+            },
+            {
+              "internalType": "struct Elock.Transfer[]",
+              "name": "transfers",
+              "type": "tuple[]",
+              "components": [
+                {
+                  "internalType": "address payable",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "trxHash",
+                  "type": "uint256"
+                }
+              ]
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "startWithdrawalProposal"
         },
         {
           "inputs": [],
@@ -102,12 +355,25 @@
           "inputs": [],
           "stateMutability": "view",
           "type": "function",
-          "name": "trxCount",
+          "name": "trxDepositCount",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint128",
               "name": "",
-              "type": "uint256"
+              "type": "uint128"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "trxWithdrawCount",
+          "outputs": [
+            {
+              "internalType": "uint128",
+              "name": "",
+              "type": "uint128"
             }
           ]
         }
@@ -142,10 +408,10 @@
     },
     "sources": {
       "src/Elock.sol": {
-        "keccak256": "0xa225302c4634e99826461081cea9472f33b3fb125a04c2d2c85379c20f92c6e2",
+        "keccak256": "0x40f6391cadf87937c9d5570e862e0ad05535b7d70ed122ad4ebfbee207d2844e",
         "urls": [
-          "bzz-raw://d462ce110e7facf81b84e05937c89fa8a31bc07c796ee3bbcf0f5ef4fbae1258",
-          "dweb:/ipfs/QmQVAXXqEMD9LNmbv6dpMR6AeaCAa2Du36CLrDEUmXwANz"
+          "bzz-raw://5af5157b90736fbc73177a9d6efa4c8017a1627fe49d7554013542099384c722",
+          "dweb:/ipfs/QmTCd5KKyju1nDqDukB79HW5FR2SJ8ztbkbxT3hURoNAj5"
         ],
         "license": null
       }
@@ -154,14 +420,14 @@
   },
   "ast": {
     "absolutePath": "src/Elock.sol",
-    "id": 43354,
+    "id": 43554,
     "exportedSymbols": {
       "Elock": [
-        43353
+        43553
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "0:333:18",
+    "src": "0:2218:18",
     "nodes": [
       {
         "id": 43321,
@@ -176,9 +442,9 @@
         ]
       },
       {
-        "id": 43353,
+        "id": 43553,
         "nodeType": "ContractDefinition",
-        "src": "26:307:18",
+        "src": "26:2192:18",
         "nodes": [
           {
             "id": 43323,
@@ -190,7 +456,7 @@
             "mutability": "mutable",
             "name": "totalSupply",
             "nameLocation": "62:11:18",
-            "scope": 43353,
+            "scope": 43553,
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -212,14 +478,71 @@
           {
             "id": 43325,
             "nodeType": "VariableDeclaration",
-            "src": "86:23:18",
+            "src": "86:30:18",
             "nodes": [],
             "constant": false,
-            "functionSelector": "7d2674f1",
+            "functionSelector": "24c37d6e",
             "mutability": "mutable",
-            "name": "trxCount",
-            "nameLocation": "101:8:18",
-            "scope": 43353,
+            "name": "trxDepositCount",
+            "nameLocation": "101:15:18",
+            "scope": 43553,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint128",
+              "typeString": "uint128"
+            },
+            "typeName": {
+              "id": 43324,
+              "name": "uint128",
+              "nodeType": "ElementaryTypeName",
+              "src": "86:7:18",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint128",
+                "typeString": "uint128"
+              }
+            },
+            "visibility": "public"
+          },
+          {
+            "id": 43327,
+            "nodeType": "VariableDeclaration",
+            "src": "129:31:18",
+            "nodes": [],
+            "constant": false,
+            "functionSelector": "939947b8",
+            "mutability": "mutable",
+            "name": "trxWithdrawCount",
+            "nameLocation": "144:16:18",
+            "scope": 43553,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint128",
+              "typeString": "uint128"
+            },
+            "typeName": {
+              "id": 43326,
+              "name": "uint128",
+              "nodeType": "ElementaryTypeName",
+              "src": "129:7:18",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint128",
+                "typeString": "uint128"
+              }
+            },
+            "visibility": "public"
+          },
+          {
+            "id": 43329,
+            "nodeType": "VariableDeclaration",
+            "src": "173:23:18",
+            "nodes": [],
+            "constant": false,
+            "mutability": "mutable",
+            "name": "elockStartBlock",
+            "nameLocation": "181:15:18",
+            "scope": 43553,
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -227,10 +550,67 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 43324,
+              "id": 43328,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "86:7:18",
+              "src": "173:7:18",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 43331,
+            "nodeType": "VariableDeclaration",
+            "src": "209:23:18",
+            "nodes": [],
+            "constant": false,
+            "mutability": "mutable",
+            "name": "glockStartBlock",
+            "nameLocation": "217:15:18",
+            "scope": 43553,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 43330,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "209:7:18",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 43333,
+            "nodeType": "VariableDeclaration",
+            "src": "245:33:18",
+            "nodes": [],
+            "constant": false,
+            "functionSelector": "33de61d2",
+            "mutability": "mutable",
+            "name": "lastProcessedBlock",
+            "nameLocation": "260:18:18",
+            "scope": 43553,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 43332,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "245:7:18",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -239,16 +619,549 @@
             "visibility": "public"
           },
           {
-            "id": 43329,
+            "id": 43338,
+            "nodeType": "VariableDeclaration",
+            "src": "291:49:18",
+            "nodes": [],
+            "constant": false,
+            "mutability": "mutable",
+            "name": "withdrawals",
+            "nameLocation": "329:11:18",
+            "scope": 43553,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_WithdrawProposal_$43357_storage_$",
+              "typeString": "mapping(uint256 => struct Elock.WithdrawProposal)"
+            },
+            "typeName": {
+              "id": 43337,
+              "keyName": "",
+              "keyNameLocation": "-1:-1:-1",
+              "keyType": {
+                "id": 43334,
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName",
+                "src": "300:7:18",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "291:37:18",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_WithdrawProposal_$43357_storage_$",
+                "typeString": "mapping(uint256 => struct Elock.WithdrawProposal)"
+              },
+              "valueName": "",
+              "valueNameLocation": "-1:-1:-1",
+              "valueType": {
+                "id": 43336,
+                "nodeType": "UserDefinedTypeName",
+                "pathNode": {
+                  "id": 43335,
+                  "name": "WithdrawProposal",
+                  "nameLocations": [
+                    "311:16:18"
+                  ],
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 43357,
+                  "src": "311:16:18"
+                },
+                "referencedDeclaration": 43357,
+                "src": "311:16:18",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage_ptr",
+                  "typeString": "struct Elock.WithdrawProposal"
+                }
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 43341,
+            "nodeType": "VariableDeclaration",
+            "src": "353:31:18",
+            "nodes": [],
+            "constant": false,
+            "mutability": "mutable",
+            "name": "_proposalKeys",
+            "nameLocation": "371:13:18",
+            "scope": 43553,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_array$_t_uint256_$dyn_storage",
+              "typeString": "uint256[]"
+            },
+            "typeName": {
+              "baseType": {
+                "id": 43339,
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName",
+                "src": "353:7:18",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                }
+              },
+              "id": 43340,
+              "nodeType": "ArrayTypeName",
+              "src": "353:9:18",
+              "typeDescriptions": {
+                "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                "typeString": "uint256[]"
+              }
+            },
+            "visibility": "private"
+          },
+          {
+            "id": 43348,
+            "nodeType": "StructDefinition",
+            "src": "398:99:18",
+            "nodes": [],
+            "canonicalName": "Elock.Transfer",
+            "members": [
+              {
+                "constant": false,
+                "id": 43343,
+                "mutability": "mutable",
+                "name": "to",
+                "nameLocation": "440:2:18",
+                "nodeType": "VariableDeclaration",
+                "scope": 43348,
+                "src": "424:18:18",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address_payable",
+                  "typeString": "address payable"
+                },
+                "typeName": {
+                  "id": 43342,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "424:15:18",
+                  "stateMutability": "payable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 43345,
+                "mutability": "mutable",
+                "name": "value",
+                "nameLocation": "460:5:18",
+                "nodeType": "VariableDeclaration",
+                "scope": 43348,
+                "src": "452:13:18",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 43344,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "452:7:18",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 43347,
+                "mutability": "mutable",
+                "name": "trxHash",
+                "nameLocation": "483:7:18",
+                "nodeType": "VariableDeclaration",
+                "scope": 43348,
+                "src": "475:15:18",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 43346,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "475:7:18",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "Transfer",
+            "nameLocation": "405:8:18",
+            "scope": 43553,
+            "visibility": "public"
+          },
+          {
+            "id": 43357,
+            "nodeType": "StructDefinition",
+            "src": "503:115:18",
+            "nodes": [],
+            "canonicalName": "Elock.WithdrawProposal",
+            "members": [
+              {
+                "constant": false,
+                "id": 43350,
+                "mutability": "mutable",
+                "name": "fromBlock",
+                "nameLocation": "545:9:18",
+                "nodeType": "VariableDeclaration",
+                "scope": 43357,
+                "src": "537:17:18",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 43349,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "537:7:18",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 43352,
+                "mutability": "mutable",
+                "name": "tillBlock",
+                "nameLocation": "572:9:18",
+                "nodeType": "VariableDeclaration",
+                "scope": 43357,
+                "src": "564:17:18",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 43351,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "564:7:18",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 43356,
+                "mutability": "mutable",
+                "name": "transfers",
+                "nameLocation": "602:9:18",
+                "nodeType": "VariableDeclaration",
+                "scope": 43357,
+                "src": "591:20:18",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_storage_$dyn_storage_ptr",
+                  "typeString": "struct Elock.Transfer[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 43354,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 43353,
+                      "name": "Transfer",
+                      "nameLocations": [
+                        "591:8:18"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 43348,
+                      "src": "591:8:18"
+                    },
+                    "referencedDeclaration": 43348,
+                    "src": "591:8:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Transfer_$43348_storage_ptr",
+                      "typeString": "struct Elock.Transfer"
+                    }
+                  },
+                  "id": 43355,
+                  "nodeType": "ArrayTypeName",
+                  "src": "591:10:18",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_storage_$dyn_storage_ptr",
+                    "typeString": "struct Elock.Transfer[]"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "WithdrawProposal",
+            "nameLocation": "510:16:18",
+            "scope": 43553,
+            "visibility": "public"
+          },
+          {
+            "id": 43381,
             "nodeType": "FunctionDefinition",
-            "src": "124:16:18",
+            "src": "624:178:18",
             "nodes": [],
             "body": {
-              "id": 43328,
+              "id": 43380,
               "nodeType": "Block",
-              "src": "138:2:18",
+              "src": "656:146:18",
               "nodes": [],
-              "statements": []
+              "statements": [
+                {
+                  "expression": {
+                    "id": 43370,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 43362,
+                      "name": "elockStartBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43329,
+                      "src": "666:15:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "arguments": [
+                        {
+                          "arguments": [
+                            {
+                              "expression": {
+                                "id": 43366,
+                                "name": "block",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": -4,
+                                "src": "702:5:18",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_magic_block",
+                                  "typeString": "block"
+                                }
+                              },
+                              "id": 43367,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberLocation": "708:6:18",
+                              "memberName": "number",
+                              "nodeType": "MemberAccess",
+                              "src": "702:12:18",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            ],
+                            "id": 43365,
+                            "name": "blockhash",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": -5,
+                            "src": "692:9:18",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_blockhash_view$_t_uint256_$returns$_t_bytes32_$",
+                              "typeString": "function (uint256) view returns (bytes32)"
+                            }
+                          },
+                          "id": 43368,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "nameLocations": [],
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "692:23:18",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes32",
+                            "typeString": "bytes32"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_bytes32",
+                            "typeString": "bytes32"
+                          }
+                        ],
+                        "id": 43364,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "nodeType": "ElementaryTypeNameExpression",
+                        "src": "684:7:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_uint256_$",
+                          "typeString": "type(uint256)"
+                        },
+                        "typeName": {
+                          "id": 43363,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "684:7:18",
+                          "typeDescriptions": {}
+                        }
+                      },
+                      "id": 43369,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "typeConversion",
+                      "lValueRequested": false,
+                      "nameLocations": [],
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "684:32:18",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "666:50:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 43371,
+                  "nodeType": "ExpressionStatement",
+                  "src": "666:50:18"
+                },
+                {
+                  "expression": {
+                    "id": 43374,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 43372,
+                      "name": "glockStartBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43331,
+                      "src": "726:15:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 43373,
+                      "name": "startBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43359,
+                      "src": "744:10:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "726:28:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 43375,
+                  "nodeType": "ExpressionStatement",
+                  "src": "726:28:18"
+                },
+                {
+                  "expression": {
+                    "id": 43378,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 43376,
+                      "name": "lastProcessedBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43333,
+                      "src": "764:18:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 43377,
+                      "name": "startBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43359,
+                      "src": "785:10:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "764:31:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 43379,
+                  "nodeType": "ExpressionStatement",
+                  "src": "764:31:18"
+                }
+              ]
             },
             "implemented": true,
             "kind": "constructor",
@@ -256,31 +1169,59 @@
             "name": "",
             "nameLocation": "-1:-1:-1",
             "parameters": {
-              "id": 43326,
+              "id": 43360,
               "nodeType": "ParameterList",
-              "parameters": [],
-              "src": "135:2:18"
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 43359,
+                  "mutability": "mutable",
+                  "name": "startBlock",
+                  "nameLocation": "644:10:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43381,
+                  "src": "636:18:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 43358,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "636:7:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "635:20:18"
             },
             "returnParameters": {
-              "id": 43327,
+              "id": 43361,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "138:0:18"
+              "src": "656:0:18"
             },
-            "scope": 43353,
+            "scope": 43553,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           },
           {
-            "id": 43352,
+            "id": 43406,
             "nodeType": "FunctionDefinition",
-            "src": "146:185:18",
+            "src": "808:208:18",
             "nodes": [],
             "body": {
-              "id": 43351,
+              "id": 43405,
               "nodeType": "Block",
-              "src": "194:137:18",
+              "src": "856:160:18",
               "nodes": [],
               "statements": [
                 {
@@ -291,33 +1232,33 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 43338,
+                        "id": 43390,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "expression": {
-                            "id": 43335,
+                            "id": 43387,
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": -15,
-                            "src": "212:3:18",
+                            "src": "874:3:18",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
                             }
                           },
-                          "id": 43336,
+                          "id": 43388,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
-                          "memberLocation": "216:5:18",
+                          "memberLocation": "878:5:18",
                           "memberName": "value",
                           "nodeType": "MemberAccess",
-                          "src": "212:9:18",
+                          "src": "874:9:18",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -327,14 +1268,14 @@
                         "operator": ">",
                         "rightExpression": {
                           "hexValue": "313030",
-                          "id": 43337,
+                          "id": 43389,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "kind": "number",
                           "lValueRequested": false,
                           "nodeType": "Literal",
-                          "src": "224:7:18",
+                          "src": "886:7:18",
                           "subdenomination": "wei",
                           "typeDescriptions": {
                             "typeIdentifier": "t_rational_100_by_1",
@@ -342,7 +1283,7 @@
                           },
                           "value": "100"
                         },
-                        "src": "212:19:18",
+                        "src": "874:19:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
@@ -356,7 +1297,7 @@
                           "typeString": "bool"
                         }
                       ],
-                      "id": 43334,
+                      "id": 43386,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -364,13 +1305,13 @@
                         -18
                       ],
                       "referencedDeclaration": -18,
-                      "src": "204:7:18",
+                      "src": "866:7:18",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                         "typeString": "function (bool) pure"
                       }
                     },
-                    "id": 43339,
+                    "id": 43391,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -379,36 +1320,53 @@
                     "nameLocations": [],
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "204:28:18",
+                    "src": "866:28:18",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 43340,
+                  "id": 43392,
                   "nodeType": "ExpressionStatement",
-                  "src": "204:28:18"
+                  "src": "866:28:18"
                 },
                 {
-                  "id": 43346,
+                  "expression": {
+                    "id": 43393,
+                    "name": "pubkey",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 43383,
+                    "src": "904:6:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 43394,
+                  "nodeType": "ExpressionStatement",
+                  "src": "904:6:18"
+                },
+                {
+                  "id": 43400,
                   "nodeType": "UncheckedBlock",
-                  "src": "243:59:18",
+                  "src": "921:59:18",
                   "statements": [
                     {
                       "expression": {
-                        "id": 43344,
+                        "id": 43398,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftHandSide": {
-                          "id": 43341,
+                          "id": 43395,
                           "name": "totalSupply",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
                           "referencedDeclaration": 43323,
-                          "src": "267:11:18",
+                          "src": "945:11:18",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -418,89 +1376,89 @@
                         "operator": "+=",
                         "rightHandSide": {
                           "expression": {
-                            "id": 43342,
+                            "id": 43396,
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": -15,
-                            "src": "282:3:18",
+                            "src": "960:3:18",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
                             }
                           },
-                          "id": 43343,
+                          "id": 43397,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
                           "lValueRequested": false,
-                          "memberLocation": "286:5:18",
+                          "memberLocation": "964:5:18",
                           "memberName": "value",
                           "nodeType": "MemberAccess",
-                          "src": "282:9:18",
+                          "src": "960:9:18",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
                           }
                         },
-                        "src": "267:24:18",
+                        "src": "945:24:18",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         }
                       },
-                      "id": 43345,
+                      "id": 43399,
                       "nodeType": "ExpressionStatement",
-                      "src": "267:24:18"
+                      "src": "945:24:18"
                     }
                   ]
                 },
                 {
                   "expression": {
-                    "id": 43349,
+                    "id": 43403,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 43347,
-                      "name": "trxCount",
+                      "id": 43401,
+                      "name": "trxDepositCount",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 43325,
-                      "src": "311:8:18",
+                      "src": "989:15:18",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_uint256",
-                        "typeString": "uint256"
+                        "typeIdentifier": "t_uint128",
+                        "typeString": "uint128"
                       }
                     },
                     "nodeType": "Assignment",
                     "operator": "+=",
                     "rightHandSide": {
                       "hexValue": "31",
-                      "id": 43348,
+                      "id": 43402,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "323:1:18",
+                      "src": "1008:1:18",
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_1_by_1",
                         "typeString": "int_const 1"
                       },
                       "value": "1"
                     },
-                    "src": "311:13:18",
+                    "src": "989:20:18",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_uint256",
-                      "typeString": "uint256"
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
                     }
                   },
-                  "id": 43350,
+                  "id": 43404,
                   "nodeType": "ExpressionStatement",
-                  "src": "311:13:18"
+                  "src": "989:20:18"
                 }
               ]
             },
@@ -509,20 +1467,20 @@
             "kind": "function",
             "modifiers": [],
             "name": "deposit",
-            "nameLocation": "155:7:18",
+            "nameLocation": "817:7:18",
             "parameters": {
-              "id": 43332,
+              "id": 43384,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 43331,
+                  "id": 43383,
                   "mutability": "mutable",
                   "name": "pubkey",
-                  "nameLocation": "171:6:18",
+                  "nameLocation": "833:6:18",
                   "nodeType": "VariableDeclaration",
-                  "scope": 43352,
-                  "src": "163:14:18",
+                  "scope": 43406,
+                  "src": "825:14:18",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -530,10 +1488,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 43330,
+                    "id": 43382,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "163:7:18",
+                    "src": "825:7:18",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -542,16 +1500,1822 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "162:16:18"
+              "src": "824:16:18"
             },
             "returnParameters": {
-              "id": 43333,
+              "id": 43385,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "194:0:18"
+              "src": "856:0:18"
             },
-            "scope": 43353,
+            "scope": 43553,
             "stateMutability": "payable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "id": 43514,
+            "nodeType": "FunctionDefinition",
+            "src": "1022:795:18",
+            "nodes": [],
+            "body": {
+              "id": 43513,
+              "nodeType": "Block",
+              "src": "1161:656:18",
+              "nodes": [],
+              "statements": [
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 43419,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 43417,
+                      "name": "lastProcessedBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43333,
+                      "src": "1175:18:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": ">",
+                    "rightExpression": {
+                      "hexValue": "30",
+                      "id": 43418,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1196:1:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1175:22:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 43430,
+                  "nodeType": "IfStatement",
+                  "src": "1171:102:18",
+                  "trueBody": {
+                    "id": 43429,
+                    "nodeType": "Block",
+                    "src": "1199:74:18",
+                    "statements": [
+                      {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "commonType": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "id": 43426,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "arguments": [
+                                  {
+                                    "id": 43423,
+                                    "name": "fromBlock",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 43408,
+                                    "src": "1229:9:18",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  ],
+                                  "id": 43422,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": true,
+                                  "lValueRequested": false,
+                                  "nodeType": "ElementaryTypeNameExpression",
+                                  "src": "1221:7:18",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_type$_t_uint256_$",
+                                    "typeString": "type(uint256)"
+                                  },
+                                  "typeName": {
+                                    "id": 43421,
+                                    "name": "uint256",
+                                    "nodeType": "ElementaryTypeName",
+                                    "src": "1221:7:18",
+                                    "typeDescriptions": {}
+                                  }
+                                },
+                                "id": 43424,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "typeConversion",
+                                "lValueRequested": false,
+                                "nameLocations": [],
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1221:18:18",
+                                "tryCall": false,
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "id": 43425,
+                                "name": "lastProcessedBlock",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 43333,
+                                "src": "1243:18:18",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "src": "1221:40:18",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            ],
+                            "id": 43420,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              -18,
+                              -18
+                            ],
+                            "referencedDeclaration": -18,
+                            "src": "1213:7:18",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+                              "typeString": "function (bool) pure"
+                            }
+                          },
+                          "id": 43427,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "nameLocations": [],
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1213:49:18",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 43428,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1213:49:18"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "assignments": [
+                    43432
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 43432,
+                      "mutability": "mutable",
+                      "name": "blockRange",
+                      "nameLocation": "1295:10:18",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 43513,
+                      "src": "1282:23:18",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes_memory_ptr",
+                        "typeString": "bytes"
+                      },
+                      "typeName": {
+                        "id": 43431,
+                        "name": "bytes",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1282:5:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_storage_ptr",
+                          "typeString": "bytes"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 43445,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "arguments": [
+                          {
+                            "id": 43438,
+                            "name": "fromBlock",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 43408,
+                            "src": "1329:9:18",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          ],
+                          "id": 43437,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1321:7:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_bytes32_$",
+                            "typeString": "type(bytes32)"
+                          },
+                          "typeName": {
+                            "id": 43436,
+                            "name": "bytes32",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1321:7:18",
+                            "typeDescriptions": {}
+                          }
+                        },
+                        "id": 43439,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1321:18:18",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      {
+                        "arguments": [
+                          {
+                            "id": 43442,
+                            "name": "tillBlock",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 43410,
+                            "src": "1349:9:18",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          ],
+                          "id": 43441,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "1341:7:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_bytes32_$",
+                            "typeString": "type(bytes32)"
+                          },
+                          "typeName": {
+                            "id": 43440,
+                            "name": "bytes32",
+                            "nodeType": "ElementaryTypeName",
+                            "src": "1341:7:18",
+                            "typeDescriptions": {}
+                          }
+                        },
+                        "id": 43443,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1341:18:18",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        },
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      ],
+                      "expression": {
+                        "id": 43434,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "nodeType": "ElementaryTypeNameExpression",
+                        "src": "1308:5:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_bytes_storage_ptr_$",
+                          "typeString": "type(bytes storage pointer)"
+                        },
+                        "typeName": {
+                          "id": 43433,
+                          "name": "bytes",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1308:5:18",
+                          "typeDescriptions": {}
+                        }
+                      },
+                      "id": 43435,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "1314:6:18",
+                      "memberName": "concat",
+                      "nodeType": "MemberAccess",
+                      "src": "1308:12:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_bytesconcat_pure$__$returns$_t_bytes_memory_ptr_$",
+                        "typeString": "function () pure returns (bytes memory)"
+                      }
+                    },
+                    "id": 43444,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1308:52:18",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_memory_ptr",
+                      "typeString": "bytes memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1282:78:18"
+                },
+                {
+                  "assignments": [
+                    43447
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 43447,
+                      "mutability": "mutable",
+                      "name": "proposalKey",
+                      "nameLocation": "1378:11:18",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 43513,
+                      "src": "1370:19:18",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 43446,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1370:7:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 43454,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "arguments": [
+                          {
+                            "id": 43451,
+                            "name": "blockRange",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 43432,
+                            "src": "1410:10:18",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bytes_memory_ptr",
+                              "typeString": "bytes memory"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_bytes_memory_ptr",
+                              "typeString": "bytes memory"
+                            }
+                          ],
+                          "id": 43450,
+                          "name": "keccak256",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": -8,
+                          "src": "1400:9:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                            "typeString": "function (bytes memory) pure returns (bytes32)"
+                          }
+                        },
+                        "id": 43452,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "1400:21:18",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      ],
+                      "id": 43449,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "src": "1392:7:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_uint256_$",
+                        "typeString": "type(uint256)"
+                      },
+                      "typeName": {
+                        "id": 43448,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1392:7:18",
+                        "typeDescriptions": {}
+                      }
+                    },
+                    "id": 43453,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1392:30:18",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1370:52:18"
+                },
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 43461,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "expression": {
+                            "baseExpression": {
+                              "id": 43456,
+                              "name": "withdrawals",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 43338,
+                              "src": "1441:11:18",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_WithdrawProposal_$43357_storage_$",
+                                "typeString": "mapping(uint256 => struct Elock.WithdrawProposal storage ref)"
+                              }
+                            },
+                            "id": 43458,
+                            "indexExpression": {
+                              "id": 43457,
+                              "name": "proposalKey",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 43447,
+                              "src": "1453:11:18",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "nodeType": "IndexAccess",
+                            "src": "1441:24:18",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage",
+                              "typeString": "struct Elock.WithdrawProposal storage ref"
+                            }
+                          },
+                          "id": 43459,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberLocation": "1466:9:18",
+                          "memberName": "fromBlock",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 43350,
+                          "src": "1441:34:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "hexValue": "30",
+                          "id": 43460,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "1479:1:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "1441:39:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "hexValue": "50726f706f73616c20616c726561647920657869737473",
+                        "id": 43462,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1482:25:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_524810b928f0e31e2e9d5253e457189cb263f19fcd86c0c8824a68fe2dad99db",
+                          "typeString": "literal_string \"Proposal already exists\""
+                        },
+                        "value": "Proposal already exists"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_524810b928f0e31e2e9d5253e457189cb263f19fcd86c0c8824a68fe2dad99db",
+                          "typeString": "literal_string \"Proposal already exists\""
+                        }
+                      ],
+                      "id": 43455,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        -18,
+                        -18
+                      ],
+                      "referencedDeclaration": -18,
+                      "src": "1433:7:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 43463,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1433:75:18",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 43464,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1433:75:18"
+                },
+                {
+                  "assignments": [
+                    43467
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 43467,
+                      "mutability": "mutable",
+                      "name": "wp",
+                      "nameLocation": "1544:2:18",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 43513,
+                      "src": "1519:27:18",
+                      "stateVariable": false,
+                      "storageLocation": "storage",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage_ptr",
+                        "typeString": "struct Elock.WithdrawProposal"
+                      },
+                      "typeName": {
+                        "id": 43466,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 43465,
+                          "name": "WithdrawProposal",
+                          "nameLocations": [
+                            "1519:16:18"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 43357,
+                          "src": "1519:16:18"
+                        },
+                        "referencedDeclaration": 43357,
+                        "src": "1519:16:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage_ptr",
+                          "typeString": "struct Elock.WithdrawProposal"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 43471,
+                  "initialValue": {
+                    "baseExpression": {
+                      "id": 43468,
+                      "name": "withdrawals",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43338,
+                      "src": "1549:11:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_WithdrawProposal_$43357_storage_$",
+                        "typeString": "mapping(uint256 => struct Elock.WithdrawProposal storage ref)"
+                      }
+                    },
+                    "id": 43470,
+                    "indexExpression": {
+                      "id": 43469,
+                      "name": "proposalKey",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43447,
+                      "src": "1561:11:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "1549:24:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage",
+                      "typeString": "struct Elock.WithdrawProposal storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1519:54:18"
+                },
+                {
+                  "expression": {
+                    "id": 43476,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "expression": {
+                        "id": 43472,
+                        "name": "wp",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 43467,
+                        "src": "1583:2:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage_ptr",
+                          "typeString": "struct Elock.WithdrawProposal storage pointer"
+                        }
+                      },
+                      "id": 43474,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "memberLocation": "1586:9:18",
+                      "memberName": "fromBlock",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 43350,
+                      "src": "1583:12:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 43475,
+                      "name": "fromBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43408,
+                      "src": "1598:9:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1583:24:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 43477,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1583:24:18"
+                },
+                {
+                  "expression": {
+                    "id": 43482,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "expression": {
+                        "id": 43478,
+                        "name": "wp",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 43467,
+                        "src": "1617:2:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage_ptr",
+                          "typeString": "struct Elock.WithdrawProposal storage pointer"
+                        }
+                      },
+                      "id": 43480,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "memberLocation": "1620:9:18",
+                      "memberName": "tillBlock",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 43352,
+                      "src": "1617:12:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 43481,
+                      "name": "tillBlock",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43410,
+                      "src": "1632:9:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1617:24:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 43483,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1617:24:18"
+                },
+                {
+                  "body": {
+                    "id": 43505,
+                    "nodeType": "Block",
+                    "src": "1710:60:18",
+                    "statements": [
+                      {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "baseExpression": {
+                                "id": 43500,
+                                "name": "transfers",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 43414,
+                                "src": "1742:9:18",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_calldata_ptr_$dyn_calldata_ptr",
+                                  "typeString": "struct Elock.Transfer calldata[] calldata"
+                                }
+                              },
+                              "id": 43502,
+                              "indexExpression": {
+                                "id": 43501,
+                                "name": "index",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 43485,
+                                "src": "1752:5:18",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "nodeType": "IndexAccess",
+                              "src": "1742:16:18",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_Transfer_$43348_calldata_ptr",
+                                "typeString": "struct Elock.Transfer calldata"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_struct$_Transfer_$43348_calldata_ptr",
+                                "typeString": "struct Elock.Transfer calldata"
+                              }
+                            ],
+                            "expression": {
+                              "expression": {
+                                "id": 43495,
+                                "name": "wp",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 43467,
+                                "src": "1724:2:18",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage_ptr",
+                                  "typeString": "struct Elock.WithdrawProposal storage pointer"
+                                }
+                              },
+                              "id": 43498,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberLocation": "1727:9:18",
+                              "memberName": "transfers",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 43356,
+                              "src": "1724:12:18",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_storage_$dyn_storage",
+                                "typeString": "struct Elock.Transfer storage ref[] storage ref"
+                              }
+                            },
+                            "id": 43499,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberLocation": "1737:4:18",
+                            "memberName": "push",
+                            "nodeType": "MemberAccess",
+                            "src": "1724:17:18",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_arraypush_nonpayable$_t_array$_t_struct$_Transfer_$43348_storage_$dyn_storage_ptr_$_t_struct$_Transfer_$43348_storage_$returns$__$attached_to$_t_array$_t_struct$_Transfer_$43348_storage_$dyn_storage_ptr_$",
+                              "typeString": "function (struct Elock.Transfer storage ref[] storage pointer,struct Elock.Transfer storage ref)"
+                            }
+                          },
+                          "id": 43503,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "nameLocations": [],
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1724:35:18",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 43504,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1724:35:18"
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 43491,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 43488,
+                      "name": "index",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43485,
+                      "src": "1675:5:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "expression": {
+                        "id": 43489,
+                        "name": "transfers",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 43414,
+                        "src": "1683:9:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_calldata_ptr_$dyn_calldata_ptr",
+                          "typeString": "struct Elock.Transfer calldata[] calldata"
+                        }
+                      },
+                      "id": 43490,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "1693:6:18",
+                      "memberName": "length",
+                      "nodeType": "MemberAccess",
+                      "src": "1683:16:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1675:24:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 43506,
+                  "initializationExpression": {
+                    "assignments": [
+                      43485
+                    ],
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "id": 43485,
+                        "mutability": "mutable",
+                        "name": "index",
+                        "nameLocation": "1664:5:18",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 43506,
+                        "src": "1656:13:18",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 43484,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1656:7:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "visibility": "internal"
+                      }
+                    ],
+                    "id": 43487,
+                    "initialValue": {
+                      "hexValue": "30",
+                      "id": 43486,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1672:1:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "nodeType": "VariableDeclarationStatement",
+                    "src": "1656:17:18"
+                  },
+                  "loopExpression": {
+                    "expression": {
+                      "id": 43493,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "src": "1701:7:18",
+                      "subExpression": {
+                        "id": 43492,
+                        "name": "index",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 43485,
+                        "src": "1701:5:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 43494,
+                    "nodeType": "ExpressionStatement",
+                    "src": "1701:7:18"
+                  },
+                  "nodeType": "ForStatement",
+                  "src": "1651:119:18"
+                },
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "id": 43510,
+                        "name": "proposalKey",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 43447,
+                        "src": "1798:11:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "id": 43507,
+                        "name": "_proposalKeys",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 43341,
+                        "src": "1779:13:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_uint256_$dyn_storage",
+                          "typeString": "uint256[] storage ref"
+                        }
+                      },
+                      "id": 43509,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "1793:4:18",
+                      "memberName": "push",
+                      "nodeType": "MemberAccess",
+                      "src": "1779:18:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_arraypush_nonpayable$_t_array$_t_uint256_$dyn_storage_ptr_$_t_uint256_$returns$__$attached_to$_t_array$_t_uint256_$dyn_storage_ptr_$",
+                        "typeString": "function (uint256[] storage pointer,uint256)"
+                      }
+                    },
+                    "id": 43511,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1779:31:18",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 43512,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1779:31:18"
+                }
+              ]
+            },
+            "functionSelector": "a08ca9d7",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "startWithdrawalProposal",
+            "nameLocation": "1031:23:18",
+            "parameters": {
+              "id": 43415,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 43408,
+                  "mutability": "mutable",
+                  "name": "fromBlock",
+                  "nameLocation": "1072:9:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43514,
+                  "src": "1064:17:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 43407,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1064:7:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 43410,
+                  "mutability": "mutable",
+                  "name": "tillBlock",
+                  "nameLocation": "1099:9:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43514,
+                  "src": "1091:17:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 43409,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1091:7:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 43414,
+                  "mutability": "mutable",
+                  "name": "transfers",
+                  "nameLocation": "1138:9:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43514,
+                  "src": "1118:29:18",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_calldata_ptr_$dyn_calldata_ptr",
+                    "typeString": "struct Elock.Transfer[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 43412,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 43411,
+                        "name": "Transfer",
+                        "nameLocations": [
+                          "1118:8:18"
+                        ],
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 43348,
+                        "src": "1118:8:18"
+                      },
+                      "referencedDeclaration": 43348,
+                      "src": "1118:8:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Transfer_$43348_storage_ptr",
+                        "typeString": "struct Elock.Transfer"
+                      }
+                    },
+                    "id": 43413,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1118:10:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_storage_$dyn_storage_ptr",
+                      "typeString": "struct Elock.Transfer[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1054:99:18"
+            },
+            "returnParameters": {
+              "id": 43416,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1161:0:18"
+            },
+            "scope": 43553,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "id": 43523,
+            "nodeType": "FunctionDefinition",
+            "src": "1823:116:18",
+            "nodes": [],
+            "body": {
+              "id": 43522,
+              "nodeType": "Block",
+              "src": "1902:37:18",
+              "nodes": [],
+              "statements": [
+                {
+                  "expression": {
+                    "id": 43520,
+                    "name": "_proposalKeys",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 43341,
+                    "src": "1919:13:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage",
+                      "typeString": "uint256[] storage ref"
+                    }
+                  },
+                  "functionReturnParameters": 43519,
+                  "id": 43521,
+                  "nodeType": "Return",
+                  "src": "1912:20:18"
+                }
+              ]
+            },
+            "functionSelector": "346750f3",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getProposalList",
+            "nameLocation": "1832:15:18",
+            "parameters": {
+              "id": 43515,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1847:2:18"
+            },
+            "returnParameters": {
+              "id": 43519,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 43518,
+                  "mutability": "mutable",
+                  "name": "proposalKeys",
+                  "nameLocation": "1888:12:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43523,
+                  "src": "1871:29:18",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 43516,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1871:7:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 43517,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1871:9:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1870:31:18"
+            },
+            "scope": 43553,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "id": 43552,
+            "nodeType": "FunctionDefinition",
+            "src": "1945:271:18",
+            "nodes": [],
+            "body": {
+              "id": 43551,
+              "nodeType": "Block",
+              "src": "2079:137:18",
+              "nodes": [],
+              "statements": [
+                {
+                  "assignments": [
+                    43538
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 43538,
+                      "mutability": "mutable",
+                      "name": "prop",
+                      "nameLocation": "2113:4:18",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 43551,
+                      "src": "2089:28:18",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_WithdrawProposal_$43357_memory_ptr",
+                        "typeString": "struct Elock.WithdrawProposal"
+                      },
+                      "typeName": {
+                        "id": 43537,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 43536,
+                          "name": "WithdrawProposal",
+                          "nameLocations": [
+                            "2089:16:18"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 43357,
+                          "src": "2089:16:18"
+                        },
+                        "referencedDeclaration": 43357,
+                        "src": "2089:16:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage_ptr",
+                          "typeString": "struct Elock.WithdrawProposal"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 43542,
+                  "initialValue": {
+                    "baseExpression": {
+                      "id": 43539,
+                      "name": "withdrawals",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43338,
+                      "src": "2120:11:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_WithdrawProposal_$43357_storage_$",
+                        "typeString": "mapping(uint256 => struct Elock.WithdrawProposal storage ref)"
+                      }
+                    },
+                    "id": 43541,
+                    "indexExpression": {
+                      "id": 43540,
+                      "name": "proposalKey",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 43525,
+                      "src": "2132:11:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "2120:24:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_WithdrawProposal_$43357_storage",
+                      "typeString": "struct Elock.WithdrawProposal storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2089:55:18"
+                },
+                {
+                  "expression": {
+                    "components": [
+                      {
+                        "expression": {
+                          "id": 43543,
+                          "name": "prop",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 43538,
+                          "src": "2162:4:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_WithdrawProposal_$43357_memory_ptr",
+                            "typeString": "struct Elock.WithdrawProposal memory"
+                          }
+                        },
+                        "id": 43544,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberLocation": "2167:9:18",
+                        "memberName": "fromBlock",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 43350,
+                        "src": "2162:14:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "expression": {
+                          "id": 43545,
+                          "name": "prop",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 43538,
+                          "src": "2178:4:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_WithdrawProposal_$43357_memory_ptr",
+                            "typeString": "struct Elock.WithdrawProposal memory"
+                          }
+                        },
+                        "id": 43546,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberLocation": "2183:9:18",
+                        "memberName": "tillBlock",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 43352,
+                        "src": "2178:14:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "expression": {
+                          "id": 43547,
+                          "name": "prop",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 43538,
+                          "src": "2194:4:18",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_WithdrawProposal_$43357_memory_ptr",
+                            "typeString": "struct Elock.WithdrawProposal memory"
+                          }
+                        },
+                        "id": 43548,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberLocation": "2199:9:18",
+                        "memberName": "transfers",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 43356,
+                        "src": "2194:14:18",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_memory_ptr_$dyn_memory_ptr",
+                          "typeString": "struct Elock.Transfer memory[] memory"
+                        }
+                      }
+                    ],
+                    "id": 43549,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "2161:48:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_uint256_$_t_uint256_$_t_array$_t_struct$_Transfer_$43348_memory_ptr_$dyn_memory_ptr_$",
+                      "typeString": "tuple(uint256,uint256,struct Elock.Transfer memory[] memory)"
+                    }
+                  },
+                  "functionReturnParameters": 43535,
+                  "id": 43550,
+                  "nodeType": "Return",
+                  "src": "2154:55:18"
+                }
+              ]
+            },
+            "functionSelector": "c7f758a8",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getProposal",
+            "nameLocation": "1954:11:18",
+            "parameters": {
+              "id": 43526,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 43525,
+                  "mutability": "mutable",
+                  "name": "proposalKey",
+                  "nameLocation": "1974:11:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43552,
+                  "src": "1966:19:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 43524,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1966:7:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1965:21:18"
+            },
+            "returnParameters": {
+              "id": 43535,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 43528,
+                  "mutability": "mutable",
+                  "name": "fromBlock",
+                  "nameLocation": "2020:9:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43552,
+                  "src": "2012:17:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 43527,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2012:7:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 43530,
+                  "mutability": "mutable",
+                  "name": "tillB",
+                  "nameLocation": "2039:5:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43552,
+                  "src": "2031:13:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 43529,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2031:7:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 43534,
+                  "mutability": "mutable",
+                  "name": "transfers",
+                  "nameLocation": "2064:9:18",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 43552,
+                  "src": "2046:27:18",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_memory_ptr_$dyn_memory_ptr",
+                    "typeString": "struct Elock.Transfer[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 43532,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 43531,
+                        "name": "Transfer",
+                        "nameLocations": [
+                          "2046:8:18"
+                        ],
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 43348,
+                        "src": "2046:8:18"
+                      },
+                      "referencedDeclaration": 43348,
+                      "src": "2046:8:18",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Transfer_$43348_storage_ptr",
+                        "typeString": "struct Elock.Transfer"
+                      }
+                    },
+                    "id": 43533,
+                    "nodeType": "ArrayTypeName",
+                    "src": "2046:10:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Transfer_$43348_storage_$dyn_storage_ptr",
+                      "typeString": "struct Elock.Transfer[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2011:63:18"
+            },
+            "scope": 43553,
+            "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           }
@@ -563,11 +3327,11 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "linearizedBaseContracts": [
-          43353
+          43553
         ],
         "name": "Elock",
         "nameLocation": "35:5:18",
-        "scope": 43354,
+        "scope": 43554,
         "usedErrors": [],
         "usedEvents": []
       }

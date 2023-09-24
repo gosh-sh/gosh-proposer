@@ -10,7 +10,7 @@ contract ElockTest is Test {
     address user3 = address(0x300);
 
     function setUp() public {
-        elock = new Elock();
+        elock = new Elock(1);
     }
 
     function test_totalSupply() public {
@@ -18,25 +18,57 @@ contract ElockTest is Test {
 
         elock.deposit{value: 1 ether}(100);
         assertEq(elock.totalSupply(), 1 ether);
-    }
-
-    function test_trxCount() public {
-        assertEq(elock.trxCount(), 0);
-
-        elock.deposit{value: 1 ether}(100);
-        assertEq(elock.trxCount(), 1);
-
-        elock.deposit{value: 1 ether}(100);
-        assertEq(elock.trxCount(), 2);
 
         vm.expectRevert();
         payable(address(elock)).transfer(1 ether);
-        assertEq(elock.trxCount(), 2);
-        assertEq(elock.totalSupply(), 2 ether);
+        assertEq(elock.totalSupply(), 1 ether);
 
         vm.expectRevert();
         elock.deposit{value: 0 ether}(100);
-        assertEq(elock.trxCount(), 2);
-        assertEq(elock.totalSupply(), 2 ether);
+        assertEq(elock.totalSupply(), 1 ether);
+    }
+
+    function test_trxDepositCount() public {
+        assertEq(elock.trxDepositCount(), 0);
+
+        elock.deposit{value: 1 ether}(100);
+        assertEq(elock.trxDepositCount(), 1);
+
+        elock.deposit{value: 1 ether}(100);
+        assertEq(elock.trxDepositCount(), 2);
+
+        vm.expectRevert();
+        payable(address(elock)).transfer(1 ether);
+        assertEq(elock.trxDepositCount(), 2);
+
+        vm.expectRevert();
+        elock.deposit{value: 0 ether}(100);
+        assertEq(elock.trxDepositCount(), 2);
+    }
+
+    function test_startWithdrawalProposal() public {
+        uint256 fromBlock = 1;
+        uint256 tillBlock = 2;
+        Elock.Transfer memory transfer1 = Elock.Transfer({
+            to: payable(address(this)),
+            value: 0.5 ether,
+            trxHash: 0xbeef
+        });
+        Elock.Transfer[] memory transfers = new Elock.Transfer[](1);
+        transfers[0] = transfer1;
+        elock.startWithdrawalProposal(fromBlock, tillBlock, transfers);
+
+        uint256[] memory proposalKeys = elock.getProposalList();
+        assertEq(proposalKeys.length, 1);
+        uint256 BlockA;
+        uint256 BlockB;
+        Elock.Transfer[] memory _transfers;
+        (BlockA, BlockB, _transfers) = elock.getProposal(proposalKeys[0]);
+        assertEq(BlockA, fromBlock);
+        assertEq(BlockB, tillBlock);
+        assertEq(_transfers.length, 1);
+
+        vm.expectRevert("Proposal already exists");
+        elock.startWithdrawalProposal(fromBlock, tillBlock, transfers);
     }
 }
