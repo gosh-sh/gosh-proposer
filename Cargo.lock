@@ -3460,6 +3460,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "withdraw_proposal_checker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "common",
+ "dotenv",
+ "serde",
+ "serde_json",
+ "tokio",
+ "ton_client",
+ "tracing",
+ "web3",
+]
+
+[[package]]
 name = "wyz"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
