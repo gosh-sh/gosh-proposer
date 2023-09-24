@@ -41,12 +41,12 @@ interface ARootToken {
 }
 
 library ProposalLib {
-    function calculateProposalAddress(TvmCell code, optional(uint256) hash, uint128 index, address root) public returns(address) {
+    function calculateProposalAddress(TvmCell code, uint256 hash, uint128 index, address root) public returns(address) {
         TvmCell s1 = composeProposalStateInit(code, hash, index, root);
         return address.makeAddrStd(0, tvm.hash(s1));
     }
 
-     function composeProposalStateInit(TvmCell code, optional(uint256) hash, uint128 index, address root) public returns(TvmCell) {
+     function composeProposalStateInit(TvmCell code, uint256 hash, uint128 index, address root) public returns(TvmCell) {
         TvmCell Proposalcode = buildProposalCode(code, hash);
         TvmCell s1 = tvm.buildStateInit({
             code: Proposalcode,
@@ -58,7 +58,7 @@ library ProposalLib {
 
     function buildProposalCode(
         TvmCell originalCode,
-        optional(uint256) hash
+        uint256 hash
     ) public returns (TvmCell) {
         TvmBuilder b;
         b.store(hash);

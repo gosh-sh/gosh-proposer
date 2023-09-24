@@ -6,7 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"hash","type":"optional(uint256)"},
+				{"name":"hash","type":"uint256"},
 				{"name":"newhash","type":"uint256"},
 				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"}
 			],
@@ -33,7 +33,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"hash","type":"optional(uint256)"},
+				{"name":"hash","type":"uint256"},
 				{"name":"newhash","type":"uint256"},
 				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"},
 				{"name":"index","type":"uint128"},
@@ -68,7 +68,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"_hash","type":"optional(uint256)"},
+		{"name":"_hash","type":"uint256"},
 		{"name":"_newhash","type":"uint256"},
 		{"name":"_root","type":"address"},
 		{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"_transactions","type":"tuple[]"},
