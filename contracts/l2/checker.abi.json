@@ -6,6 +6,7 @@
 		{
 			"name": "constructor",
 			"inputs": [
+				{"name":"prevhash","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -48,7 +49,7 @@
 		{
 			"name": "setNewHash",
 			"inputs": [
-				{"name":"prevhash","type":"optional(uint256)"},
+				{"name":"prevhash","type":"uint256"},
 				{"name":"newhash","type":"uint256"},
 				{"name":"index","type":"uint128"},
 				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"}
@@ -59,9 +60,18 @@
 		{
 			"name": "destroyTrash",
 			"inputs": [
-				{"name":"prevhash","type":"optional(uint256)"},
+				{"name":"prevhash","type":"uint256"},
 				{"name":"indexmax","type":"uint128"},
 				{"name":"index","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "updateCode",
+			"inputs": [
+				{"name":"newcode","type":"cell"},
+				{"name":"cell","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -97,7 +107,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"prevhash","type":"optional(uint256)"},
+				{"name":"prevhash","type":"uint256"},
 				{"name":"index","type":"uint128"}
 			]
 		}
@@ -110,7 +120,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"_prevhash","type":"optional(uint256)"},
+		{"name":"_prevhash","type":"uint256"},
 		{"name":"_root","type":"address"},
 		{"name":"_index","type":"uint128"},
 		{"name":"_proposalCode","type":"cell"}

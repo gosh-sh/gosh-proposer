@@ -30,7 +30,7 @@ contract Proposal_Test {
         _;
     }
 
-    optional(uint256) _hash;
+    uint256 _hash;
     uint256 _newhash;
     address static _root;
     TransactionBatch[] _transactions;
@@ -39,7 +39,7 @@ contract Proposal_Test {
     mapping(uint16 => uint256) _vdict;
     
     constructor(
-        optional(uint256) hash,
+        uint256 hash,
         uint256 newhash,
         TransactionBatch[] transactions
     ) accept {
@@ -89,7 +89,7 @@ contract Proposal_Test {
     }
 
     //Getter 
-    function getDetails() external view returns(optional(uint256) hash, uint256 newhash, TransactionBatch[] transactions, uint128 index){
+    function getDetails() external view returns(uint256 hash, uint256 newhash, TransactionBatch[] transactions, uint128 index){
         return (_hash, _newhash, _transactions, _index);
     }
 

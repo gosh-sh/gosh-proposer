@@ -15,7 +15,7 @@ contract Checker {
 
     string constant _version = "1.0.0";
 
-    optional(uint256) _prevhash;
+    uint256 _prevhash;
 
     address _root;
     uint128 _index = 0;
@@ -38,7 +38,9 @@ contract Checker {
     }
     
     constructor(
+        uint256 prevhash
     ) accept {
+        _prevhash = prevhash;
     }
 
     function setRootContract (address root) public onlyOwner accept {
@@ -71,10 +73,8 @@ contract Checker {
         dataslice.skip(8);
         (uint256 newhash) = dataslice.load(uint256);
         if (index == 0) {
-            if (_prevhash.hasValue()) {
-                if (_prevhash.get() != newhash) {
+            if (_prevhash != newhash) {
                     return;
-                }
             }
         }
         else {
@@ -88,17 +88,15 @@ contract Checker {
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
     }
 
-    function setNewHash(optional(uint256) prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
-        if (_prevhash.hasValue()) {
-            require(_prevhash.get() == prevhash.get(), ERR_WRONG_HASH);
-        }
+    function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
+        require(_prevhash == prevhash, ERR_WRONG_HASH);
         ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, transactions);
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _index, 0);
         _prevhash = newhash;
         _index = 0;
     }
 
-    function destroyTrash(optional(uint256) prevhash, uint128 indexmax, uint128 index) public view senderIs(this) accept {
+    function destroyTrash(uint256 prevhash, uint128 indexmax, uint128 index) public view senderIs(this) accept {
         for (uint128 i = 0; i < BATCH_SIZE; i++) {
             if (index + i > indexmax) {
                 return;
@@ -106,6 +104,16 @@ contract Checker {
             Proposal(ProposalLib.calculateProposalAddress(_proposalCode, prevhash, index + i, this)).destroy{value: 0.1 ton, flag: 1}();
         }
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, index + BATCH_SIZE, 0);
+    }
+
+    function updateCode(TvmCell newcode, TvmCell cell) public view onlyOwner accept {
+        cell;
+        tvm.setcode(newcode);
+        tvm.setCurrentCode(newcode);
+        onCodeUpgrade();
+    }
+
+    function onCodeUpgrade() private pure {
     }
 
     //Fallback/Receive
@@ -136,7 +144,7 @@ contract Checker {
         return result;
     }
 
-    function getStatus() external view returns(optional(uint256) prevhash, uint128 index) {
+    function getStatus() external view returns(uint256 prevhash, uint128 index) {
         return (_prevhash, _index);
     }
 }
