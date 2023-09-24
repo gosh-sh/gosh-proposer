@@ -8,9 +8,12 @@ use web3::transports::WebSocket;
 use web3::types::{Transaction, TransactionId, H256, U64};
 use web3::{helpers as w3h, Web3};
 
+use crate::helper::deserialize_u128;
+
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Transfer {
     pub pubkey: String,
+    #[serde(deserialize_with = "deserialize_u128")]
     pub value: u128,
     pub hash: String,
 }

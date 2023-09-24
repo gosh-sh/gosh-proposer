@@ -2,6 +2,7 @@ use common::{eth::transfer::Transfer, gosh::{helper::load_keys, call_function, c
 use std::{env};
 use serde::Deserialize;
 use common::gosh::helper::EverClient;
+use common::helper::deserialize_u128;
 
 const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 const PROPOSAL_ABI_PATH: &str = "contracts/l2/proposal.abi.json";
@@ -18,7 +19,9 @@ pub struct ProposalDetails {
     #[serde(rename = "newhash")]
     pub new_hash: String,
     pub transactions: Vec<Transfer>,
+    #[serde(deserialize_with = "deserialize_u128")]
     pub index: u128,
+    #[serde(deserialize_with = "deserialize_u128")]
     pub need: u128,
 }
 
@@ -74,9 +77,10 @@ pub async fn find_proposals(
 pub async fn approve_proposal(
     context: &EverClient,
     proposal_address: String,
+    index: u128,
 ) -> anyhow::Result<()> {
-    let proposal_abi = "../contracts/l2/proposal_test.abi.json";
-    let key_path = "../tests/keys.json";
+    let proposal_abi = "contracts/l2/proposal_test.abi.json";
+    let key_path = "tests/keys.json";
     let keys = Some(load_keys(key_path)?);
 
     call_function(
@@ -85,7 +89,7 @@ pub async fn approve_proposal(
         proposal_abi,
         keys,
         "setVote",
-        Some(serde_json::json!({"id": 0})),
+        Some(serde_json::json!({"id": index})),
     ).await?;
     Ok(())
 }

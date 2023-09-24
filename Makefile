@@ -26,7 +26,7 @@ run_checker:
 
 .PHONY: check
 check:
-	cargo check -p gosh_proposer --release
+	cargo check --release
 
 .PHONY: debug_run
 debug_run:

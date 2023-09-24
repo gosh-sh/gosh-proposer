@@ -72,5 +72,8 @@ pub async fn validate_proposal(
 
         block_id = BlockId::Hash(block.parent_hash);
     }
+    if !verifying_transfers.is_empty() {
+        anyhow::bail!("Not all transfers were found in block chain");
+    }
     Ok(())
 }

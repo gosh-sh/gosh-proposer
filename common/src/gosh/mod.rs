@@ -78,12 +78,10 @@ pub async fn call_getter(
             return_updated_account: None,
         },
     )
-    .await;
-    tracing::info!("getter result: {result:?}");
-    let result = result
-        .map(|r| r.decoded.unwrap())
-        .map(|r| r.output.unwrap())
-        .map_err(|e| anyhow::format_err!("run_local failed: {e}"))?;
+    .await
+    .map(|r| r.decoded.unwrap())
+    .map(|r| r.output.unwrap())
+    .map_err(|e| anyhow::format_err!("run_local failed: {e}"))?;
 
     Ok(result)
 }
