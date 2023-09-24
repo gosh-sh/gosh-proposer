@@ -143,7 +143,7 @@ public:
     return dest;
   }
 
-  void burn_tokens(uint256 pubkey, address_opt owner, uint128 tokens) {
+  void burn_tokens(uint256 pubkey, address_opt owner, uint128 tokens, address to) {
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
     require(total_granted_ >= tokens, error_code::not_enough_balance);
