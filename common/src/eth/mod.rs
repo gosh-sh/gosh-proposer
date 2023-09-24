@@ -47,11 +47,10 @@ pub async fn read_block(
     }
     .await?;
 
-    tracing::info!("{}", serde_json::to_string_pretty(&block)?);
     Ok(serde_json::from_value(block)?)
 }
 
-async fn _get_storage_proof(
+pub async fn get_storage_proof(
     web3s: &Web3<WebSocket>,
     account: Address,
     block_num: Option<BlockNumber>,
