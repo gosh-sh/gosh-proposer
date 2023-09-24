@@ -104,7 +104,8 @@ __interface IRootTokenContract {
   void burn_tokens(
     uint256 pubkey, 
     address_opt owner,
-    uint128 tokens
+    uint128 tokens,
+    uint256 to
   ) = 1017;
 
   /// Mint tokens. Allocates new tokens (increases total_supply_).

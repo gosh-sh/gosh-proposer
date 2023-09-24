@@ -137,7 +137,8 @@ __interface ITONTokenWallet {
   TIP3_EXTERNAL
   [[internal, answer_id]]
   void burn_tokens(
-    uint128 tokens
+    uint128 tokens,
+    uint256 to
   ) = 1003;
 
   /// Lock tokens in tip3 wallet contract.
