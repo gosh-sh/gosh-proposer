@@ -534,6 +534,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "deposit-proposal-checker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "common",
+ "dotenv",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "web3",
+]
+
+[[package]]
 name = "deranged"
 version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1807,20 +1821,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d433d9f1a3e8c1263d9456598b16fec66f4acc9a74dacffd35c7bb09b3a1328"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "proposal-checker"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "common",
- "dotenv",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
- "web3",
 ]
 
 [[package]]

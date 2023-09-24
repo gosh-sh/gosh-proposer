@@ -21,8 +21,8 @@ run_proposer:
 	cargo run -p gosh_proposer --release
 
 .PHONY: run_checker
-run_proposer:
-	cargo run -p l2-proposal-checker --release
+run_checker:
+	cargo run -p deposit-proposal-checker --release
 
 .PHONY: check
 check:

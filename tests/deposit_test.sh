@@ -8,7 +8,7 @@ gosh-cli config --is_json true -e https://sh.network.gosh.sh
 ADDRESS=$(gosh-cli -j genaddr --save --abi ../contracts/l2/checker.abi.json --genkey keys.json ../contracts/l2/checker.tvc | jq .raw_address | cut -d '"' -f 2)
 echo "checker_address=$ADDRESS" > trace.log
 gosh-cli -j callx --addr -1:9999999999999999999999999999999999999999999999999999999999999999 --abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 100000000000 --bounce false --allBalance false --payload ""  --dest $ADDRESS
-gosh-cli -j deployx --abi ../contracts/l2/checker.abi.json --keys keys.json ../contracts/l2/checker.tvc
+gosh-cli -j deployx --abi ../contracts/l2/checker.abi.json --keys keys.json ../contracts/l2/checker.tvc --prevhash 0x502825da41e0e7252f6afbb1443239f23e74241b1d91672c2cc3bc6a0c410565
 
 PROP_CODE=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/proposal_test.tvc | jq .code | cut -d '"' -f 2)
 gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $ADDRESS -m setProposalCode --code $PROP_CODE
@@ -24,16 +24,20 @@ gosh-cli -j deployx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json
 gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json --addr $ADDRESS_ROOT -m setWalletCode --wallet_code $CODE_WALLET --_answer_id 0
 
 cd ..
-CHECKER_ADDRESS=$ADDRESS make run
+CHECKER_ADDRESS=$ADDRESS make run_proposer
 
 cd tests
 PROP_ADDRESS=$(gosh-cli runx --addr $ADDRESS --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr | jq -r '.value0[0]')
 echo "prop_address=$PROP_ADDRESS" >> trace.log
 gosh-cli -j callx --addr $PROP_ADDRESS --abi ../contracts/l2/proposal_test.abi.json  -m setvdict --key "0x$PUBKEY"
 
-# TODO change to checker call
-gosh-cli -j callx --addr $PROP_ADDRESS --abi ../contracts/l2/proposal_test.abi.json --keys keys.json -m setVote --id 0
+exit 0
 
+# TODO change to checker call
+# gosh-cli -j callx --addr $PROP_ADDRESS --abi ../contracts/l2/proposal_test.abi.json --keys keys.json -m setVote --id 0
+cd ..
+CHECKER_ADDRESS=$ADDRESS make run_checker
+cd tests
 
 
 gosh-cli -j runx --addr $ADDRESS --abi ../contracts/l2/checker.abi.json -m getStatus

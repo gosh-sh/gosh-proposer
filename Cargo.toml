@@ -3,7 +3,7 @@ members = [
     #
     "common",
     "gosh-proposer",
-    "l2-proposal-checker",
+    "deposit-proposal-checker",
 ]
 resolver = "2"
 

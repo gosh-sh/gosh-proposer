@@ -16,7 +16,7 @@ pub async fn call_getter(
     function_name: &str,
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<serde_json::Value> {
-    tracing::trace!("call_getter: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
+    tracing::info!("call_getter: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
     let filter = Some(serde_json::json!({
         "id": { "eq": address }
     }));
@@ -78,10 +78,12 @@ pub async fn call_getter(
             return_updated_account: None,
         },
     )
-    .await
-    .map(|r| r.decoded.unwrap())
-    .map(|r| r.output.unwrap())
-    .map_err(|e| anyhow::format_err!("run_local failed: {e}"))?;
+    .await;
+    tracing::info!("getter result: {result:?}");
+    let result = result
+        .map(|r| r.decoded.unwrap())
+        .map(|r| r.output.unwrap())
+        .map_err(|e| anyhow::format_err!("run_local failed: {e}"))?;
 
     Ok(result)
 }

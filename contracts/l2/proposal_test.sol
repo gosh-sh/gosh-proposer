@@ -89,8 +89,9 @@ contract Proposal_Test {
     }
 
     //Getter 
-    function getDetails() external view returns(uint256 hash, uint256 newhash, TransactionBatch[] transactions, uint128 index){
-        return (_hash, _newhash, _transactions, _index);
+    function getDetails() external view returns(uint256 hash, uint256 newhash, TransactionBatch[] transactions, uint128 index, uint128 need) {
+        uint128 _need = 1св ;
+        return (_hash, _newhash, _transactions, _index, _need);
     }
 
     function getVersion() external pure returns(string, string) {

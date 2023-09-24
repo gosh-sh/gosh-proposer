@@ -44,7 +44,8 @@
 				{"name":"hash","type":"uint256"},
 				{"name":"newhash","type":"uint256"},
 				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"},
-				{"name":"index","type":"uint128"}
+				{"name":"index","type":"uint128"},
+				{"name":"need","type":"uint128"}
 			]
 		},
 		{
