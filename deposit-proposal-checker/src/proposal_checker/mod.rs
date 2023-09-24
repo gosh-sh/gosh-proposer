@@ -1,5 +1,5 @@
-use std::env;
 use common::gosh::helper::create_client;
+use std::env;
 use web3::transports::WebSocket;
 use web3::Web3;
 
@@ -20,4 +20,3 @@ pub async fn check_proposals() -> anyhow::Result<()> {
     }
     Ok(())
 }
-

@@ -1,5 +1,5 @@
-use common::eth::read_block;
 use crate::proposer::propose::propose_blocks;
+use common::eth::read_block;
 use std::env;
 use web3::transports::WebSocket;
 use web3::types::{BlockId, BlockNumber, U64};

@@ -1,2 +1,2 @@
-mod monitor;
 pub mod burn;
+mod monitor;

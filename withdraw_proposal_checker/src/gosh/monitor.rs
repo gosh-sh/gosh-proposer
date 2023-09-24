@@ -1,9 +1,8 @@
-use std::sync::Arc;
+use common::gosh::helper::EverClient;
 use serde::Deserialize;
 use serde_json::json;
+use std::sync::Arc;
 use ton_client::net::ParamsOfQuery;
-use common::gosh::helper::EverClient;
-
 
 #[derive(Deserialize, Debug)]
 pub struct InMessage {
@@ -18,7 +17,7 @@ struct Node {
     #[serde(rename = "lt")]
     _lt: String,
     #[serde(rename = "block_id")]
-    _block_id: String
+    _block_id: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -57,7 +56,7 @@ pub async fn query_messages(
         }
       }
     }"#
-        .to_string();
+    .to_string();
 
     let mut after = "".to_string();
     let dst_address = root_address.to_string();
@@ -72,16 +71,14 @@ pub async fn query_messages(
                     "addr": dst_address.clone(),
                     "after": after
                 })),
-                ..Default::default()
             },
         )
-            .await
-            .map(|r| r.result)
-            .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
+        .await
+        .map(|r| r.result)
+        .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
         let nodes = &result["data"]["blockchain"]["account"]["transactions_by_lt"];
         let nodes: Messages = serde_json::from_value(nodes.clone())
             .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
-
 
         after = nodes.page_info.end_cursor;
         for node in nodes.edges {

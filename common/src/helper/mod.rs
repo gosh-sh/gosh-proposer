@@ -1,11 +1,11 @@
-use serde::{Deserializer, Deserialize};
+use serde::{Deserialize, Deserializer};
 
 pub mod tracing;
 
 pub fn deserialize_u128<'de, D>(deserializer: D) -> Result<u128, D::Error>
-    where
-        D: Deserializer<'de>,
+where
+    D: Deserializer<'de>,
 {
     let s = String::deserialize(deserializer)?;
-    Ok(u128::from_str_radix(&s, 10).unwrap_or_default())
+    Ok(s.parse::<u128>().unwrap_or_default())
 }

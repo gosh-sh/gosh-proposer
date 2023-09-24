@@ -13,7 +13,6 @@ use web3::Web3;
 const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 const KEY_PATH: &str = "tests/keys.json";
 
-
 pub async fn propose_blocks(
     web3s: &Web3<WebSocket>,
     blocks: Vec<FullBlock<H256>>,

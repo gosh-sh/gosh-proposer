@@ -32,7 +32,12 @@ pub fn decode_transfer(
     tracing::trace!("input_str: {input_str}");
     let func_code = input_str[3..11].to_string();
     let func_signature: String = match code_sig_lookup.get(&func_code) {
-        Some(func_sig) => format!("{:?}", func_sig.get(0).ok_or(anyhow::format_err!("Failed to decode function signature"))?),
+        Some(func_sig) => format!(
+            "{:?}",
+            func_sig
+                .get(0)
+                .ok_or(anyhow::format_err!("Failed to decode function signature"))?
+        ),
         _ => {
             tracing::trace!("Function not found.");
             anyhow::bail!("Function not found.");
@@ -59,7 +64,10 @@ pub fn decode_transfer(
         tx.gas_price.unwrap(),
     );
 
-    let tx_value = w3h::to_string(&tx.value).replace('"', "").trim_start_matches("0x").to_string();
+    let tx_value = w3h::to_string(&tx.value)
+        .replace('"', "")
+        .trim_start_matches("0x")
+        .to_string();
 
     let tx_hash = w3h::to_string(&tx.hash).replace('"', "");
     let value = u128::from_str_radix(&tx_value, 16);
@@ -118,9 +126,8 @@ pub async fn filter_and_decode_block_transactions(
             continue;
         }
 
-        match decode_transfer(tx, code_sig_lookup) {
-            Ok(transfer) => res.push(transfer),
-            Err(_) => {}
+        if let Ok(transfer) = decode_transfer(tx, code_sig_lookup) {
+            res.push(transfer);
         }
     }
     tracing::info!("block {} transfers: {:?}", w3h::to_string(&block.hash), res);

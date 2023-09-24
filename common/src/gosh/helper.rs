@@ -19,15 +19,14 @@ pub fn create_client() -> anyhow::Result<EverClient> {
         .map(|e| e.to_string())
         .collect::<Vec<String>>();
     tracing::info!("create gosh client. endpoints: {endpoints:?}");
-
     let message_processing_timeout = env::var(MESSAGE_PROCESSING_TIMEOUT)
-        .map(|secs| Duration::from_secs(u64::from_str_radix(&secs, 10).unwrap_or(0)))
+        .map(|secs| Duration::from_secs(secs.parse::<u64>().unwrap_or(0)))
         .unwrap_or(DEFAULT_BLOCKCHAIN_TIMEOUT);
     let wait_for_timeout = env::var(WAIT_FOR_TIMEOUT)
-        .map(|secs| Duration::from_secs(u64::from_str_radix(&secs, 10).unwrap_or(0)))
+        .map(|secs| Duration::from_secs(secs.parse::<u64>().unwrap_or(0)))
         .unwrap_or(DEFAULT_BLOCKCHAIN_TIMEOUT);
     let query_timeout = env::var(QUERY_TIMEOUT)
-        .map(|secs| Duration::from_secs(u64::from_str_radix(&secs, 10).unwrap_or(0)))
+        .map(|secs| Duration::from_secs(secs.parse::<u64>().unwrap_or(0)))
         .unwrap_or(DEFAULT_BLOCKCHAIN_TIMEOUT);
 
     let config = ClientConfig {

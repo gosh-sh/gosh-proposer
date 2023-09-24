@@ -1,8 +1,11 @@
-use common::{eth::transfer::Transfer, gosh::{helper::load_keys, call_function, call_getter}};
-use std::{env};
-use serde::Deserialize;
 use common::gosh::helper::EverClient;
 use common::helper::deserialize_u128;
+use common::{
+    eth::transfer::Transfer,
+    gosh::{call_function, call_getter, helper::load_keys},
+};
+use serde::Deserialize;
+use std::env;
 
 const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 const PROPOSAL_ABI_PATH: &str = "contracts/l2/proposal.abi.json";
@@ -31,9 +34,7 @@ pub struct Proposal {
     pub details: ProposalDetails,
 }
 
-pub async fn find_proposals(
-    context: &EverClient,
-) -> anyhow::Result<Vec<Proposal>> {
+pub async fn find_proposals(context: &EverClient) -> anyhow::Result<Vec<Proposal>> {
     let checker_address = env::var("CHECKER_ADDRESS")?;
 
     let proposal_addresses = call_getter(
@@ -42,7 +43,8 @@ pub async fn find_proposals(
         CHECKER_ABI_PATH,
         "getAllProposalAddr",
         None,
-    ).await?;
+    )
+    .await?;
     tracing::info!("Get prop addresses res: {:?}", proposal_addresses);
     let proposal_addresses: AllProposals = serde_json::from_value(proposal_addresses)?;
 
@@ -50,7 +52,7 @@ pub async fn find_proposals(
         0 => {
             tracing::info!("There are no proposals in the checker contract");
             std::process::exit(0);
-        },
+        }
         val => {
             tracing::info!("There are {val} proposals in the checker contract.");
         }
@@ -63,7 +65,8 @@ pub async fn find_proposals(
             PROPOSAL_ABI_PATH,
             "getDetails",
             None,
-        ).await?;
+        )
+        .await?;
         tracing::info!("Proposal details: {}", proposal_details);
         let proposal_details: ProposalDetails = serde_json::from_value(proposal_details)?;
         res.push(Proposal {
@@ -84,12 +87,13 @@ pub async fn approve_proposal(
     let keys = Some(load_keys(key_path)?);
 
     call_function(
-        &context,
+        context,
         &proposal_address,
         proposal_abi,
         keys,
         "setVote",
         Some(serde_json::json!({"id": index})),
-    ).await?;
+    )
+    .await?;
     Ok(())
 }
