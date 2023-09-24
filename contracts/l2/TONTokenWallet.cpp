@@ -79,7 +79,7 @@ public:
     dest_handle(5e8, 1).askEvers(wallet_pubkey_, owner_address_);
   }
 
-  void burn_tokens(uint128 tokens, address to) {
+  void burn_tokens(uint128 tokens, uint256 to) {
     require(balance_ >= tokens, error_code::not_enough_balance);
     balance_ -= tokens;
     IRootTokenContractPtr dest_handle(root_address_);

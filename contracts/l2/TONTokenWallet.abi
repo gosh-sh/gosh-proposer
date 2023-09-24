@@ -12,7 +12,7 @@
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
     { "name":"tokens", "type":"uint128" },
-    { "name":"to", "type":"address" }
+    { "name":"to", "type":"uint256" }
     ],
     "outputs": [
     ],

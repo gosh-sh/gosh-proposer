@@ -105,7 +105,7 @@ __interface IRootTokenContract {
     uint256 pubkey, 
     address_opt owner,
     uint128 tokens,
-    address to
+    uint256 to
   ) = 1017;
 
   /// Mint tokens. Allocates new tokens (increases total_supply_).
