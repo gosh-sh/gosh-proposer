@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 set -x
 
-ETH_PREV_HASH=0x8d945cccc417457135cd5c930af42731de9e9a6013d7cfad032120ea99f9e048
+ETH_PREV_HASH=0x4d378e9d6752162d3b6f89e118f790cd5bd0d66ceb8e680101e7870cf73ba2d4
 OUT_ENV=env.deposit
 
 gosh-cli config --is_json true -e https://sh.network.gosh.sh
@@ -17,6 +17,7 @@ rm ../contracts/l2/checker2.tvc
 
 PROP_CODE=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/proposal_test.tvc | jq .code | cut -d '"' -f 2)
 gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $ADDRESS -m setProposalCode --code $PROP_CODE
+PUBKEY=$(cat keys.json | jq  -r .public)
 
 cp ../contracts/l2/RootTokenContract.tvc ../contracts/l2/RootTokenContract2.tvc
 ADDRESS_ROOT=$(gosh-cli -j genaddr --save --abi ../contracts/l2/RootTokenContract.abi --setkey keys.json ../contracts/l2/RootTokenContract2.tvc | jq .raw_address | cut -d '"' -f 2)
@@ -24,7 +25,6 @@ echo "export ROOT_ADDRESS=$ADDRESS_ROOT" >> $OUT_ENV
 gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $ADDRESS -m setRootContract --root $ADDRESS_ROOT
 
 CODE_WALLET=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/TONTokenWallet.tvc | jq .code | cut -d '"' -f 2)
-PUBKEY=$(cat keys.json | jq  -r .public)
 gosh-cli -j callx --addr -1:9999999999999999999999999999999999999999999999999999999999999999 --abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 1000000000000 --bounce false --allBalance false --payload ""  --dest $ADDRESS_ROOT
 gosh-cli -j deployx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json ../contracts/l2/RootTokenContract2.tvc --name "geth" --symbol "gth" --decimals 18 --root_pubkey "0x$PUBKEY" --root_owner null --total_supply 0 --checker $ADDRESS
 gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json --addr $ADDRESS_ROOT -m setWalletCode --wallet_code $CODE_WALLET --_answer_id 0

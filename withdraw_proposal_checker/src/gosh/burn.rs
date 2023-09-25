@@ -11,7 +11,7 @@ const ROOT_FUNCTION_NAME: &str = "burn_tokens";
 pub struct Burn {
     pub dest: String,
     pub value: u128,
-    pub msg_id: String,
+    pub tx_id: String,
 }
 
 #[derive(Deserialize)]
@@ -25,15 +25,17 @@ struct BurnArguments {
     to: String,
 }
 
-pub async fn find_burns(context: &EverClient, root_address: &str) -> anyhow::Result<Vec<Burn>> {
-    let messages = query_messages(context, root_address).await?;
+pub async fn find_burns(context: &EverClient, root_address: &str, start_lt: &str) -> anyhow::Result<(Vec<Burn>, String)> {
+    let messages = query_messages(context, root_address, start_lt).await?;
 
     let abi_json = std::fs::read_to_string(ROOT_ABI_PATH)?;
     let abi = Abi::Json(abi_json);
 
     let mut res = vec![];
+    let mut last_trans_lt = 0_u128;
+    let mut last_block_id = "".to_string();
     for message in messages {
-        let body = message.body.unwrap();
+        let body = message.body;
         tracing::info!("decode message: {} {body}", message.id);
         let decode_params = ParamsOfDecodeMessageBody {
             abi: abi.clone(),
@@ -48,15 +50,19 @@ pub async fn find_burns(context: &EverClient, root_address: &str) -> anyhow::Res
             if decode_result.name != ROOT_FUNCTION_NAME {
                 continue;
             }
+            if message.lt > last_trans_lt {
+                last_trans_lt = message.lt;
+                last_block_id = message.block_id;
+            }
             let args: BurnArguments = serde_json::from_value(decode_result.value.unwrap())?;
             res.push(Burn {
                 dest: args.to,
                 value: args.tokens.parse::<u128>()?,
-                msg_id: message.id,
+                tx_id: message.tx_id,
             })
         } else {
             tracing::info!("Failed to decode message, skip it. ID={}", message.id);
         }
     }
-    Ok(res)
+    Ok((res, last_block_id))
 }

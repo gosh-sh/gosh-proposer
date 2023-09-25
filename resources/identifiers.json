@@ -2,10 +2,25 @@
   "b6b55f25": [
     "deposit(uint256)"
   ],
+  "c7f758a8": [
+    "getProposal(uint256)"
+  ],
+  "346750f3": [
+    "getProposalList()"
+  ],
+  "33de61d2": [
+    "lastProcessedBlock()"
+  ],
+  "a08ca9d7": [
+    "startWithdrawalProposal(uint256,uint256,(address,uint256,uint256)[])"
+  ],
   "18160ddd": [
     "totalSupply()"
   ],
-  "7d2674f1": [
-    "trxCount()"
+  "24c37d6e": [
+    "trxDepositCount()"
+  ],
+  "939947b8": [
+    "trxWithdrawCount()"
   ]
 }

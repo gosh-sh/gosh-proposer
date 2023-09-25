@@ -1,6 +1,6 @@
 import json
 
-INPUT_FILE = 'resources/elock_full_abi.json'
+INPUT_FILE = 'contracts/l1/out/Elock.sol/Elock.json'
 OUTPUT_ABI = 'resources/elock.abi.json'
 OUTPUT_IDS = 'resources/identifiers.json'
 

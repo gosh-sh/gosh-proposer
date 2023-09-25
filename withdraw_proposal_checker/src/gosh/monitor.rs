@@ -4,8 +4,16 @@ use serde_json::json;
 use std::sync::Arc;
 use ton_client::net::ParamsOfQuery;
 
+pub struct Message {
+    pub id: String,
+    pub body: String,
+    pub tx_id: String,
+    pub block_id: String,
+    pub lt: u128,
+}
+
 #[derive(Deserialize, Debug)]
-pub struct InMessage {
+struct InMessage {
     pub id: String,
     pub body: Option<String>,
     pub msg_type: u8,
@@ -15,10 +23,10 @@ pub struct InMessage {
 struct Node {
     #[serde(rename = "in_message")]
     message: InMessage,
-    #[serde(rename = "lt")]
-    _lt: String,
-    #[serde(rename = "block_id")]
-    _block_id: String,
+    aborted: bool,
+    lt: String,
+    block_id: String,
+    id: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -43,7 +51,8 @@ struct Messages {
 pub async fn query_messages(
     context: &EverClient,
     root_address: &str,
-) -> anyhow::Result<Vec<InMessage>> {
+    start_lt: &str,
+) -> anyhow::Result<Vec<Message>> {
     tracing::info!("query messages to root, address={root_address}");
     let query = r#"query($addr: String!, $after: String){
       blockchain {
@@ -54,8 +63,10 @@ pub async fn query_messages(
                 in_message {
                   id body msg_type
                 }
+                aborted
                 lt(format: DEC)
                 block_id
+                id
               }
             }
             pageInfo { hasNextPage endCursor }
@@ -65,7 +76,7 @@ pub async fn query_messages(
     }"#
     .to_string();
 
-    let mut after = "".to_string();
+    let mut after = start_lt.to_string();
     let dst_address = root_address.to_string();
     let mut result_messages = vec![];
 
@@ -90,12 +101,15 @@ pub async fn query_messages(
         after = nodes.page_info.end_cursor;
         for node in nodes.edges {
             let msg = node.node.message;
-            if msg.body.is_some() && msg.msg_type == 0 {
+            if msg.body.is_some() && msg.msg_type == 0 && node.node.aborted == false {
                 let id = msg.id.trim_start_matches("message/").to_string();
-                let message = InMessage {
-                    msg_type: msg.msg_type,
-                    body: msg.body,
-                    id
+                let tx_id = node.node.id.trim_start_matches("transaction/").to_string();
+                let message = Message {
+                    body: msg.body.unwrap(),
+                    id,
+                    block_id: node.node.block_id,
+                    lt: node.node.lt.parse::<u128>()?,
+                    tx_id,
                 };
 
                 result_messages.push(message);
