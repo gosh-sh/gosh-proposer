@@ -20,7 +20,7 @@ struct BurnArguments {
     #[serde(rename = "pubkey")]
     _pubkey: String,
     #[serde(rename = "owner")]
-    _owner: String,
+    _owner: Option<String>,
     tokens: String,
     to: String,
 }
@@ -33,24 +33,30 @@ pub async fn find_burns(context: &EverClient, root_address: &str) -> anyhow::Res
 
     let mut res = vec![];
     for message in messages {
+        let body = message.body.unwrap();
+        tracing::info!("decode message: {} {body}", message.id);
         let decode_params = ParamsOfDecodeMessageBody {
             abi: abi.clone(),
-            body: message.body,
+            body,
             is_internal: true,
-            allow_partial: true,
+            allow_partial: false,
             function_name: None,
             data_layout: None,
         };
-        let decode_result = decode_message_body(Arc::clone(context), decode_params).await?;
-        if decode_result.name != ROOT_FUNCTION_NAME {
-            continue;
+        let decode_result = decode_message_body(Arc::clone(context), decode_params).await;
+        if let Ok(decode_result) = decode_result {
+            if decode_result.name != ROOT_FUNCTION_NAME {
+                continue;
+            }
+            let args: BurnArguments = serde_json::from_value(decode_result.value.unwrap())?;
+            res.push(Burn {
+                dest: args.to,
+                value: args.tokens.parse::<u128>()?,
+                msg_id: message.id,
+            })
+        } else {
+            tracing::info!("Failed to decode message, skip it. ID={}", message.id);
         }
-        let args: BurnArguments = serde_json::from_value(decode_result.value.unwrap())?;
-        res.push(Burn {
-            dest: args.to,
-            value: args.tokens.parse::<u128>()?,
-            msg_id: message.id,
-        })
     }
     Ok(res)
 }

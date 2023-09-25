@@ -7,17 +7,23 @@ use ton_client::net::ParamsOfQuery;
 #[derive(Deserialize, Debug)]
 pub struct InMessage {
     pub id: String,
-    pub body: String,
+    pub body: Option<String>,
+    pub msg_type: u8,
 }
 
 #[derive(Deserialize, Debug)]
 struct Node {
-    #[serde(rename = "node")]
+    #[serde(rename = "in_message")]
     message: InMessage,
     #[serde(rename = "lt")]
     _lt: String,
     #[serde(rename = "block_id")]
     _block_id: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct WrappedNode {
+    node: Node,
 }
 
 #[derive(Deserialize, Debug)]
@@ -30,7 +36,7 @@ struct PageInfo {
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 struct Messages {
-    edges: Vec<Node>,
+    edges: Vec<WrappedNode>,
     page_info: PageInfo,
 }
 
@@ -38,10 +44,11 @@ pub async fn query_messages(
     context: &EverClient,
     root_address: &str,
 ) -> anyhow::Result<Vec<InMessage>> {
-    let query = r#"query($addr: String!, $before: String){
+    tracing::info!("query messages to root, address={root_address}");
+    let query = r#"query($addr: String!, $after: String){
       blockchain {
         account(address: $addr) {
-          transactions_by_lt(after: $after, first: 20) {
+          transactions(after: $after, first: 20) {
             edges {
               node {
                 in_message {
@@ -69,26 +76,36 @@ pub async fn query_messages(
                 query: query.clone(),
                 variables: Some(json!({
                     "addr": dst_address.clone(),
-                    "after": after
+                    "after": after,
                 })),
             },
         )
         .await
         .map(|r| r.result)
         .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
-        let nodes = &result["data"]["blockchain"]["account"]["transactions_by_lt"];
+        let nodes = &result["data"]["blockchain"]["account"]["transactions"];
         let nodes: Messages = serde_json::from_value(nodes.clone())
             .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
 
         after = nodes.page_info.end_cursor;
         for node in nodes.edges {
-            result_messages.push(node.message);
+            let msg = node.node.message;
+            if msg.body.is_some() && msg.msg_type == 0 {
+                let id = msg.id.trim_start_matches("message/").to_string();
+                let message = InMessage {
+                    msg_type: msg.msg_type,
+                    body: msg.body,
+                    id
+                };
+
+                result_messages.push(message);
+            }
         }
 
         if !nodes.page_info.has_next_page {
             break;
         }
     }
-
+    tracing::info!("Found {} messages to root contract", result_messages.len());
     Ok(result_messages)
 }
