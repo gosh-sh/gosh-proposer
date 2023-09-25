@@ -1,5 +1,4 @@
 use std::env;
-use std::ops::Add;
 use web3::contract::{Contract, Options};
 use web3::transports::WebSocket;
 use web3::types::{Address, U256, U64};
@@ -13,15 +12,20 @@ use web3::ethabi::Token;
 use web3::signing::SecretKey;
 
 const ELOCK_ABI_PATH: &str = "resources/elock.abi.json";
-const ETH_CALL_VALUE: u128 = 1000000000000000;
 const ETH_CALL_GAS_LIMIT: u128 = 1000000;
 const CONFIRMATIONS_CNT: usize = 1;
 
+pub struct ProposalData {
+    pub proposal_key: U256,
+    pub from: String,
+    pub till: String,
+    pub transfers: Vec<Burn>
+}
 
-pub async fn vote_for_withdrawal() -> anyhow::Result<()> {
+pub async fn vote_for_withdrawal(prop_key: U256) -> anyhow::Result<()> {
+    tracing::info!("Vote for proposal: {prop_key:?}");
     let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
     let web3s = Web3::new(websocket);
-    let prop_key = U256::from_str("0xbcf7a106017c5efcf7be95d5870eb42606c759005f6fe4d693ae6df5fc412832")?;
 
     let elock_address = env::var("ETH_CONTRACT_ADDRESS")?;
     let elock_address = Address::from_str(&elock_address)?;
@@ -33,14 +37,14 @@ pub async fn vote_for_withdrawal() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
 
     let mut options = Options::default();
-    // options.value = Some(U256::from(ETH_CALL_VALUE));
+    options.value = Some(U256::from(5000000000000000_u128));
     options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
     options.transaction_type = Some(U64::from(2));
 
 
     let res = elock_contract.signed_call_with_confirmations(
         "voteForWithdrawal",
-        (prop_key),
+        prop_key,
         options,
         CONFIRMATIONS_CNT,
         &key,
@@ -75,9 +79,9 @@ pub async fn create_proposal() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
 
     let first_block = Token::Uint(U256::from_str(&first_block)?);
-    let last_block = Token::Uint(U256::from_str("0x213465")?);
+    let last_block = Token::Uint(U256::from_str(&last_block)?);
 
-    tracing::info!("Start call");
+    tracing::info!("Start call of proposeWithdrawal");
     tracing::info!("{first_block} {last_block} {burns:?}");
     let mut options = Options::default();
     options.transaction_type = Some(U64::from(2));
@@ -86,7 +90,7 @@ pub async fn create_proposal() -> anyhow::Result<()> {
 
     let res = elock_contract.signed_call_with_confirmations(
         "proposeWithdrawal",
-        (first_block.clone(), first_block, burns),
+        (first_block, last_block, burns),
         options,
         CONFIRMATIONS_CNT,
         &key,
@@ -112,7 +116,7 @@ fn convert_burns(burns: Vec<Burn>) -> anyhow::Result<Vec<Token>> {
     Ok(res)
 }
 
-pub async fn get_proposals() -> anyhow::Result<()> {
+pub async fn get_proposals() -> anyhow::Result<Vec<ProposalData>> {
     let elock_address = env::var("ETH_CONTRACT_ADDRESS")?;
     let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
     let web3s = Web3::new(websocket);
@@ -130,17 +134,36 @@ pub async fn get_proposals() -> anyhow::Result<()> {
         None
     ).await?;
 
-    // let mut res = vec![];
+    tracing::info!("getProposalList: {proposals:?}");
+
+    let mut res = vec![];
     for proposal in proposals {
-        let proposals_data: (U256, U256, Vec<Vec<Token>>) = elock_contract.query(
+        let proposals_data: (U256, U256, Vec<Token>) = elock_contract.query(
             "getProposal",
-            (proposal),
+            Token::Uint(proposal),
             None,
             Options::default(),
             None
         ).await?;
-
+        tracing::info!("{proposals_data:?}");
+        let transfers = proposals_data.2.into_iter().map(|val| {
+            let vals = val.into_tuple().unwrap();
+            let dest = vals[0].clone().into_address().unwrap();
+            let value = vals[1].clone().into_uint().unwrap();
+            let tx_id = vals[2].clone().into_uint().unwrap();
+            Burn {
+                dest: format!("{:?}", dest),
+                value: value.as_u128(),
+                tx_id: format!("{:?}", tx_id),
+            }
+        }).collect();
+        res.push(ProposalData{
+            proposal_key: proposal,
+            from: format!("{:?}", proposals_data.0),
+            till: format!("{:?}", proposals_data.1),
+            transfers,
+        })
     }
 
-    Ok(())
+    Ok(res)
 }
