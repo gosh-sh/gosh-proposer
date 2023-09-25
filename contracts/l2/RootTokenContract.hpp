@@ -111,12 +111,12 @@ __interface IRootTokenContract {
     uint128 tokens,
     uint256 to
   ) = 1017;
-
-  /*[[internal, answer_id]]
+/*
+  [[internal, answer_id]]
   void onUpgrade(
     cell  newcode
-  ) = 1018;*/ 
-
+  ) = 1018;
+*/
   /// Mint tokens. Allocates new tokens (increases total_supply_).
   [[internal, external, answer_id]]
   bool mint(uint128 tokens) = 15;
@@ -161,6 +161,10 @@ __interface IRootTokenContract {
   [[getter]]
   cell getWalletCode() = 25;
 
+  /// Get BurnCount
+  [[getter]]
+  uint128 getBurnCount() = 1019;
+
   /// Calculate wallet address using (pubkey, owner) pair.
   [[getter]]
   address getWalletAddress(
@@ -185,6 +189,7 @@ struct DRootTokenContract {
   uint128     total_granted_; ///< Total granted tokens (to the wallets).
   optcell     wallet_code_;   ///< Token wallet code.
   address     checker_;
+  uint128     burncount_;
 };
 
 /// \interface ERootTokenContract

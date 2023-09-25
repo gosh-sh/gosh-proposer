@@ -234,6 +234,15 @@
     "id": "0x19"
   },
   {
+    "name": "getBurnCount",
+    "inputs": [
+    ],
+    "outputs": [
+    { "name":"value0", "type":"uint128" }
+    ],
+    "id": "0x3fb"
+  },
+  {
     "name": "getWalletAddress",
     "inputs": [
     { "name":"pubkey", "type":"uint256" },
@@ -265,7 +274,8 @@
     { "name":"total_supply_", "type":"uint128" },
     { "name":"total_granted_", "type":"uint128" },
     { "name":"wallet_code_", "type":"optional(cell)" },
-    { "name":"checker_", "type":"address" }
+    { "name":"checker_", "type":"address" },
+    { "name":"burncount_", "type":"uint128" }
   ],
   "events": [
   ]

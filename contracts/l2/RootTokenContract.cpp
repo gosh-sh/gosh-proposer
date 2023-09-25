@@ -152,6 +152,7 @@ public:
     require(total_supply_ >= tokens, error_code::not_enough_balance);
     total_supply_ -= tokens;
     total_granted_ -= tokens;
+    burncount_ += 1;
   }
 
   void grantbatch(
@@ -252,16 +253,17 @@ public:
     tvm_accept();
 
     cell state = prepare_persistent_data<IRootTokenContract, root_replay_protection_t, data>(header_, static_cast<data&>(*this));
-    tvm_setcode(newcode);
-    tvm_setcurrentcode(parser(newcode).skipref().ldref());
+//    tvm_setcode(newcode);
+//    tvm_setcurrentcode(parser(newcode).skipref().ldref());
     onCodeUpgrade(state);
   }
 
   __attribute__((noinline, noreturn))
   static void onCodeUpgrade([[maybe_unused]] cell state) {
     tvm_throw(error_code::call_upgrade); // Must not be called
-  } */
-
+  } 
+  */
+ 
   // getters
   string getName() {
     return name_;
@@ -297,6 +299,10 @@ public:
 
   cell getWalletCode() {
     return wallet_code_.get();
+  }
+
+  uint128 getBurnCount() {
+    return burncount_;
   }
 
   address getWalletAddress(uint256 pubkey, address_opt owner) {
