@@ -85,13 +85,17 @@ __interface IRootTokenContract {
 
   [[internal, external, answer_id]]
   void grantbatch(
-    dict_array<TransactionBatch> transactions ///< Amount of tokens to be granted.
+    dict_array<TransactionBatch> transactions, ///< Amount of tokens to be granted.
+    uint128 a,
+    uint128 b
   ) = 1014;
 
   [[internal, answer_id]]
   void grantbatchindex(
     dict_array<TransactionBatch> transactions, ///< Amount of tokens to be granted.
-    uint128 index
+    uint128 index,
+    uint128 a,
+    uint128 b
   ) = 1015; 
 
   [[internal, answer_id]]
@@ -107,6 +111,11 @@ __interface IRootTokenContract {
     uint128 tokens,
     uint256 to
   ) = 1017;
+
+  /*[[internal, answer_id]]
+  void onUpgrade(
+    cell  newcode
+  ) = 1018;*/ 
 
   /// Mint tokens. Allocates new tokens (increases total_supply_).
   [[internal, external, answer_id]]

@@ -82,7 +82,9 @@
       { "name":"pubkey", "type":"uint256" },
       { "name":"tokens", "type":"uint128" },
       { "name":"hash", "type":"uint256" }
-    ], "name":"transactions", "type":"tuple[]" }
+    ], "name":"transactions", "type":"tuple[]" },
+    { "name":"a", "type":"uint128" },
+    { "name":"b", "type":"uint128" }
     ],
     "outputs": [
     ],
@@ -97,7 +99,9 @@
       { "name":"tokens", "type":"uint128" },
       { "name":"hash", "type":"uint256" }
     ], "name":"transactions", "type":"tuple[]" },
-    { "name":"index", "type":"uint128" }
+    { "name":"index", "type":"uint128" },
+    { "name":"a", "type":"uint128" },
+    { "name":"b", "type":"uint128" }
     ],
     "outputs": [
     ],

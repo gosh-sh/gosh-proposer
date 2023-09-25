@@ -45,6 +45,7 @@ public:
     static constexpr unsigned wrong_wallet_code_hash          = 107;
     static constexpr unsigned cant_override_wallet_code       = 108;
     static constexpr unsigned wallet_code_not_initialized     = 109;
+    static constexpr unsigned call_upgrade                    = 110; 
   };
 
   void constructor(
@@ -146,6 +147,7 @@ public:
   void burn_tokens(uint256 pubkey, address_opt owner, uint128 tokens, uint256 to) {
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
+    tvm_accept();
     require(total_granted_ >= tokens, error_code::not_enough_balance);
     require(total_supply_ >= tokens, error_code::not_enough_balance);
     total_supply_ -= tokens;
@@ -153,19 +155,24 @@ public:
   }
 
   void grantbatch(
-    dict_array<TransactionBatch> transactions
+    dict_array<TransactionBatch> transactions,
+    uint128 a,
+    uint128 b
   ) {
     require(checker_ == int_sender(), error_code::message_sender_is_not_my_owner);
     IRootTokenContractPtr dest_handle(tvm_myaddr());
-    dest_handle(Evers(1e9), 1).grantbatchindex(transactions, uint128(0));
+    dest_handle(Evers(1e9), 1).grantbatchindex(transactions, uint128(0), a, b);
   }
 
   void grantbatchindex(
     dict_array<TransactionBatch> transactions,
-    uint128 index
+    uint128 index,
+    uint128 a,
+    uint128 b
   ) {
-    total_supply_ += transactions.get_at(unsigned(index)).tokens;
-    require(total_granted_ + transactions.get_at(unsigned(index)).tokens <= total_supply_, error_code::not_enough_balance);
+    uint128 value = transactions.get_at(unsigned(index)).tokens * a / 1000 + b;
+    total_supply_ += value;
+    require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
     require(tvm_myaddr() == int_sender(), error_code::message_sender_is_not_my_owner);
 
     tvm_accept();
@@ -178,17 +185,17 @@ public:
     } else {
       answer_addr = address{tvm_myaddr()};
     }
-    total_granted_ += transactions.get_at(unsigned(index)).tokens;
+    total_granted_ += value;
     address_opt owner;
     auto [wallet_init, dest_addr] = calc_wallet_init(transactions.get_at(unsigned(index)).pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest_addr);
     opt<cell> notify;
     dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
-    dest_handle(Evers(evers.get()), 1).acceptMint(transactions.get_at(unsigned(index)).tokens, answer_addr, 0u128, notify);
+    dest_handle(Evers(evers.get()), 1).acceptMint(value, answer_addr, 0u128, notify);
     
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());
     index += 1;
-    dest_handle_next(Evers(1e9), 1).grantbatchindex(transactions, uint128(index));
+    dest_handle_next(Evers(1e9), 1).grantbatchindex(transactions, uint128(index), a, b);
   } 
 
   void grant(
@@ -237,6 +244,23 @@ public:
     set_int_return_flag(SEND_ALL_GAS);
     return total_granted_;
   }
+/*
+  void onUpgrade(
+    cell  newcode
+  ) {
+    check_owner();
+    tvm_accept();
+
+    cell state = prepare_persistent_data<IRootTokenContract, root_replay_protection_t, data>(header_, static_cast<data&>(*this));
+    tvm_setcode(newcode);
+    tvm_setcurrentcode(parser(newcode).skipref().ldref());
+    onCodeUpgrade(state);
+  }
+
+  __attribute__((noinline, noreturn))
+  static void onCodeUpgrade([[maybe_unused]] cell state) {
+    tvm_throw(error_code::call_upgrade); // Must not be called
+  } */
 
   // getters
   string getName() {
