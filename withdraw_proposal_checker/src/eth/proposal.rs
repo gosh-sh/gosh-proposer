@@ -37,30 +37,31 @@ pub async fn create_proposal() -> anyhow::Result<()> {
     let key = SecretKey::from_str(&env::var("ETH_PRIVATE_KEY")?)
         .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
 
-    // tracing::info!("Start getter call");
-    // let res = elock_contract.signed_call(
-    //     "getProposalList",
-    //     (),
-    //     elock_address,
-    //     Options::default()
-    // ).await?;
-    //
-    // tracing::info!("getter result: {res}");
-
-    let first_block = Token::Uint(U256::from_str(&first_block)?);
-    let last_block = Token::Uint(U256::from_str(&last_block)?);
-
-    tracing::info!("Start call");
-    tracing::info!("{first_block} {last_block} {burns:?}");
-    let mut options = Options::default();
-    options.value = Some(U256::from(1000000000000000_u128));
-    let res = elock_contract.signed_call(
-        "deposit",
-        (first_block),
-        options,
-        &key,
+    tracing::info!("Start getter call");
+    let res: Vec<U256> = elock_contract.query(
+        "getProposalList",
+        (),
+        None,
+        Options::default(),
+        None
     ).await?;
-    tracing::info!("Call result: {}", web3::helpers::to_string(&res));
+
+    tracing::info!("getter result: {res:?}");
+
+    // let first_block = Token::Uint(U256::from_str(&first_block)?);
+    // let last_block = Token::Uint(U256::from_str(&last_block)?);
+    //
+    // tracing::info!("Start call");
+    // tracing::info!("{first_block} {last_block} {burns:?}");
+    // let mut options = Options::default();
+    // options.value = Some(U256::from(1000000000000000_u128));
+    // let res = elock_contract.signed_call(
+    //     "deposit",
+    //     (first_block),
+    //     options,
+    //     &key,
+    // ).await?;
+    // tracing::info!("Call result: {}", web3::helpers::to_string(&res));
 
     Ok(())
 }
