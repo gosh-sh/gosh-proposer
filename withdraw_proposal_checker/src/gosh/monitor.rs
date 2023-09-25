@@ -52,6 +52,7 @@ pub async fn query_messages(
     context: &EverClient,
     root_address: &str,
     start_lt: &str,
+    // till_lt: Option<u128>,
 ) -> anyhow::Result<Vec<Message>> {
     tracing::info!("query messages to root, address={root_address}");
     let query = r#"query($addr: String!, $after: String){
@@ -99,16 +100,23 @@ pub async fn query_messages(
             .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
 
         after = nodes.page_info.end_cursor;
+        let mut found_last_block = false;
         for node in nodes.edges {
             let msg = node.node.message;
             if msg.body.is_some() && msg.msg_type == 0 && node.node.aborted == false {
                 let id = msg.id.trim_start_matches("message/").to_string();
                 let tx_id = node.node.id.trim_start_matches("transaction/").to_string();
+                let lt = node.node.lt.parse::<u128>()?;
+                // if let Some(last_lt) = till_lt {
+                //     if lt > last_lt {
+                //         found_last_block = true;
+                //     }
+                // }
                 let message = Message {
                     body: msg.body.unwrap(),
                     id,
                     block_id: node.node.block_id,
-                    lt: node.node.lt.parse::<u128>()?,
+                    lt,
                     tx_id,
                 };
 

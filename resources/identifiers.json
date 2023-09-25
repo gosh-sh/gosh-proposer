@@ -8,11 +8,20 @@
   "346750f3": [
     "getProposalList()"
   ],
+  "c44339ce": [
+    "getProposedValidators()"
+  ],
+  "b7ab4db5": [
+    "getValidators()"
+  ],
   "33de61d2": [
     "lastProcessedBlock()"
   ],
-  "a08ca9d7": [
-    "startWithdrawalProposal(uint256,uint256,(address,uint256,uint256)[])"
+  "d00f128b": [
+    "proposeChangeValidators(address[])"
+  ],
+  "24862ea9": [
+    "proposeWithdrawal(uint256,uint256,(address,uint256,uint256)[])"
   ],
   "18160ddd": [
     "totalSupply()"
@@ -22,5 +31,11 @@
   ],
   "939947b8": [
     "trxWithdrawCount()"
+  ],
+  "c9ce3367": [
+    "voteForChangeValidators()"
+  ],
+  "bb1b2ba2": [
+    "voteForWithdrawal(uint256)"
   ]
 }

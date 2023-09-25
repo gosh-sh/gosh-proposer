@@ -1,4 +1,5 @@
 use std::env;
+use std::ops::Add;
 use web3::contract::{Contract, Options};
 use web3::transports::WebSocket;
 use web3::types::{Address, U256};
@@ -12,10 +13,46 @@ use web3::ethabi::Token;
 use web3::signing::SecretKey;
 
 const ELOCK_ABI_PATH: &str = "resources/elock.abi.json";
+const ETH_CALL_VALUE: u128 = 1000000000000000;
+const ETH_CALL_GAS_LIMIT: u128 = 1000000;
+const CONFIRMATIONS_CNT: usize = 1;
+
+
+pub async fn vote_for_withdrawal() -> anyhow::Result<()> {
+    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+    let web3s = Web3::new(websocket);
+    let prop_key = U256::from_str("CE3BA8D3F286231A624865407EA86A3319CBD6F9A79C0F56AD4D557CCF3B89DA")?;
+
+    let elock_address = env::var("ETH_CONTRACT_ADDRESS")?;
+    let elock_address = Address::from_str(&elock_address)?;
+    let abi_file = std::fs::File::open(ELOCK_ABI_PATH)?;
+    let elock_abi = web3::ethabi::Contract::load(abi_file)
+        .map_err(|e| anyhow::format_err!("Failed to load elock abi: {e}"))?;
+    let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
+    let key = SecretKey::from_str(&env::var("ETH_PRIVATE_KEY")?)
+        .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
+
+    let mut options = Options::default();
+    options.value = Some(U256::from(ETH_CALL_VALUE));
+    options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
+
+
+
+    let res = elock_contract.signed_call_with_confirmations(
+        "voteForWithdrawal",
+        (prop_key),
+        options,
+        CONFIRMATIONS_CNT,
+        &key,
+    ).await?;
+    tracing::info!("Call result: {}", web3::helpers::to_string(&res));
+    Ok(())
+}
 
 pub async fn create_proposal() -> anyhow::Result<()> {
     let context = create_client()?;
     let elock_address = env::var("ETH_CONTRACT_ADDRESS")?;
+    tracing::info!("elock address: {elock_address}");
     let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
     let web3s = Web3::new(websocket);
 
@@ -37,31 +74,24 @@ pub async fn create_proposal() -> anyhow::Result<()> {
     let key = SecretKey::from_str(&env::var("ETH_PRIVATE_KEY")?)
         .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
 
-    tracing::info!("Start getter call");
-    let res: Vec<U256> = elock_contract.query(
-        "getProposalList",
-        (),
-        None,
-        Options::default(),
-        None
+    let first_block = Token::Uint(U256::from_str(&first_block)?);
+    let last_block = Token::Uint(U256::from_str(&last_block)?);
+
+    tracing::info!("Start call");
+    tracing::info!("{first_block} {last_block} {burns:?}");
+    let mut options = Options::default();
+    // options.value = Some(U256::from(ETH_CALL_VALUE));
+    // options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
+
+
+    let res = elock_contract.signed_call_with_confirmations(
+        "proposeWithdrawal",
+        (first_block.clone(), first_block, burns),
+        options,
+        CONFIRMATIONS_CNT,
+        &key,
     ).await?;
-
-    tracing::info!("getter result: {res:?}");
-
-    // let first_block = Token::Uint(U256::from_str(&first_block)?);
-    // let last_block = Token::Uint(U256::from_str(&last_block)?);
-    //
-    // tracing::info!("Start call");
-    // tracing::info!("{first_block} {last_block} {burns:?}");
-    // let mut options = Options::default();
-    // options.value = Some(U256::from(1000000000000000_u128));
-    // let res = elock_contract.signed_call(
-    //     "deposit",
-    //     (first_block),
-    //     options,
-    //     &key,
-    // ).await?;
-    // tracing::info!("Call result: {}", web3::helpers::to_string(&res));
+    tracing::info!("Call result: {}", web3::helpers::to_string(&res));
 
     Ok(())
 }
@@ -80,4 +110,37 @@ fn convert_burns(burns: Vec<Burn>) -> anyhow::Result<Vec<Token>> {
         res.push(Token::Tuple(tuple));
     }
     Ok(res)
+}
+
+pub async fn get_proposals() -> anyhow::Result<()> {
+    let elock_address = env::var("ETH_CONTRACT_ADDRESS")?;
+    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+    let web3s = Web3::new(websocket);
+    let elock_address = Address::from_str(&elock_address)?;
+    let abi_file = std::fs::File::open(ELOCK_ABI_PATH)?;
+    let elock_abi = web3::ethabi::Contract::load(abi_file)
+        .map_err(|e| anyhow::format_err!("Failed to load elock abi: {e}"))?;
+    let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
+
+    let proposals: Vec<U256> = elock_contract.query(
+        "getProposalList",
+        (),
+        None,
+        Options::default(),
+        None
+    ).await?;
+
+    // let mut res = vec![];
+    for proposal in proposals {
+        let proposals_data: (U256, U256, Vec<Vec<Token>>) = elock_contract.query(
+            "getProposal",
+            (proposal),
+            None,
+            Options::default(),
+            None
+        ).await?;
+
+    }
+
+    Ok(())
 }

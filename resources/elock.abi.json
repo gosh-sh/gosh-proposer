@@ -5,10 +5,20 @@
         "internalType": "uint256",
         "name": "startBlock",
         "type": "uint256"
+      },
+      {
+        "internalType": "address[]",
+        "name": "validatorSet",
+        "type": "address[]"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
   },
   {
     "inputs": [
@@ -84,6 +94,32 @@
   },
   {
     "inputs": [],
+    "name": "getProposedValidators",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "proposedValidatorSet",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getValidators",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "currentValidatorSet",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "lastProcessedBlock",
     "outputs": [
       {
@@ -93,6 +129,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "validatorSet",
+        "type": "address[]"
+      }
+    ],
+    "name": "proposeChangeValidators",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -130,7 +179,7 @@
         "type": "tuple[]"
       }
     ],
-    "name": "startWithdrawalProposal",
+    "name": "proposeWithdrawal",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -172,6 +221,26 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "voteForChangeValidators",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalKey",
+        "type": "uint256"
+      }
+    ],
+    "name": "voteForWithdrawal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
