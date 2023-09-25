@@ -245,7 +245,7 @@ public:
     set_int_return_flag(SEND_ALL_GAS);
     return total_granted_;
   }
-/*
+
   void onUpgrade(
     cell  newcode
   ) {
@@ -253,8 +253,8 @@ public:
     tvm_accept();
 
     cell state = prepare_persistent_data<IRootTokenContract, root_replay_protection_t, data>(header_, static_cast<data&>(*this));
-//    tvm_setcode(newcode);
-//    tvm_setcurrentcode(parser(newcode).skipref().ldref());
+    tvm_setcode(newcode);
+    tvm_setcurrentcode(parser(newcode).skipref().ldref());
     onCodeUpgrade(state);
   }
 
@@ -262,8 +262,8 @@ public:
   static void onCodeUpgrade([[maybe_unused]] cell state) {
     tvm_throw(error_code::call_upgrade); // Must not be called
   } 
-  */
- 
+
+
   // getters
   string getName() {
     return name_;

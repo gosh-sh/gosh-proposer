@@ -111,12 +111,12 @@ __interface IRootTokenContract {
     uint128 tokens,
     uint256 to
   ) = 1017;
-/*
-  [[internal, answer_id]]
+
+  [[internal, external, answer_id]]
   void onUpgrade(
     cell  newcode
   ) = 1018;
-*/
+
   /// Mint tokens. Allocates new tokens (increases total_supply_).
   [[internal, external, answer_id]]
   bool mint(uint128 tokens) = 15;
