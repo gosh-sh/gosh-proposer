@@ -2,7 +2,7 @@ use std::env;
 use std::ops::Add;
 use web3::contract::{Contract, Options};
 use web3::transports::WebSocket;
-use web3::types::{Address, U256};
+use web3::types::{Address, U256, U64};
 use web3::Web3;
 use common::gosh::helper::create_client;
 use crate::eth::elock::get_last_gosh_block_id;
@@ -21,7 +21,7 @@ const CONFIRMATIONS_CNT: usize = 1;
 pub async fn vote_for_withdrawal() -> anyhow::Result<()> {
     let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
     let web3s = Web3::new(websocket);
-    let prop_key = U256::from_str("CE3BA8D3F286231A624865407EA86A3319CBD6F9A79C0F56AD4D557CCF3B89DA")?;
+    let prop_key = U256::from_str("0xbcf7a106017c5efcf7be95d5870eb42606c759005f6fe4d693ae6df5fc412832")?;
 
     let elock_address = env::var("ETH_CONTRACT_ADDRESS")?;
     let elock_address = Address::from_str(&elock_address)?;
@@ -33,9 +33,9 @@ pub async fn vote_for_withdrawal() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
 
     let mut options = Options::default();
-    options.value = Some(U256::from(ETH_CALL_VALUE));
+    // options.value = Some(U256::from(ETH_CALL_VALUE));
     options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
-
+    options.transaction_type = Some(U64::from(2));
 
 
     let res = elock_contract.signed_call_with_confirmations(
@@ -75,13 +75,13 @@ pub async fn create_proposal() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
 
     let first_block = Token::Uint(U256::from_str(&first_block)?);
-    let last_block = Token::Uint(U256::from_str(&last_block)?);
+    let last_block = Token::Uint(U256::from_str("0x213465")?);
 
     tracing::info!("Start call");
     tracing::info!("{first_block} {last_block} {burns:?}");
     let mut options = Options::default();
-    // options.value = Some(U256::from(ETH_CALL_VALUE));
-    // options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
+    options.transaction_type = Some(U64::from(2));
+    options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
 
 
     let res = elock_contract.signed_call_with_confirmations(

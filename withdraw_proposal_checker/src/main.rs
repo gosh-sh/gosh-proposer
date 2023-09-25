@@ -1,5 +1,5 @@
 use common::helper::tracing::init_default_tracing;
-use crate::eth::proposal::create_proposal;
+use crate::eth::proposal::{create_proposal, vote_for_withdrawal};
 
 mod gosh;
 mod proposal;
@@ -9,7 +9,7 @@ mod eth;
 async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
     init_default_tracing();
-    create_proposal().await?;
+    vote_for_withdrawal().await?;
 
     Ok(())
 }
