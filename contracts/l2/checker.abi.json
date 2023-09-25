@@ -28,6 +28,15 @@
 			]
 		},
 		{
+			"name": "setCommission",
+			"inputs": [
+				{"name":"a_from_ax_div1000_plus_b","type":"uint128"},
+				{"name":"b_from_ax_div1000_plus_b","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "checkData",
 			"inputs": [
 				{"components":[{"name":"data","type":"bytes"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple[]"},
@@ -123,6 +132,8 @@
 		{"name":"_prevhash","type":"uint256"},
 		{"name":"_root","type":"address"},
 		{"name":"_index","type":"uint128"},
+		{"name":"a","type":"uint128"},
+		{"name":"b","type":"uint128"},
 		{"name":"_proposalCode","type":"cell"}
 	]
 }

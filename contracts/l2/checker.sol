@@ -20,6 +20,9 @@ contract Checker {
     address _root;
     uint128 _index = 0;
 
+    uint128 a = 1000;
+    uint128 b = 0;
+
     TvmCell _proposalCode;
 
     modifier onlyOwner {
@@ -49,6 +52,11 @@ contract Checker {
 
     function setProposalCode(TvmCell code) public onlyOwner accept {
         _proposalCode = code;
+    }
+
+    function setCommission(uint128 a_from_ax_div1000_plus_b, uint128 b_from_ax_div1000_plus_b) public onlyOwner accept {
+        a = a_from_ax_div1000_plus_b;
+        b = b_from_ax_div1000_plus_b;
     }
 
     function checkData(BlockData[] data, TransactionBatch[] transactions) public view onlyOwner accept {
@@ -90,7 +98,7 @@ contract Checker {
 
     function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
         require(_prevhash == prevhash, ERR_WRONG_HASH);
-        ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, transactions);
+        ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, transactions, a, b);
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _index, 0);
         _prevhash = newhash;
         _index = 0;
