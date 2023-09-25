@@ -1,6 +1,6 @@
 {
   "ABI version": 2,
-  "version": "2.2.0",
+  "version": "2.3.0",
   "header": [
     "pubkey",
     "time",
@@ -130,6 +130,16 @@
     "outputs": [
     ],
     "id": "0x3f9"
+  },
+  {
+    "name": "onUpgrade",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"newcode", "type":"cell" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3fa"
   },
   {
     "name": "mint",
