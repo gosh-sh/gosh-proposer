@@ -58,6 +58,10 @@ contract Elock {
         votesRequired = _calcVotes(validatorSet.length);
     }
 
+    receive() external payable {
+        //
+    }
+
     /// pubkey - GOSH pubkey (32 bytes)
     function deposit(uint256 pubkey) public payable {
         require(msg.value > 100 wei);
@@ -73,7 +77,7 @@ contract Elock {
         uint256 fromBlock,
         uint256 tillBlock,
         Transfer[] calldata transfers
-    ) public onlyGoshValidators() {
+    ) public payable onlyGoshValidators() {
         if (lastProcessedBlock > 0) {
             require(uint256(fromBlock) == lastProcessedBlock);
         }
@@ -91,7 +95,7 @@ contract Elock {
         _proposalKeys.push(proposalKey);
     }
 
-    function voteForWithdrawal(uint256 proposalKey) public onlyGoshValidators() {
+    function voteForWithdrawal(uint256 proposalKey) public payable onlyGoshValidators() {
         require(votingForWithdrawal[proposalKey][msg.sender] == false, "Already voted");
 
         votingForWithdrawal[proposalKey][msg.sender] = true;
@@ -100,21 +104,25 @@ contract Elock {
         if (votesPerProposal[proposalKey] >= votesRequired) {
             bool isExecuted = _executeWithdrawals(proposalKey);
             if (!isExecuted) {
-                // todo mark proposal as unfeasible
+                // revert vote
+                votingForWithdrawal[proposalKey][msg.sender] = false;
+                votesPerProposal[proposalKey] -= 1;
             } else {
                 _finalizeProposal(proposalKey);
             }
         }
     }
 
-    function proposeChangeValidators(address[] memory validatorSet) public onlyGoshValidators() {
+    function proposeChangeValidators(address[] memory validatorSet)
+        public payable onlyGoshValidators()
+    {
         require(proposedValidators.length == 0);
         require(validatorSet.length > 0);
         proposedValidators = validatorSet;
     }
 
 
-    function voteForChangeValidators() public onlyGoshValidators() {
+    function voteForChangeValidators() public payable onlyGoshValidators() {
         require(votingForChangeValidators[msg.sender] == false, "Already voted");
 
         votingForChangeValidators[msg.sender] = true;
@@ -207,5 +215,6 @@ contract Elock {
             }
         }
         delete votesPerProposal[proposalKey];
+        delete _proposalKeys;
     }
 }
