@@ -2,6 +2,7 @@ use crate::eth::elock::get_last_gosh_block_id;
 use crate::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 use crate::gosh::burn::{find_burns, Burn};
 use common::gosh::helper::EverClient;
+use ethereum_types::BigEndianHash;
 use std::str::FromStr;
 use web3::contract::{Contract, Options};
 use web3::ethabi::Token;
@@ -9,7 +10,6 @@ use web3::signing::SecretKey;
 use web3::transports::WebSocket;
 use web3::types::{Address, H256, U256, U64};
 use web3::Web3;
-use ethereum_types::BigEndianHash;
 
 const ETH_CALL_VALUE: u128 = 1000000000000000;
 const ETH_CALL_GAS_LIMIT: u128 = 1000000;
@@ -133,15 +133,19 @@ pub async fn get_proposals(
                 }
             })
             .collect();
-        let from = format!("{:0>64}",
+        let from = format!(
+            "{:0>64}",
             web3::helpers::to_string(&H256::from_uint(&proposals_data.0))
-            .replace('"', "")
-            .trim_start_matches("0x")
-            .to_string());
-        let till = format!("{:0>64}",
+                .replace('"', "")
+                .trim_start_matches("0x")
+                .to_string()
+        );
+        let till = format!(
+            "{:0>64}",
             web3::helpers::to_string(&H256::from_uint(&proposals_data.1))
-            .replace('"', "")
-            .trim_start_matches("0x"));
+                .replace('"', "")
+                .trim_start_matches("0x")
+        );
         res.push(ProposalData {
             proposal_key: proposal,
             from,

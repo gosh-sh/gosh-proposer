@@ -97,43 +97,41 @@ pub async fn filter_and_decode_block_transactions(
     for transaction_hash in &block.transactions {
         // Load transaction
         tracing::info!("tx: {}", w3h::to_string(transaction_hash));
-        let transaction_hash = transaction_hash.clone();
+        let transaction_hash = *transaction_hash;
         let web3s_clone = web3s.clone();
         let eth_contract_address_clone = eth_contract_address.to_string();
-        parallel.spawn(
-            async move {
-                let tx = match web3s_clone
-                    .eth()
-                    .transaction(TransactionId::Hash(transaction_hash.to_owned()))
-                    .await
-                {
-                    Ok(Some(tx)) => tx,
-                    _ => {
-                        anyhow::bail!("Failed to fetch transaction: {transaction_hash}");
-                    }
-                };
+        parallel.spawn(async move {
+            let tx = match web3s_clone
+                .eth()
+                .transaction(TransactionId::Hash(transaction_hash.to_owned()))
+                .await
+            {
+                Ok(Some(tx)) => tx,
+                _ => {
+                    anyhow::bail!("Failed to fetch transaction: {transaction_hash}");
+                }
+            };
 
-                // Check that transaction destination is equal to the specified address
-                if let Some(address) = tx.to {
-                    let dest = w3h::to_string(&address)
-                        .trim()
-                        .trim_end_matches('"')
-                        .trim_start_matches('"')
-                        .to_lowercase();
-                    tracing::info!("Txn destination address: {dest}");
-                    if dest != eth_contract_address_clone {
-                        anyhow::bail!(
+            // Check that transaction destination is equal to the specified address
+            if let Some(address) = tx.to {
+                let dest = w3h::to_string(&address)
+                    .trim()
+                    .trim_end_matches('"')
+                    .trim_start_matches('"')
+                    .to_lowercase();
+                tracing::info!("Txn destination address: {dest}");
+                if dest != eth_contract_address_clone {
+                    anyhow::bail!(
                     "Wrong destination address, skip it. `{}` != `{eth_contract_address_clone}`",
                     dest
                 );
-                    }
-                } else {
-                    anyhow::bail!("No destination address, skip it.");
                 }
-                let code_sig_lookup = get_signatures_table()?;
-                decode_transfer(tx, &code_sig_lookup)
+            } else {
+                anyhow::bail!("No destination address, skip it.");
             }
-        );
+            let code_sig_lookup = get_signatures_table()?;
+            decode_transfer(tx, &code_sig_lookup)
+        });
     }
 
     let mut transfers = vec![];
@@ -143,6 +141,10 @@ pub async fn filter_and_decode_block_transactions(
             transfers.push(trans);
         }
     }
-    tracing::info!("block {} transfers: {:?}", w3h::to_string(&block.hash), transfers);
+    tracing::info!(
+        "block {} transfers: {:?}",
+        w3h::to_string(&block.hash),
+        transfers
+    );
     Ok(transfers)
 }

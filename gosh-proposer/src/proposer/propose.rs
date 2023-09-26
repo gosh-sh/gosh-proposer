@@ -3,7 +3,7 @@ use common::eth::encoder::serialize_block;
 use common::eth::helper::get_signatures_table;
 use common::eth::transfer::filter_and_decode_block_transactions;
 use common::gosh::call_function;
-use common::gosh::helper::{EverClient, load_keys};
+use common::gosh::helper::{load_keys, EverClient};
 use serde_json::json;
 use std::env;
 use std::sync::Arc;

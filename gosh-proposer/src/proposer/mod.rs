@@ -1,15 +1,15 @@
 use crate::proposer::propose::propose_blocks;
 use common::eth::read_block;
-use std::env;
-use web3::transports::WebSocket;
-use web3::types::{BlockId, BlockNumber, H256, U64};
-use web3::Web3;
 use common::gosh::call_getter;
 use common::gosh::helper::{create_client, EverClient};
 use common::helper::deserialize_u128;
+use serde::Deserialize;
+use std::env;
 use std::str::FromStr;
 use std::sync::Arc;
-use serde::Deserialize;
+use web3::transports::WebSocket;
+use web3::types::{BlockId, BlockNumber, H256, U64};
+use web3::Web3;
 
 mod propose;
 
@@ -23,9 +23,7 @@ struct Status {
 
 const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 
-pub async fn get_block_from_checker(
-    client: &EverClient
-) -> anyhow::Result<H256> {
+pub async fn get_block_from_checker(client: &EverClient) -> anyhow::Result<H256> {
     tracing::info!("get block from checker");
     let checker_address = env::var("CHECKER_ADDRESS")?;
     let value = call_getter(
@@ -34,7 +32,8 @@ pub async fn get_block_from_checker(
         CHECKER_ABI_PATH,
         "getStatus",
         None,
-    ).await?;
+    )
+    .await?;
     tracing::info!("getter res: {value}");
     let status: Status = serde_json::from_value(value)?;
     Ok(H256::from_str(&status.prevhash)?)

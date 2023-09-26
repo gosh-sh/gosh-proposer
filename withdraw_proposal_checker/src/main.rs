@@ -1,6 +1,6 @@
-use std::env;
 use crate::checker::{check_proposals_and_accept, create_new_proposal, get_last_blocks};
 use common::helper::tracing::init_default_tracing;
+use std::env;
 
 mod checker;
 mod eth;
@@ -24,7 +24,7 @@ async fn main() -> anyhow::Result<()> {
             } else {
                 anyhow::bail!("Unknown subcommand");
             }
-        },
+        }
         _ => check_proposals_and_accept().await,
     }
 }

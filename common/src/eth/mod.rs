@@ -86,7 +86,7 @@ pub async fn _get_storage_proof(
 #[cfg(test)]
 mod tests {
     use super::encoder::serialize_block;
-    use super::{get_storage_proof, read_block, StorageProof};
+    use super::{_get_storage_proof, read_block, StorageProof};
     use crate::helper::tracing::init_default_tracing;
     use std::env;
     use std::matches;
@@ -117,7 +117,7 @@ mod tests {
 
         let block_num = Some(BlockNumber::Latest);
         let account = Address::from_str("0x52410a00621a9bc08f8230a27267957913d961b3")?;
-        let storage_proof = get_storage_proof(&web3s, account, block_num).await?;
+        let storage_proof = _get_storage_proof(&web3s, account, block_num).await?;
 
         assert_eq!(storage_proof.len(), 2);
         assert!(matches!(storage_proof[0], StorageProof::TotalSupply { .. }));
