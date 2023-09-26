@@ -16,7 +16,9 @@
     { "name":"root_pubkey", "type":"uint256" },
     { "name":"root_owner", "type":"optional(address)" },
     { "name":"total_supply", "type":"uint128" },
-    { "name":"checker", "type":"address" }
+    { "name":"checker", "type":"address" },
+    { "name":"oldroot_", "type":"optional(address)" },
+    { "name":"newroot_", "type":"optional(address)" }
     ],
     "outputs": [
     ],
@@ -330,8 +332,8 @@
     { "name":"wallet_code_", "type":"optional(cell)" },
     { "name":"checker_", "type":"address" },
     { "name":"burncount_", "type":"uint128" },
-    { "name":"oldroot_", "type":"address" },
-    { "name":"newroot_", "type":"address" }
+    { "name":"oldroot_", "type":"optional(address)" },
+    { "name":"newroot_", "type":"optional(address)" }
   ],
   "events": [
   ]

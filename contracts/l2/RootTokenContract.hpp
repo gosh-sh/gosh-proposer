@@ -39,7 +39,9 @@ __interface IRootTokenContract {
     uint256     root_pubkey, ///< Root public key
     address_opt root_owner,  ///< Owner contract address for internal ownership.
     uint128     total_supply, ///< Total supply. Originally allocated tokens.
-    address     checker
+    address     checker,
+    address_opt oldroot_,
+    address_opt newroot_
   ) = 10;
 
   /// Set wallet code.
@@ -214,8 +216,8 @@ struct DRootTokenContract {
   optcell     wallet_code_;   ///< Token wallet code.
   address     checker_;
   uint128     burncount_;
-  address     oldroot_;
-  address     newroot_;
+  address_opt oldroot_;
+  address_opt newroot_;
 };
 
 /// \interface ERootTokenContract
