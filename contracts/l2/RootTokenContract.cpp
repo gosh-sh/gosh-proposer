@@ -55,7 +55,9 @@ public:
     uint256 root_pubkey,
     address_opt root_owner,
     uint128 total_supply,
-    address checker
+    address checker,
+    address_opt oldroot,
+    address_opt newroot
   ) {
     require((root_pubkey != 0) or root_owner, error_code::define_pubkey_or_internal_owner);
     name_ = name;
@@ -66,18 +68,20 @@ public:
     total_supply_ = total_supply;
     total_granted_ = uint128(0);
     checker_ = checker;
+    oldroot_ = oldroot;
+    newroot_ = newroot;
   }
 
   void setOldRoot(address oldroot) {
     check_owner(true);
     tvm_accept();
-    oldroot_ = oldroot;
+    *oldroot_ = oldroot;
   }
 
   void setNewRoot(address newroot) {
     check_owner(true);
     tvm_accept();
-    newroot_ = newroot;
+    *newroot_ = newroot;
   }
 
   void askEvers(uint256 pubkey, address_opt owner) {
@@ -175,12 +179,13 @@ public:
     require(total_supply_ >= tokens, error_code::not_enough_balance);
     total_supply_ -= tokens;
     total_granted_ -= tokens;
-    IRootTokenContractPtr dest_handle(newroot_);
+    IRootTokenContractPtr dest_handle(*newroot_);
     dest_handle(Evers(1e9), 1).deploy_upgrade_wallet(pubkey, owner, tokens);
   }
 
   void deploy_upgrade_wallet(uint256 pubkey, address_opt owner, uint128 tokens) {
-    require(oldroot_ == int_sender(), error_code::message_sender_is_not_my_owner);
+    require(oldroot_.has_value(), error_code::message_sender_is_not_my_owner);
+    require(*oldroot_ == int_sender(), error_code::message_sender_is_not_my_owner);
     uint128 evers = uint128(1000000000);
     auto [wallet_init, dest_addr] = calc_wallet_init(pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest_addr);
