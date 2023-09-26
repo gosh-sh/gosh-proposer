@@ -187,7 +187,7 @@ contract Elock {
         for (uint256 index = 0; index < transfers.length; index++) {
             requiredFunds += transfers[index].value;
         }
-        if (requiredFunds > address(this).balance) {
+        if (requiredFunds > address(this).balance || requiredFunds > totalSupply) {
             return false;
         }
 
