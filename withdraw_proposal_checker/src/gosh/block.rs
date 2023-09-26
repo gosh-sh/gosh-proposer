@@ -59,7 +59,7 @@ pub async fn get_latest_master_block(context: &EverClient) -> anyhow::Result<Mas
     tracing::info!("query latest master block seq no");
     let query = r#"query {
         blockchain {
-            blocks( last: 1, workchain: -1 ) {
+            blocks( allow_latest_inconsistent_data: true, last: 1, workchain: -1 ) {
                 edges { node { seq_no id }  }
             }
         }

@@ -59,6 +59,7 @@ pub async fn query_messages(
       blockchain {
         account(address: $addr) {
           transactions(
+            allow_latest_inconsistent_data: true,
             after: $after,
             master_seq_no_range: {
              start: $start,

@@ -104,6 +104,8 @@ fi
 # Burn tokens
 gosh-cli callx --addr $TOKEN_WALLET_ADDRESS --abi ../contracts/l2/TONTokenWallet.abi --keys keys.json -m burn_tokens --_answer_id 0 --to $ETH_WALLET_ADDR --tokens $TOKEN_BALANCE
 
+sleep 10
+
 # run withdraw proposal checker
 cd ..
 ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS make run_withdraw
