@@ -28,6 +28,10 @@ run_deposit:
 run_withdraw:
 	cargo run -p withdraw_proposal_checker --release
 
+.PHONY: get_blocks
+get_blocks:
+	cargo run -p withdraw_proposal_checker --release  -- get_last_blocks
+
 .PHONY: check
 check:
 	cargo check --release

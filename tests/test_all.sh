@@ -1,0 +1,106 @@
+#!/bin/bash
+set -e
+set -o pipefail
+set -x
+
+TEST_TRACE="/home/user/GOSH/gosh-proposer/tests/trace.log"
+ETH_URL="https://sepolia.infura.io/v3/df557e910fb2496e8d854046cbedb99a"
+GOSH_URL="https://sh.network.gosh.sh"
+
+# Generate keypair
+gosh-cli genphrase --dump keys.json
+PUBKEY="0x$(cat keys.json | jq  -r .public)"
+echo "export PUBKEY=$PUBKEY" > $TEST_TRACE
+
+# go to the repo root
+cd ..
+
+# Query last blocks
+LAST_BLOCKS=$(cargo run -p withdraw_proposal_checker --release  -- get_last_blocks)
+echo "LAST_BLOCKS=$LAST_BLOCKS"
+LAST_GOSH_BLOCK=$(echo $LAST_BLOCKS | jq -r .gosh.id )
+LAST_ETH_BLOCK=$(echo $LAST_BLOCKS | jq -r .eth.hash )
+echo "export LAST_GOSH_BLOCK=$LAST_GOSH_BLOCK" >> $TEST_TRACE
+echo "export LAST_ETH_BLOCK=$LAST_ETH_BLOCK" >> $TEST_TRACE
+
+
+# Disable bash trace for not to show private keys
+set +x
+
+# go to l1 root
+cd contracts/l1/
+
+# deploy Elock
+ELOCK_ADDRESS=$(forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK [$ETH_WALLET_ADDR] | grep "Deployed to: " | cut -d ' ' -f 3)
+echo "export ELOCK_ADDRESS=$ELOCK_ADDRESS" >> $TEST_TRACE
+# deposit value to Elock
+cast send --rpc-url $ETH_URL $ELOCK_ADDRESS "deposit(uint256)" $PUBKEY --private-key $ETH_PRIVATE_KEY --value 0.0002ether
+
+# Enable bash trace
+set -x
+
+# go back to the tests dir
+cd ../../tests
+
+# set up network
+gosh-cli config --is_json true -e $GOSH_URL
+
+# deploy Checker
+cp ../contracts/l2/checker.tvc ../contracts/l2/checker2.tvc
+ADDRESS=$(gosh-cli -j genaddr --save --abi ../contracts/l2/checker.abi.json --genkey keys.json ../contracts/l2/checker2.tvc | jq .raw_address | cut -d '"' -f 2)
+echo "export CHECKER_ADDRESS=$ADDRESS" >> $TEST_TRACE
+# ask giver
+gosh-cli -j callx --addr -1:9999999999999999999999999999999999999999999999999999999999999999 --abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 100000000000 --bounce false --allBalance false --payload ""  --dest $ADDRESS
+gosh-cli -j deployx --abi ../contracts/l2/checker.abi.json --keys keys.json ../contracts/l2/checker2.tvc --prevhash $LAST_ETH_BLOCK
+rm ../contracts/l2/checker2.tvc
+
+# set proposal code
+PROP_CODE=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/proposal_test.tvc | jq .code | cut -d '"' -f 2)
+gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $ADDRESS -m setProposalCode --code $PROP_CODE
+
+# deploy Root
+cp ../contracts/l2/RootTokenContract.tvc ../contracts/l2/RootTokenContract2.tvc
+ADDRESS_ROOT=$(gosh-cli -j genaddr --save --abi ../contracts/l2/RootTokenContract.abi --setkey keys.json ../contracts/l2/RootTokenContract2.tvc | jq .raw_address | cut -d '"' -f 2)
+echo "export ROOT_ADDRESS=$ADDRESS_ROOT" >> $TEST_TRACE
+
+# set root in checker
+gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $ADDRESS -m setRootContract --root $ADDRESS_ROOT
+
+CODE_WALLET=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/TONTokenWallet.tvc | jq .code | cut -d '"' -f 2)
+gosh-cli -j callx --addr -1:9999999999999999999999999999999999999999999999999999999999999999 --abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 1000000000000 --bounce false --allBalance false --payload ""  --dest $ADDRESS_ROOT
+gosh-cli -j deployx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json ../contracts/l2/RootTokenContract2.tvc --name "geth" --symbol "gth" --decimals 18 --root_pubkey $PUBKEY --root_owner null --total_supply 0 --checker $ADDRESS
+gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys keys.json --addr $ADDRESS_ROOT -m setWalletCode --wallet_code $CODE_WALLET --_answer_id 0
+rm ../contracts/l2/RootTokenContract2.tvc
+
+# run gosh-proposer to find deposit in ETH and deploy token wallet
+cd ..
+CHECKER_ADDRESS=$ADDRESS make run_proposer
+cd tests
+
+# get proposal address
+PROP_ADDRESS=$(gosh-cli runx --addr $ADDRESS --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr | jq -r '.value0[0]')
+gosh-cli -j callx --addr $PROP_ADDRESS --abi ../contracts/l2/proposal_test.abi.json  -m setvdict --key $PUBKEY
+
+# run deposit_proposal_cheker to check proposal and vote for it
+cd ..
+CHECKER_ADDRESS=$ADDRESS make run_checker
+cd tests
+
+# Get checker status
+gosh-cli -j runx --addr $ADDRESS --abi ../contracts/l2/checker.abi.json -m getStatus
+
+# get token wallet address
+TOKEN_WALLET_ADDRESS=$(gosh-cli runx --addr $ADDRESS_ROOT --abi ../contracts/l2/RootTokenContract.abi -m getWalletAddress --owner null --pubkey $PUBKEY | jq -r .value0)
+echo "export TOKEN_WALLET_ADDRESS=$TOKEN_WALLET_ADDRESS" >> $TEST_TRACE
+
+# check token wallet balance
+TOKEN_BALANCE=$(gosh-cli runx --addr $TOKEN_WALLET_ADDRESS --abi ../contracts/l2/TONTokenWallet.abi -m getDetails| jq -r .balance)
+if [[ "$TOKEN_BALANCE" != "200000000000000" ]]; then
+  echo "Wrong balance"
+  exit 1
+fi
+
+# Burn tokens
+gosh-cli callx --addr $TOKEN_WALLET_ADDRESS --abi ../contracts/l2/TONTokenWallet.abi --keys keys.json -m burn_tokens --_answer_id 0 --to $ETH_WALLET_ADDR --tokens $TOKEN_BALANCE
+
+ETH_CONTRACT_ADDRESS=$ELOCK_ADDRESS make run_withdraw

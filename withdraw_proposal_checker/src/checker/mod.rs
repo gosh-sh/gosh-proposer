@@ -2,11 +2,14 @@ use crate::eth::proposal::{check_proposal, create_proposal, get_proposals, vote_
 use common::gosh::helper::create_client;
 use std::env;
 use std::str::FromStr;
+use serde_json::json;
 use web3::contract::Contract;
 use web3::signing::SecretKey;
 use web3::transports::WebSocket;
-use web3::types::Address;
+use web3::types::{Address, BlockId, BlockNumber};
 use web3::Web3;
+use common::eth::read_block;
+use crate::gosh::block::get_latest_master_block;
 
 const ELOCK_ABI_PATH: &str = "resources/elock.abi.json";
 
@@ -51,5 +54,34 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
             }
         }
     }
+    Ok(())
+}
+
+pub async fn get_last_blocks() -> anyhow::Result<()> {
+    let context = create_client()?;
+
+    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+    let web3s = Web3::new(websocket);
+
+    let last_gosh_block = get_latest_master_block(
+        &context
+    ).await?;
+
+    let last_eth_block = read_block(
+        &web3s,
+        BlockId::Number(BlockNumber::Latest),
+    ).await?;
+
+    println!("{}",
+        serde_json::to_string_pretty(
+            &json!({
+                "gosh": last_gosh_block,
+                "eth": {
+                    "hash": last_eth_block.hash,
+                    "number": last_eth_block.number
+                }
+            })
+        )?
+    );
     Ok(())
 }

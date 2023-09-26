@@ -1,10 +1,10 @@
 use common::gosh::helper::EverClient;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::sync::Arc;
 use ton_client::net::ParamsOfQuery;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Serialize)]
 pub struct MasterBlock {
     pub seq_no: u128,
     #[serde(rename = "id")]
