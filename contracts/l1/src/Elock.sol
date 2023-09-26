@@ -6,6 +6,8 @@ pragma solidity ^0.8.13;
 // * calculate how many withdrawals we can do per transaction
 //
 contract Elock {
+    event VoteRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
+
     uint256 public totalSupply; // 0x0
     uint128 public trxDepositCount; // 0x1
     uint128 public trxWithdrawCount; // 0x1
@@ -27,6 +29,10 @@ contract Elock {
     mapping (uint256 => mapping (address => bool)) votingForWithdrawal; // 0xc
     mapping (uint256 => uint256) votesPerProposal; // 0xd
 
+    bool isFreezed;
+    mapping (address => FreezeVote) votingForFreeze;
+    address[] votedForFreeze;
+
     struct Transfer {
         address payable to;
         uint256 value;
@@ -38,6 +44,8 @@ contract Elock {
         uint256 tillBlock;
         Transfer[] transfers;
     }
+
+    enum FreezeVote { None, Freeze, Unfreeze }
 
     error Unauthorized();
 
@@ -64,6 +72,7 @@ contract Elock {
 
     /// pubkey - GOSH pubkey (32 bytes)
     function deposit(uint256 pubkey) public payable {
+        require(isFreezed == false);
         require(msg.value > 100 wei);
         pubkey;
 
@@ -107,6 +116,7 @@ contract Elock {
                 // revert vote
                 votingForWithdrawal[proposalKey][msg.sender] = false;
                 votesPerProposal[proposalKey] -= 1;
+                emit VoteRejected(proposalKey, msg.sender, 3); // reason not enough funds
             } else {
                 _finalizeProposal(proposalKey);
             }
@@ -136,6 +146,42 @@ contract Elock {
     // function proposeCancelValidatorsChange() public onlyGoshValidators() {}
     // function voteForCancelValidatorsChange() public onlyGoshValidators() {}
 
+    function freeze() public payable onlyGoshValidators() {
+        require(isFreezed == false, "Deposit already unfreezed");
+        require(collectedVotesForChangeValidators == 0, "Validators changing is in progress");
+        require(votingForFreeze[msg.sender] != FreezeVote.Freeze);
+
+        if ((votedForFreeze.length + 1) >= votesRequired) {
+            isFreezed = true;
+            for (uint256 i = 0; i < votedForFreeze.length; i++) {
+                address validator = votedForFreeze[i];
+                votingForFreeze[validator] = FreezeVote.None;
+            }
+            delete votedForFreeze;
+        } else {
+            votingForFreeze[msg.sender] = FreezeVote.Freeze;
+            votedForFreeze.push(msg.sender);
+        }
+    }
+
+    function unfreeze() public payable onlyGoshValidators() {
+        require(isFreezed == true, "Deposit already unfreezed");
+        require(collectedVotesForChangeValidators == 0, "Validators changing is in progress");
+        require(votingForFreeze[msg.sender] != FreezeVote.Unfreeze);
+
+        if ((votedForFreeze.length + 1) >= votesRequired) {
+            isFreezed = false;
+            for (uint256 i = 0; i < votedForFreeze.length; i++) {
+                address validator = votedForFreeze[i];
+                votingForFreeze[validator] = FreezeVote.None;
+            }
+            delete votedForFreeze;
+        } else {
+            votingForFreeze[msg.sender] = FreezeVote.Unfreeze;
+            votedForFreeze.push(msg.sender);
+        }
+    }
+
     function getProposalList() public view returns (uint256[] memory proposalKeys) {
         return _proposalKeys;
     }
@@ -153,6 +199,14 @@ contract Elock {
 
     function getProposedValidators() public view returns (address[] memory proposedValidatorSet) {
         return proposedValidators;
+    }
+
+    function getVotesForWithdrawal(uint256 proposalKey) public view returns (uint256 votes) {
+        return votesPerProposal[proposalKey];
+    }
+
+    function getMyVoteForWithdrawal(uint256 proposalKey) public view returns (bool isVoted) {
+        return votingForWithdrawal[proposalKey][msg.sender];
     }
 
     function _isPermitedValidator(address caller) private view returns (bool) {
@@ -201,7 +255,7 @@ contract Elock {
     }
 
     function _finalizeProposal(uint256 proposalKey) private {
-        lastProcessedBlock = withdrawals[proposalKey].fromBlock;
+        lastProcessedBlock = withdrawals[proposalKey].tillBlock;
 
         // delete all proposals
         for (uint256 i = 0; i < _proposalKeys.length; i++) {
