@@ -5,22 +5,10 @@ use std::sync::Arc;
 use ton_client::net::ParamsOfQuery;
 
 #[derive(Deserialize, Debug)]
-struct Block {
-    #[serde(rename = "id")]
-    _id: String,
-    end_lt: String,
-}
-
-#[derive(Deserialize, Debug)]
-struct Blocks {
-    blocks: Vec<Block>,
-}
-
-#[derive(Deserialize, Debug)]
 pub struct MasterBlock {
     pub seq_no: u128,
     #[serde(rename = "id")]
-    pub block_id: String
+    pub block_id: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -29,18 +17,16 @@ struct SeqNo {
     workchain_id: i8,
 }
 
-pub async fn get_block_lt(context: &EverClient, block_id: &str) -> anyhow::Result<String> {
-    tracing::info!("query end block lt for block_id={block_id}");
-    let query = r#"query($block_id: String){
-        blocks(
-            filter: {
-              id: {
-                eq: $block_id
-              }
+pub async fn get_master_block_seq_no(context: &EverClient, block_id: &str) -> anyhow::Result<u128> {
+    tracing::info!("query seq no for block_id={block_id}");
+    let query = r#"query($block_id: String!){
+        blockchain {
+            block(
+                hash: $block_id
+            ) {
+                seq_no workchain_id
             }
-          ) {
-            id end_lt(format:DEC)
-         }
+        }
     }"#
     .to_string();
 
@@ -60,46 +46,7 @@ pub async fn get_block_lt(context: &EverClient, block_id: &str) -> anyhow::Resul
 
     tracing::info!("query result: {result}");
 
-    let blocks: Blocks = serde_json::from_value(result["data"].clone())
-        .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
-
-    if blocks.blocks.len() != 1 {
-        anyhow::bail!("Failed to find block with specified id: {}", block_id);
-    }
-
-    Ok(blocks.blocks[0].end_lt.clone())
-}
-
-pub async fn get_master_block_seq_no(context: &EverClient, block_id: &str) -> anyhow::Result<u128> {
-    tracing::info!("query seq no for block_id={block_id}");
-    let query = r#"query($block_id: String!){
-        blockchain {
-            block(
-                hash: $block_id
-            ) {
-                seq_no workchain_id
-            }
-        }
-    }"#
-        .to_string();
-
-    let block_id = block_id.to_string();
-    let result = ton_client::net::query(
-        Arc::clone(context),
-        ParamsOfQuery {
-            query: query.clone(),
-            variables: Some(json!({
-                "block_id": block_id
-            })),
-        },
-    )
-        .await
-        .map(|r| r.result)
-        .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
-
-    tracing::info!("query result: {result}");
-
-    let seq_no: SeqNo= serde_json::from_value(result["data"]["blockchain"]["block"].clone())
+    let seq_no: SeqNo = serde_json::from_value(result["data"]["blockchain"]["block"].clone())
         .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
     tracing::info!("queried seq_no: {seq_no:?}");
     if seq_no.workchain_id != -1 {
@@ -117,7 +64,7 @@ pub async fn get_latest_master_block(context: &EverClient) -> anyhow::Result<Mas
             }
         }
     }"#
-        .to_string();
+    .to_string();
 
     let result = ton_client::net::query(
         Arc::clone(context),
@@ -126,17 +73,20 @@ pub async fn get_latest_master_block(context: &EverClient) -> anyhow::Result<Mas
             variables: None,
         },
     )
-        .await
-        .map(|r| r.result)
-        .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
+    .await
+    .map(|r| r.result)
+    .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
 
     tracing::info!("query result: {result}");
 
-    let mut master_block: MasterBlock = serde_json::from_value(result["data"]["blockchain"]["blocks"]["edges"][0]["node"].clone())
-        .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
+    let mut master_block: MasterBlock =
+        serde_json::from_value(result["data"]["blockchain"]["blocks"]["edges"][0]["node"].clone())
+            .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
 
-    master_block.block_id = master_block.block_id.trim_start_matches("block/").to_string();
+    master_block.block_id = master_block
+        .block_id
+        .trim_start_matches("block/")
+        .to_string();
     tracing::info!("queried seq_no: {master_block:?}");
     Ok(master_block)
 }
-

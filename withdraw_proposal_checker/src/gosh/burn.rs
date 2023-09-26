@@ -3,7 +3,6 @@ use common::gosh::helper::EverClient;
 use serde::Deserialize;
 use std::sync::Arc;
 use ton_client::abi::{decode_message_body, Abi, ParamsOfDecodeMessageBody};
-use web3::types::Address;
 
 const ROOT_ABI_PATH: &str = "contracts/l2/RootTokenContract.abi";
 const ROOT_FUNCTION_NAME: &str = "burn_tokens";

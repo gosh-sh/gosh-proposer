@@ -1,5 +1,5 @@
 use crate::eth::elock::get_last_gosh_block_id;
-use crate::gosh::block::{get_block_lt, get_latest_master_block, get_master_block_seq_no};
+use crate::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 use crate::gosh::burn::{find_burns, Burn};
 use common::gosh::helper::EverClient;
 use std::str::FromStr;
@@ -55,10 +55,16 @@ pub async fn create_proposal(
     key: &SecretKey,
 ) -> anyhow::Result<()> {
     let first_block = get_last_gosh_block_id(elock_address, web3s).await?;
-    let first_seq_no = get_master_block_seq_no(&context, &first_block).await?;
+    let first_seq_no = get_master_block_seq_no(context, &first_block).await?;
 
-    let current_master_block = get_latest_master_block(&context).await?;
-    let burns = find_burns(context, root_address, first_seq_no, current_master_block.seq_no).await?;
+    let current_master_block = get_latest_master_block(context).await?;
+    let burns = find_burns(
+        context,
+        root_address,
+        first_seq_no,
+        current_master_block.seq_no,
+    )
+    .await?;
     tracing::info!("burns: {burns:?}");
 
     let burns =
@@ -125,8 +131,14 @@ pub async fn get_proposals(
                 }
             })
             .collect();
-        let from = web3::helpers::to_string(&proposals_data.0).replace('"', "").trim_start_matches("0x").to_string();
-        let till = web3::helpers::to_string(&proposals_data.1).replace('"', "").trim_start_matches("0x").to_string();
+        let from = web3::helpers::to_string(&proposals_data.0)
+            .replace('"', "")
+            .trim_start_matches("0x")
+            .to_string();
+        let till = web3::helpers::to_string(&proposals_data.1)
+            .replace('"', "")
+            .trim_start_matches("0x")
+            .to_string();
         res.push(ProposalData {
             proposal_key: proposal,
             from,
@@ -144,15 +156,9 @@ pub async fn check_proposal(
     proposal: &ProposalData,
 ) -> anyhow::Result<()> {
     tracing::trace!("check proposal: {}", proposal.proposal_key);
-    let start_seq_no = get_master_block_seq_no(
-        context,
-        &proposal.from
-    ).await?;
+    let start_seq_no = get_master_block_seq_no(context, &proposal.from).await?;
 
-    let end_seq_no = get_master_block_seq_no(
-        context,
-        &proposal.till
-    ).await?;
+    let end_seq_no = get_master_block_seq_no(context, &proposal.till).await?;
 
     let burns = find_burns(context, root_address, start_seq_no, end_seq_no).await?;
     tracing::info!("Found burns: {burns:?}");

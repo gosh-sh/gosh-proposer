@@ -7,7 +7,6 @@ use web3::signing::SecretKey;
 use web3::transports::WebSocket;
 use web3::types::Address;
 use web3::Web3;
-use crate::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 
 const ELOCK_ABI_PATH: &str = "resources/elock.abi.json";
 
@@ -46,7 +45,7 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
         match check_proposal(&context, &root_address, &proposal).await {
             Ok(()) => {
                 vote_for_withdrawal(proposal.proposal_key, &elock_contract, &key).await?;
-            },
+            }
             Err(e) => {
                 tracing::info!("Proposal check failed for: {proposal:?} {e}");
             }
