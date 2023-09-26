@@ -51,14 +51,19 @@ struct Messages {
 pub async fn query_messages(
     context: &EverClient,
     root_address: &str,
-    start_lt: &str,
-    // till_lt: Option<u128>,
+    start_seq_no: u128,
+    end_seq_no: u128,
 ) -> anyhow::Result<Vec<Message>> {
-    tracing::info!("query messages to root, address={root_address}");
-    let query = r#"query($addr: String!, $after: String){
+    tracing::info!("query transactions to root, address={root_address}");
+    let query = r#"query($addr: String!, $start: Int, $end: Int, $after: String){
       blockchain {
         account(address: $addr) {
-          transactions(after: $after, first: 20) {
+          transactions(
+            after: $after,
+            master_seq_no_range: {
+             start: $start,
+             end: $end
+           }) {
             edges {
               node {
                 in_message {
@@ -77,7 +82,7 @@ pub async fn query_messages(
     }"#
     .to_string();
 
-    let mut after = start_lt.to_string();
+    let mut after = "".to_string();
     let dst_address = root_address.to_string();
     let mut result_messages = vec![];
 
@@ -88,6 +93,8 @@ pub async fn query_messages(
                 query: query.clone(),
                 variables: Some(json!({
                     "addr": dst_address.clone(),
+                    "start": start_seq_no,
+                    "end": end_seq_no,
                     "after": after,
                 })),
             },
@@ -107,11 +114,6 @@ pub async fn query_messages(
                 let id = msg.id.trim_start_matches("message/").to_string();
                 let tx_id = node.node.id.trim_start_matches("transaction/").to_string();
                 let lt = node.node.lt.parse::<u128>()?;
-                // if let Some(last_lt) = till_lt {
-                //     if lt > last_lt {
-                //         found_last_block = true;
-                //     }
-                // }
                 let message = Message {
                     body: msg.body.unwrap(),
                     id,

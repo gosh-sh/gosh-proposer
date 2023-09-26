@@ -1,4 +1,4 @@
-use crate::eth::proposal::{create_proposal, get_proposals, vote_for_withdrawal};
+use crate::eth::proposal::{check_proposal, create_proposal, get_proposals, vote_for_withdrawal};
 use common::gosh::helper::create_client;
 use std::env;
 use std::str::FromStr;
@@ -7,11 +7,13 @@ use web3::signing::SecretKey;
 use web3::transports::WebSocket;
 use web3::types::Address;
 use web3::Web3;
+use crate::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 
 const ELOCK_ABI_PATH: &str = "resources/elock.abi.json";
 
 pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
     let context = create_client()?;
+
     let root_address = env::var("ROOT_ADDRESS")?;
     tracing::info!("Root address: {root_address}");
 
@@ -37,11 +39,18 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
         &key,
     )
     .await?;
+
     let current_proposals = get_proposals(&elock_contract).await?;
     for proposal in current_proposals {
         // TODO: add check of proposal data
-
-        vote_for_withdrawal(proposal.proposal_key, &elock_contract, &key).await?;
+        match check_proposal(&context, &root_address, &proposal).await {
+            Ok(()) => {
+                vote_for_withdrawal(proposal.proposal_key, &elock_contract, &key).await?;
+            },
+            Err(e) => {
+                tracing::info!("Proposal check failed for: {proposal:?} {e}");
+            }
+        }
     }
     Ok(())
 }

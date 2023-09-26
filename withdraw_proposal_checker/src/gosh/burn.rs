@@ -3,11 +3,12 @@ use common::gosh::helper::EverClient;
 use serde::Deserialize;
 use std::sync::Arc;
 use ton_client::abi::{decode_message_body, Abi, ParamsOfDecodeMessageBody};
+use web3::types::Address;
 
 const ROOT_ABI_PATH: &str = "contracts/l2/RootTokenContract.abi";
 const ROOT_FUNCTION_NAME: &str = "burn_tokens";
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Burn {
     pub dest: String,
     pub value: u128,
@@ -28,16 +29,15 @@ struct BurnArguments {
 pub async fn find_burns(
     context: &EverClient,
     root_address: &str,
-    start_lt: &str,
-) -> anyhow::Result<(Vec<Burn>, String)> {
-    let messages = query_messages(context, root_address, start_lt).await?;
+    start_seq_no: u128,
+    end_seq_no: u128,
+) -> anyhow::Result<Vec<Burn>> {
+    let messages = query_messages(context, root_address, start_seq_no, end_seq_no).await?;
 
     let abi_json = std::fs::read_to_string(ROOT_ABI_PATH)?;
     let abi = Abi::Json(abi_json);
 
     let mut res = vec![];
-    let mut last_trans_lt = 0_u128;
-    let mut last_block_id = "".to_string();
     for message in messages {
         let body = message.body;
         tracing::info!("decode message: {} {body}", message.id);
@@ -54,13 +54,11 @@ pub async fn find_burns(
             if decode_result.name != ROOT_FUNCTION_NAME {
                 continue;
             }
-            if message.lt > last_trans_lt {
-                last_trans_lt = message.lt;
-                last_block_id = message.block_id;
-            }
             let args: BurnArguments = serde_json::from_value(decode_result.value.unwrap())?;
+            let trimmed_to = args.to[26..].to_string();
+            let dest = format!("0x{}", trimmed_to);
             res.push(Burn {
-                dest: args.to,
+                dest,
                 value: args.tokens.parse::<u128>()?,
                 tx_id: message.tx_id,
             })
@@ -68,5 +66,5 @@ pub async fn find_burns(
             tracing::info!("Failed to decode message, skip it. ID={}", message.id);
         }
     }
-    Ok((res, last_block_id))
+    Ok(res)
 }
