@@ -939,6 +939,7 @@ dependencies = [
  "anyhow",
  "common",
  "dotenv",
+ "serde",
  "serde_json",
  "tokio",
  "tracing",

@@ -5,21 +5,29 @@ use crate::gosh::proposal::Proposal;
 use common::eth::block::FullBlock;
 use common::eth::helper::get_signatures_table;
 use common::eth::transfer::decode_transfer;
-use common::eth::{get_storage_proof, read_block as eth_read_block, StorageProof};
+use common::eth::{read_block as eth_read_block};
 use web3::transports::WebSocket;
 use web3::types::{Address, BlockId, BlockNumber, TransactionId, H256, U256, U64};
 use web3::Web3;
+
+const COUNTERS_INDEX: u8 = 1;
 
 async fn get_tx_counter(
     web3s: &Web3<WebSocket>,
     eth_address: Address,
     block_num: U64,
 ) -> anyhow::Result<U256> {
-    let proof = get_storage_proof(web3s, eth_address, Some(BlockNumber::Number(block_num))).await?;
-    match &proof[1] {
-        StorageProof::TrxCount(counter) => Ok(counter.value),
-        _ => anyhow::bail!("Failed to get tx counter"),
-    }
+    let counters = web3s
+        .eth()
+        .storage(eth_address, U256::from(COUNTERS_INDEX), Some(BlockNumber::Number(block_num)))
+        .await?;
+    let counters_str = web3::helpers::to_string(&counters)
+        .replace('"', "")
+        .trim_start_matches("0x")
+        .to_string();
+    tracing::info!("counters: {counters_str}");
+    let res = U256::from_str_radix(&counters_str[33..64], 16)?;
+    Ok(res)
 }
 
 pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> anyhow::Result<()> {

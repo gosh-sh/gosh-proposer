@@ -3,7 +3,7 @@ use common::eth::encoder::serialize_block;
 use common::eth::helper::get_signatures_table;
 use common::eth::transfer::filter_and_decode_block_transactions;
 use common::gosh::call_function;
-use common::gosh::helper::{create_client, load_keys};
+use common::gosh::helper::{EverClient, load_keys};
 use serde_json::json;
 use std::env;
 use web3::transports::WebSocket;
@@ -15,10 +15,10 @@ const KEY_PATH: &str = "tests/keys.json";
 
 pub async fn propose_blocks(
     web3s: &Web3<WebSocket>,
+    client: &EverClient,
     blocks: Vec<FullBlock<H256>>,
 ) -> anyhow::Result<()> {
     let checker_address = env::var("CHECKER_ADDRESS")?;
-    let client = create_client()?;
     let key_pair = load_keys(KEY_PATH)?;
 
     // ELOCK contract address
@@ -52,7 +52,7 @@ pub async fn propose_blocks(
     });
 
     call_function(
-        &client,
+        client,
         &checker_address,
         CHECKER_ABI_PATH,
         Some(key_pair),
