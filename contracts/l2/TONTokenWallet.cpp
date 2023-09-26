@@ -92,6 +92,19 @@ public:
     dest_handle(5e8, 1).burn_tokens(wallet_pubkey_, owner_address_, tokens, to);
   }
 
+  void burn_tokens_to_new_root(uint128 tokens) {
+    check_owner({
+      .allowed_for_original_owner_in_lend_state = false,
+      .allowed_lend_pubkey                      = false,
+      .allowed_lend_owner                       = false
+    });
+    tvm_accept();
+    require(balance_ >= tokens, error_code::not_enough_balance);
+    balance_ -= tokens;
+    IRootTokenContractPtr dest_handle(root_address_);
+    dest_handle(5e8, 1).burn_tokens_to_new_root(wallet_pubkey_, owner_address_, tokens);
+  }
+
   void lock(
     uint128 tokens
   ) {

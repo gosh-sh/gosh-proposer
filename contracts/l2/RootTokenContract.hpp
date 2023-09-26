@@ -112,6 +112,30 @@ __interface IRootTokenContract {
     uint256 to
   ) = 1017;
 
+  [[internal, answer_id]]
+  void burn_tokens_to_new_root(
+    uint256 pubkey, 
+    address_opt owner,
+    uint128 tokens
+  ) = 1019;
+
+  [[internal, answer_id]]
+  void deploy_upgrade_wallet(
+    uint256 pubkey, 
+    address_opt owner,
+    uint128 tokens
+  ) = 1020;
+
+  [[internal, external, answer_id]]
+  void setOldRoot(
+    address oldroot
+  ) = 1021;
+
+  [[internal, external, answer_id]]
+  void setNewRoot(
+    address newroot 
+  ) = 1022;
+
   [[internal, external, answer_id]]
   void onUpgrade(
     cell  newcode
@@ -190,6 +214,8 @@ struct DRootTokenContract {
   optcell     wallet_code_;   ///< Token wallet code.
   address     checker_;
   uint128     burncount_;
+  address     oldroot_;
+  address     newroot_;
 };
 
 /// \interface ERootTokenContract
