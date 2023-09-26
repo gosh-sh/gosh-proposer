@@ -44,7 +44,6 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
 
     let current_proposals = get_proposals(&elock_contract).await?;
     for proposal in current_proposals {
-        // TODO: add check of proposal data
         match check_proposal(&context, &root_address, &proposal).await {
             Ok(()) => {
                 vote_for_withdrawal(proposal.proposal_key, &elock_contract, &key).await?;

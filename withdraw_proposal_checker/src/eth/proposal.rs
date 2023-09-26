@@ -131,14 +131,15 @@ pub async fn get_proposals(
                 }
             })
             .collect();
-        let from = web3::helpers::to_string(&proposals_data.0)
+        let from = format!("{:0>64}",
+            web3::helpers::to_string(&proposals_data.0)
             .replace('"', "")
             .trim_start_matches("0x")
-            .to_string();
-        let till = web3::helpers::to_string(&proposals_data.1)
+            .to_string());
+        let till = format!("{:0>64}",
+            web3::helpers::to_string(&proposals_data.1)
             .replace('"', "")
-            .trim_start_matches("0x")
-            .to_string();
+            .trim_start_matches("0x"));
         res.push(ProposalData {
             proposal_key: proposal,
             from,
@@ -155,7 +156,7 @@ pub async fn check_proposal(
     root_address: &str,
     proposal: &ProposalData,
 ) -> anyhow::Result<()> {
-    tracing::trace!("check proposal: {}", proposal.proposal_key);
+    tracing::info!("check proposal: {}", proposal.proposal_key);
     let start_seq_no = get_master_block_seq_no(context, &proposal.from).await?;
 
     let end_seq_no = get_master_block_seq_no(context, &proposal.till).await?;

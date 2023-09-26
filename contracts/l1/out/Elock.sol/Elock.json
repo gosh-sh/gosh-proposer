@@ -739,9 +739,9 @@
     "src": "0:9379:18",
     "nodes": [
       {
-        "id": 43381,
+        "id": 43321,
         "nodeType": "PragmaDirective",
-        "src": "0:24:20",
+        "src": "0:24:18",
         "nodes": [],
         "literals": [
           "solidity",
@@ -875,7 +875,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 43390,
+              "id": 43330,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
               "src": "363:7:18",
@@ -1167,7 +1167,7 @@
             "visibility": "internal"
           },
           {
-            "id": 43415,
+            "id": 43355,
             "nodeType": "VariableDeclaration",
             "src": "745:31:18",
             "nodes": [],
@@ -1232,7 +1232,7 @@
             "visibility": "internal"
           },
           {
-            "id": 43421,
+            "id": 43361,
             "nodeType": "VariableDeclaration",
             "src": "825:51:18",
             "nodes": [],
@@ -6506,7 +6506,7 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 43846,
+                    "id": 43786,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -12306,5 +12306,5 @@
       }
     ]
   },
-  "id": 20
+  "id": 18
 }
