@@ -1,5 +1,5 @@
 use std::env;
-use crate::checker::{check_proposals_and_accept, get_last_blocks};
+use crate::checker::{check_proposals_and_accept, create_new_proposal, get_last_blocks};
 use common::helper::tracing::init_default_tracing;
 
 mod checker;
@@ -18,6 +18,9 @@ async fn main() -> anyhow::Result<()> {
             if args[1] == "get_last_blocks" {
                 tracing::info!("Get last blocks");
                 get_last_blocks().await
+            } else if args[1] == "create" {
+                tracing::info!("Create proposal");
+                create_new_proposal().await
             } else {
                 anyhow::bail!("Unknown subcommand");
             }

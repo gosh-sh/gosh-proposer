@@ -3,6 +3,9 @@ set -e
 set -o pipefail
 set -x
 
+# NOTE: to run this test you need to export your eth wallet to ETH_WALLET_ADDR
+# and your eth private key to ETH_PRIVATE_KEY
+
 TEST_TRACE="/home/user/GOSH/gosh-proposer/tests/trace.log"
 ETH_URL="https://sepolia.infura.io/v3/df557e910fb2496e8d854046cbedb99a"
 GOSH_URL="https://sh.network.gosh.sh"
@@ -108,4 +111,9 @@ sleep 10
 
 # run withdraw proposal checker
 cd ..
+
+# Create proposal in Elock
+ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw_proposal_checker --release  -- create
+
+# Vote for proposal
 ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS make run_withdraw

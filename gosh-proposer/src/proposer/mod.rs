@@ -45,11 +45,8 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     let web3s = Web3::new(websocket);
 
     let client = create_client()?;
-    // Oldest saved block num
-    // TODO: change to query from GLOCK contract
-    // let eth_end_block = U64::from_str_radix(&env::var("ETH_END_BLOCK")?, 10)?;
+    // Oldest saved block hash
     let eth_end_block = get_block_from_checker(&client).await?;
-
 
     // Start from the latest block if nothing was specified in the env
     let mut block_id = match U64::from_str_radix(&env::var("ETH_STARTING_BLOCK")?, 10) {
