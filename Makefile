@@ -20,9 +20,13 @@ fix:
 run_proposer:
 	cargo run -p gosh_proposer --release
 
-.PHONY: run_checker
-run_checker:
+.PHONY: run_deposit
+run_deposit:
 	cargo run -p deposit-proposal-checker --release
+
+.PHONY: run_withdraw
+run_withdraw:
+	cargo run -p withdraw_proposal_checker --release
 
 .PHONY: check
 check:

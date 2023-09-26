@@ -25,7 +25,11 @@ struct BurnArguments {
     to: String,
 }
 
-pub async fn find_burns(context: &EverClient, root_address: &str, start_lt: &str) -> anyhow::Result<(Vec<Burn>, String)> {
+pub async fn find_burns(
+    context: &EverClient,
+    root_address: &str,
+    start_lt: &str,
+) -> anyhow::Result<(Vec<Burn>, String)> {
     let messages = query_messages(context, root_address, start_lt).await?;
 
     let abi_json = std::fs::read_to_string(ROOT_ABI_PATH)?;

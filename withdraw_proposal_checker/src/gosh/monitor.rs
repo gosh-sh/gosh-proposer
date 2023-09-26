@@ -100,10 +100,10 @@ pub async fn query_messages(
             .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
 
         after = nodes.page_info.end_cursor;
-        let mut found_last_block = false;
+        let _found_last_block = false;
         for node in nodes.edges {
             let msg = node.node.message;
-            if msg.body.is_some() && msg.msg_type == 0 && node.node.aborted == false {
+            if msg.body.is_some() && msg.msg_type == 0 && !node.node.aborted {
                 let id = msg.id.trim_start_matches("message/").to_string();
                 let tx_id = node.node.id.trim_start_matches("transaction/").to_string();
                 let lt = node.node.lt.parse::<u128>()?;

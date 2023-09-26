@@ -1,8 +1,8 @@
-use std::sync::Arc;
+use common::gosh::helper::EverClient;
 use serde::Deserialize;
 use serde_json::json;
+use std::sync::Arc;
 use ton_client::net::ParamsOfQuery;
-use common::gosh::helper::EverClient;
 
 // query {
 //   blocks(
@@ -29,7 +29,8 @@ use common::gosh::helper::EverClient;
 
 #[derive(Deserialize, Debug)]
 struct Block {
-    id: String,
+    #[serde(rename = "id")]
+    _id: String,
     end_lt: String,
 }
 
@@ -38,10 +39,7 @@ struct Blocks {
     blocks: Vec<Block>,
 }
 
-pub async fn get_block_lt(
-    context: &EverClient,
-    block_id: &str,
-) -> anyhow::Result<String> {
+pub async fn get_block_lt(context: &EverClient, block_id: &str) -> anyhow::Result<String> {
     tracing::info!("query end block lt for block_id={block_id}");
     let query = r#"query($block_id: String){
         blocks(
@@ -54,7 +52,7 @@ pub async fn get_block_lt(
             id end_lt(format:DEC)
          }
     }"#
-        .to_string();
+    .to_string();
 
     let block_id = block_id.to_string();
     let result = ton_client::net::query(

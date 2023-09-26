@@ -1,3 +1,2 @@
-pub mod proposal;
 pub mod elock;
-
+pub mod proposal;

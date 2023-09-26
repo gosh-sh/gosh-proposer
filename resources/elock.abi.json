@@ -141,7 +141,7 @@
     ],
     "name": "proposeChangeValidators",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -181,7 +181,7 @@
     ],
     "name": "proposeWithdrawal",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -227,7 +227,7 @@
     "inputs": [],
     "name": "voteForChangeValidators",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -240,7 +240,11 @@
     ],
     "name": "voteForWithdrawal",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]
