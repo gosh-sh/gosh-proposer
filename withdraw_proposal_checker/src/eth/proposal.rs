@@ -7,8 +7,9 @@ use web3::contract::{Contract, Options};
 use web3::ethabi::Token;
 use web3::signing::SecretKey;
 use web3::transports::WebSocket;
-use web3::types::{Address, U256, U64};
+use web3::types::{Address, H256, U256, U64};
 use web3::Web3;
+use ethereum_types::BigEndianHash;
 
 const ETH_CALL_VALUE: u128 = 1000000000000000;
 const ETH_CALL_GAS_LIMIT: u128 = 1000000;
@@ -120,7 +121,8 @@ pub async fn get_proposals(
                 let vals = val.into_tuple().unwrap();
                 let dest = vals[0].clone().into_address().unwrap();
                 let value = vals[1].clone().into_uint().unwrap();
-                let tx_id = web3::helpers::to_string(&vals[2].clone().into_uint().unwrap())
+                let hash = H256::from_uint(&vals[2].clone().into_uint().unwrap());
+                let tx_id = web3::helpers::to_string(&hash)
                     .replace('"', "")
                     .trim_start_matches("0x")
                     .to_string();
@@ -132,12 +134,12 @@ pub async fn get_proposals(
             })
             .collect();
         let from = format!("{:0>64}",
-            web3::helpers::to_string(&proposals_data.0)
+            web3::helpers::to_string(&H256::from_uint(&proposals_data.0))
             .replace('"', "")
             .trim_start_matches("0x")
             .to_string());
         let till = format!("{:0>64}",
-            web3::helpers::to_string(&proposals_data.1)
+            web3::helpers::to_string(&H256::from_uint(&proposals_data.1))
             .replace('"', "")
             .trim_start_matches("0x"));
         res.push(ProposalData {

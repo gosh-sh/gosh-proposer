@@ -115,10 +115,11 @@ cd ..
 # Create proposal in Elock
 ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw_proposal_checker --release  -- create
 
+sleep 10
 # Vote for proposal
 # Do several attempts to vote with timeout
 NEXT_WAIT_TIME=0
-until [ $NEXT_WAIT_TIME -eq 5 ] || (timeout -k 1 5m ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS make run_withdraw); do
+until [ $NEXT_WAIT_TIME -eq 5 ] || (timeout -k 1 5m make run_withdraw); do
     echo "next attempt"
     sleep $(( NEXT_WAIT_TIME++ ))
 done

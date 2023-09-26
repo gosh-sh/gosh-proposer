@@ -1,9 +1,11 @@
-use crate::eth::helper::wei_to_eth;
+use crate::eth::helper::{get_signatures_table, wei_to_eth};
 use std::collections::BTreeMap;
 use std::env;
+use std::sync::Arc;
 
 use crate::eth::block::FullBlock;
 use serde::{Deserialize, Serialize};
+use tokio::task::JoinSet;
 use web3::transports::WebSocket;
 use web3::types::{Transaction, TransactionId, H256, U64};
 use web3::{helpers as w3h, Web3};
@@ -84,52 +86,63 @@ pub fn decode_transfer(
 }
 
 pub async fn filter_and_decode_block_transactions(
-    web3s: &Web3<WebSocket>,
+    web3s: Arc<Web3<WebSocket>>,
     block: &FullBlock<H256>,
     eth_contract_address: &str,
-    code_sig_lookup: &BTreeMap<String, Vec<String>>,
+    _code_sig_lookup: &BTreeMap<String, Vec<String>>,
 ) -> anyhow::Result<Vec<Transfer>> {
-    let mut res = vec![];
     // Parse block transactions
+
+    let mut parallel: JoinSet<anyhow::Result<Transfer>> = JoinSet::new();
     for transaction_hash in &block.transactions {
         // Load transaction
         tracing::info!("tx: {}", w3h::to_string(transaction_hash));
-        let tx = match web3s
-            .eth()
-            .transaction(TransactionId::Hash(transaction_hash.to_owned()))
-            .await
-        {
-            Ok(Some(tx)) => tx,
-            _ => {
-                tracing::info!("Failed to fetch transaction: {transaction_hash}");
-                continue;
-            }
-        };
+        let transaction_hash = transaction_hash.clone();
+        let web3s_clone = web3s.clone();
+        let eth_contract_address_clone = eth_contract_address.to_string();
+        parallel.spawn(
+            async move {
+                let tx = match web3s_clone
+                    .eth()
+                    .transaction(TransactionId::Hash(transaction_hash.to_owned()))
+                    .await
+                {
+                    Ok(Some(tx)) => tx,
+                    _ => {
+                        anyhow::bail!("Failed to fetch transaction: {transaction_hash}");
+                    }
+                };
 
-        // Check that transaction destination is equal to the specified address
-        if let Some(address) = tx.to {
-            let dest = w3h::to_string(&address)
-                .trim()
-                .trim_end_matches('"')
-                .trim_start_matches('"')
-                .to_lowercase();
-            tracing::info!("Txn destination address: {dest}");
-            if dest != eth_contract_address {
-                tracing::info!(
-                    "Wrong destination address, skip it. `{}` != `{eth_contract_address}`",
+                // Check that transaction destination is equal to the specified address
+                if let Some(address) = tx.to {
+                    let dest = w3h::to_string(&address)
+                        .trim()
+                        .trim_end_matches('"')
+                        .trim_start_matches('"')
+                        .to_lowercase();
+                    tracing::info!("Txn destination address: {dest}");
+                    if dest != eth_contract_address_clone {
+                        anyhow::bail!(
+                    "Wrong destination address, skip it. `{}` != `{eth_contract_address_clone}`",
                     dest
                 );
-                continue;
+                    }
+                } else {
+                    anyhow::bail!("No destination address, skip it.");
+                }
+                let code_sig_lookup = get_signatures_table()?;
+                decode_transfer(tx, &code_sig_lookup)
             }
-        } else {
-            tracing::info!("No destination address, skip it.");
-            continue;
-        }
+        );
+    }
 
-        if let Ok(transfer) = decode_transfer(tx, code_sig_lookup) {
-            res.push(transfer);
+    let mut transfers = vec![];
+    while let Some(res) = parallel.join_next().await {
+        let val = res?;
+        if let Ok(trans) = val {
+            transfers.push(trans);
         }
     }
-    tracing::info!("block {} transfers: {:?}", w3h::to_string(&block.hash), res);
-    Ok(res)
+    tracing::info!("block {} transfers: {:?}", w3h::to_string(&block.hash), transfers);
+    Ok(transfers)
 }

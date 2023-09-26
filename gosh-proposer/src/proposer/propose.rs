@@ -6,6 +6,7 @@ use common::gosh::call_function;
 use common::gosh::helper::{EverClient, load_keys};
 use serde_json::json;
 use std::env;
+use std::sync::Arc;
 use web3::transports::WebSocket;
 use web3::types::H256;
 use web3::Web3;
@@ -14,7 +15,7 @@ const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 const KEY_PATH: &str = "tests/keys.json";
 
 pub async fn propose_blocks(
-    web3s: &Web3<WebSocket>,
+    web3s: Arc<Web3<WebSocket>>,
     client: &EverClient,
     blocks: Vec<FullBlock<H256>>,
 ) -> anyhow::Result<()> {
@@ -29,9 +30,12 @@ pub async fn propose_blocks(
 
     let mut all_transfers = vec![];
     let mut json_blocks = vec![];
+
+    // TODO: use eth_getLogs api function instead to get all account transactions
+
     for block in blocks {
         let mut transfers = filter_and_decode_block_transactions(
-            web3s,
+            web3s.clone(),
             &block,
             &eth_contract_address,
             &code_sig_lookup,

@@ -3467,6 +3467,7 @@ dependencies = [
  "anyhow",
  "common",
  "dotenv",
+ "ethereum-types",
  "serde",
  "serde_json",
  "tokio",

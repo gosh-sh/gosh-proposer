@@ -9,6 +9,7 @@ edition = "2021"
 anyhow.workspace = true
 common = { path = "../common" }
 dotenv.workspace = true
+ethereum-types = "0.14.1"
 serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true

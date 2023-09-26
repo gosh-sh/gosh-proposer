@@ -8,6 +8,7 @@ use common::gosh::call_getter;
 use common::gosh::helper::{create_client, EverClient};
 use common::helper::deserialize_u128;
 use std::str::FromStr;
+use std::sync::Arc;
 use serde::Deserialize;
 
 mod propose;
@@ -55,6 +56,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     };
 
     let mut blocks = vec![];
+
     loop {
         // Read block
         let next_block = read_block(&web3s, block_id).await?;
@@ -70,7 +72,8 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
         blocks.push(next_block);
     }
 
-    propose_blocks(&web3s, &client, blocks).await?;
+    let web3s = Arc::new(web3s);
+    propose_blocks(web3s, &client, blocks).await?;
 
     Ok(())
 }
