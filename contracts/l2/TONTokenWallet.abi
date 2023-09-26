@@ -19,6 +19,16 @@
     "id": "0x3eb"
   },
   {
+    "name": "burn_tokens_to_new_root",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3ec"
+  },
+  {
     "name": "lock",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },

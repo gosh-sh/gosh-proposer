@@ -132,6 +132,50 @@
     "id": "0x3f9"
   },
   {
+    "name": "burn_tokens_to_new_root",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"owner", "type":"optional(address)" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3fb"
+  },
+  {
+    "name": "deploy_upgrade_wallet",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"owner", "type":"optional(address)" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3fc"
+  },
+  {
+    "name": "setOldRoot",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"oldroot", "type":"address" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3fd"
+  },
+  {
+    "name": "setNewRoot",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"newroot", "type":"address" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3fe"
+  },
+  {
     "name": "onUpgrade",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
@@ -285,7 +329,9 @@
     { "name":"total_granted_", "type":"uint128" },
     { "name":"wallet_code_", "type":"optional(cell)" },
     { "name":"checker_", "type":"address" },
-    { "name":"burncount_", "type":"uint128" }
+    { "name":"burncount_", "type":"uint128" },
+    { "name":"oldroot_", "type":"address" },
+    { "name":"newroot_", "type":"address" }
   ],
   "events": [
   ]
