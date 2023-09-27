@@ -228,7 +228,7 @@ public:
       value -= value_c;
       uint128 evers = uint128(1000000000);
       unsigned msg_flags = 0;
-      address answer_addr;
+      address answer_addr = address{tvm_myaddr()};
       total_granted_ += value + value_c;
       address_opt owner;
       auto [wallet_init, dest_addr] = calc_wallet_init(transactions.get_at(unsigned(index)).pubkey, owner);
@@ -242,15 +242,15 @@ public:
       dest_handle_root_wallet(Evers(evers.get()), 1).acceptMint(value_c, answer_addr, 0u128, notify);
     }
     else {
-      total_supply_ += value_c;
+      total_supply_ += value;
       require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
       uint128 evers = uint128(1000000000);
       opt<cell> notify;
-      address answer_addr;
-      total_granted_ += value_c;
+      address answer_addr = address{tvm_myaddr()};
+      total_granted_ += value;
       auto [wallet_init_root, dest_root] = calc_wallet_init(root_pubkey_, root_owner_);
       ITONTokenWalletPtr dest_handle_root_wallet(dest_root);
-      dest_handle_root_wallet(Evers(evers.get()), 1).acceptMint(value_c, answer_addr, 0u128, notify);
+      dest_handle_root_wallet(Evers(evers.get()), 1).acceptMint(value, answer_addr, 0u128, notify);
     }
 
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());
