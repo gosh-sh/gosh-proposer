@@ -1,12 +1,3 @@
-
-.PHONY: install-dev
-install-dev:
-	cargo install --profile dev --path .
-
-.PHONY: install
-install:
-	cargo install --profile release --path .
-
 .PHONY: fmt
 fmt:
 	taplo fmt
@@ -43,3 +34,7 @@ debug_run:
 .PHONY: test
 test:
 	cargo test -p gosh_proposer --release
+
+.PHONY: build
+build:
+	cargo build --release
