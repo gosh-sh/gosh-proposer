@@ -30,9 +30,9 @@ contract Proposal {
         _;
     }
 
-    uint256 _hash;
+    uint256 _hash; 
     uint256 _newhash;
-    address static _root;
+    address static _checker; 
     TransactionBatch[] _transactions;
     uint128 static _index;
     uint128 _need;
@@ -45,14 +45,14 @@ contract Proposal {
     ) accept {
         _hash = hash;
         _newhash = newhash;
-        require (_root == msg.sender, ERR_WRONG_SENDER);
+        require (_checker == msg.sender, ERR_WRONG_SENDER);
         _transactions = transactions;
         (optional(TvmCell) data) = tvm.rawConfigParam(34);
+        if (data.hasValue() == false) { selfdestruct(_checker); }
         ValidatorSet vset = data.get().toSlice().load(ValidatorSet);
         _vdict = vset.vdict;
         _need =  uint128(_vdict.keys().length);
         _need = _need - _need * 34 / 100;
-        if (data.hasValue() == false) { selfdestruct(_root); }
     }
 
     function setVote(uint16 id) public {
@@ -66,13 +66,13 @@ contract Proposal {
             deleted;
             _need -= 1;
             if (_need == 0) {
-                Checker(_root).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index, _transactions);
+                Checker(_checker).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index, _transactions);
             }
         }
     }
 
-    function destroy() public senderIs(_root) accept {
-        selfdestruct(_root);
+    function destroy() public senderIs(_checker) accept {
+        selfdestruct(_checker);
     }
 
     
@@ -96,7 +96,7 @@ contract Proposal {
         return ("proposal", _version);
     }
 
-    function getSet() external view returns (mapping(uint16 => uint256)) {
+    function getValidatorsSet() external view returns (mapping(uint16 => uint256)) {
         uint16 key;
         optional(uint16, TvmSlice) res = _vdict.next(key);
         mapping(uint16 => uint256) result;
@@ -106,6 +106,22 @@ contract Proposal {
             uint256 pub = data.load(uint256);
             result[newkey] = pub;
             res = _vdict.next(newkey);
+        }
+        return result;
+    }
+
+    function getValidatorId(uint256 pubkey) external view returns (optional(uint16)) {
+        uint16 key;
+        optional(uint16) result;
+        optional(uint16, TvmSlice) res = _vdict.next(key);
+        while (res.hasValue()) {
+            (uint16 newkey, TvmSlice data) = res.get();
+            data.skip(4 * 8);
+            uint256 pub = data.load(uint256);
+            if (pubkey == pub) {
+                result = newkey;
+                return result;
+            }
         }
         return result;
     }

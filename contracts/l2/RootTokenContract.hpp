@@ -86,14 +86,14 @@ __interface IRootTokenContract {
   ) = 14;
 
   [[internal, external, answer_id]]
-  void grantbatch(
+  void grantBatch(
     dict_array<TransactionBatch> transactions, ///< Amount of tokens to be granted.
     uint128 a,
     uint128 b
   ) = 1014;
 
   [[internal, answer_id]]
-  void grantbatchindex(
+  void grantBatchIndex(
     dict_array<TransactionBatch> transactions, ///< Amount of tokens to be granted.
     uint128 index,
     uint128 a,
@@ -107,7 +107,7 @@ __interface IRootTokenContract {
   ) = 1016;
 
   [[internal, answer_id]]
-  void burn_tokens(
+  void burnTokens(
     uint256 pubkey, 
     address_opt owner,
     uint128 tokens,
@@ -115,14 +115,14 @@ __interface IRootTokenContract {
   ) = 1017;
 
   [[internal, answer_id]]
-  void burn_tokens_to_new_root(
+  void burnTokensToNewRoot(
     uint256 pubkey, 
     address_opt owner,
     uint128 tokens
   ) = 1019;
 
   [[internal, answer_id]]
-  void deploy_upgrade_wallet(
+  void deployUpgradeWallet(
     uint256 pubkey, 
     address_opt owner,
     uint128 tokens

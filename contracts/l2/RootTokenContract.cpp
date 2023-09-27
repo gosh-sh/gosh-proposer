@@ -161,7 +161,7 @@ public:
     return dest;
   }
 
-  void burn_tokens(uint256 pubkey, address_opt owner, uint128 tokens, uint256 to) {
+  void burnTokens(uint256 pubkey, address_opt owner, uint128 tokens, uint256 to) {
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
     tvm_accept();
@@ -172,7 +172,7 @@ public:
     burncount_ += 1;
   }
 
-  void burn_tokens_to_new_root(uint256 pubkey, address_opt owner, uint128 tokens) {
+  void burnTokensToNewRoot(uint256 pubkey, address_opt owner, uint128 tokens) {
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
     tvm_accept();
@@ -181,10 +181,10 @@ public:
     total_supply_ -= tokens;
     total_granted_ -= tokens;
     IRootTokenContractPtr dest_handle(*newroot_);
-    dest_handle(Evers(1e9), 1).deploy_upgrade_wallet(pubkey, owner, tokens);
+    dest_handle(Evers(1e9), 1).deployUpgradeWallet(pubkey, owner, tokens);
   }
 
-  void deploy_upgrade_wallet(uint256 pubkey, address_opt owner, uint128 tokens) {
+  void deployUpgradeWallet(uint256 pubkey, address_opt owner, uint128 tokens) {
     require(oldroot_.has_value(), error_code::message_sender_is_not_my_owner);
     require(*oldroot_ == int_sender(), error_code::message_sender_is_not_my_owner);
     uint128 evers = uint128(1000000000);
@@ -202,17 +202,17 @@ public:
     dest_handle(Evers(evers.get()), 1).acceptMint(tokens, answer_addr, 0u128, notify);
   }
 
-  void grantbatch(
+  void grantBatch(
     dict_array<TransactionBatch> transactions,
     uint128 a,
     uint128 b
   ) {
     require(checker_ == int_sender(), error_code::message_sender_is_not_my_owner);
     IRootTokenContractPtr dest_handle(tvm_myaddr());
-    dest_handle(Evers(1e9), 1).grantbatchindex(transactions, uint128(0), a, b);
+    dest_handle(Evers(1e9), 1).grantBatchIndex(transactions, uint128(0), a, b);
   }
 
-  void grantbatchindex(
+  void grantBatchIndex(
     dict_array<TransactionBatch> transactions,
     uint128 index,
     uint128 a,
@@ -227,7 +227,6 @@ public:
       require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
       value -= value_c;
       uint128 evers = uint128(1000000000);
-      unsigned msg_flags = 0;
       address answer_addr = address{tvm_myaddr()};
       total_granted_ += value + value_c;
       address_opt owner;
@@ -255,7 +254,7 @@ public:
 
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());
     index += 1;
-    dest_handle_next(Evers(1e9), 1).grantbatchindex(transactions, uint128(index), a, b);
+    dest_handle_next(Evers(1e9), 1).grantBatchIndex(transactions, uint128(index), a, b);
   } 
 
   void grant(
@@ -264,6 +263,7 @@ public:
     uint128   evers,
     opt<cell> notify
   ) {
+    return;
     require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
     check_owner();
     tvm_accept();
@@ -286,6 +286,7 @@ public:
   }
 
   bool mint(uint128 tokens) {
+    return false;
     check_owner();
     tvm_accept();
 

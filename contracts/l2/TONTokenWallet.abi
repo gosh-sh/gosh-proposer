@@ -8,7 +8,7 @@
   ],
   "functions": [
   {
-    "name": "burn_tokens",
+    "name": "burnTokens",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
     { "name":"tokens", "type":"uint128" },
@@ -19,7 +19,7 @@
     "id": "0x3eb"
   },
   {
-    "name": "burn_tokens_to_new_root",
+    "name": "burnTokensToNewRoot",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
     { "name":"tokens", "type":"uint128" }
