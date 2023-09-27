@@ -342,7 +342,7 @@ GETGLOB 10
 GETGLOB 11
 GETGLOB 13
 GETGLOB 14
-PUSHINT 1
+PUSHINT 0
 .loc proposal_test.sol, 0
 
 .macro getVersion
@@ -1146,22 +1146,16 @@ IFJMPREF {
 		.inline __constructor
 	}
 	DUP
-	PUSHINT 1071142485
+	PUSHINT 1409149045
 	EQUAL
 	IFJMPREF {
-		.inline __getVersion
+		.inline __setVote
 	}
 }
 DUP
 PUSHINT 1903197803
 LEQ
 IFJMPREF {
-	DUP
-	PUSHINT 1409149045
-	EQUAL
-	IFJMPREF {
-		.inline __setVote
-	}
 	DUP
 	PUSHINT 1321526914
 	EQUAL
@@ -1170,6 +1164,12 @@ IFJMPREF {
 	}
 	DUP
 	PUSHINT 1409149045
+	EQUAL
+	IFJMPREF {
+		.inline __getDetails
+	}
+	DUP
+	PUSHINT 1666339416
 	EQUAL
 	IFJMPREF {
 		.inline __getDetails
