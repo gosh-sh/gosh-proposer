@@ -18,10 +18,11 @@ contract Checker {
     uint256 _prevhash;
 
     address _root;
-    uint128 _index = 0;
+    uint128 _proposalCount = 0;
 
-    uint128 a = 10;
-    uint128 b = 0;
+    //value = a*x/10000 + b
+    uint128 a = 10; 
+    uint128 b = 0; //1e-18 GETH
 
     TvmCell _proposalCode;
 
@@ -60,7 +61,6 @@ contract Checker {
     }
 
     function checkData(BlockData[] data, TransactionBatch[] transactions) public pure accept {
-        tvm.accept();
         if (data.length == 0) {
             return;
         }
@@ -69,9 +69,9 @@ contract Checker {
 
     function checkDataIndex(BlockData[] data, TransactionBatch[] transactions, uint128 index) public senderIs(this) accept {
         if (index >=  data.length) { 
-            TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _index, this);
+            TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _proposalCount, this);
             new Proposal{stateInit: s1, value: 10 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
-            _index += 1;        
+            _proposalCount += 1;        
             return; 
         }
         TvmSlice dataslice = TvmSlice(data[index].data);
@@ -99,9 +99,9 @@ contract Checker {
     function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
         require(_prevhash == prevhash, ERR_WRONG_HASH);
         ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, transactions, a, b);
-        this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _index, 0);
+        this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _proposalCount, 0);
         _prevhash = newhash;
-        _index = 0;
+        _proposalCount = 0;
     }
 
     function destroyTrash(uint256 prevhash, uint128 indexmax, uint128 index) public view senderIs(this) accept {
@@ -111,7 +111,7 @@ contract Checker {
             }
             Proposal(ProposalLib.calculateProposalAddress(_proposalCode, prevhash, index + i, this)).destroy{value: 0.1 ton, flag: 1}();
         }
-        this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, index + BATCH_SIZE, 0);
+        this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, indexmax, index + BATCH_SIZE);
     }
 
     function updateCode(TvmCell newcode, TvmCell cell) public view onlyOwner accept {
@@ -146,13 +146,13 @@ contract Checker {
 
     function getAllProposalAddr() external view returns(address[]) {
         address[] result;
-        for (uint128 i = 0; i < _index; i++){
+        for (uint128 i = 0; i < _proposalCount; i++){
             result.push(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, i, this));
         }
         return result;
     }
 
     function getStatus() external view returns(uint256 prevhash, uint128 index) {
-        return (_prevhash, _index);
+        return (_prevhash, _proposalCount);
     }
 }

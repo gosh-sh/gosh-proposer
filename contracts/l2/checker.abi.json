@@ -131,7 +131,7 @@
 		{"name":"_constructorFlag","type":"bool"},
 		{"name":"_prevhash","type":"uint256"},
 		{"name":"_root","type":"address"},
-		{"name":"_index","type":"uint128"},
+		{"name":"_proposalCount","type":"uint128"},
 		{"name":"a","type":"uint128"},
 		{"name":"b","type":"uint128"},
 		{"name":"_proposalCode","type":"cell"}

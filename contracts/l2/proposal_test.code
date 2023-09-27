@@ -442,6 +442,73 @@ THROW 0
 GETGLOB 15
 .loc proposal_test.sol, 0
 
+.macro getValidatorId
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc proposal_test.sol, 115
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 256
+ENDS
+.loc proposal_test.sol, 0
+CALLREF {
+	.inline __getValidatorId_822a5628_internal_macro
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 3469010562
+	STUR 130
+	XCPU S1, S0
+	ISNULL
+	PUSHCONT {
+		DROP
+		STSLICECONST 0
+	}
+	PUSHCONT {
+		SWAP
+		STSLICECONST 1
+		STU 16
+	}
+	IFELSE
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getValidatorId_822a5628_internal_macro
+.loc proposal_test.sol, 129
+DROP
+PUSHINT 0
+.loc proposal_test.sol, 0
+
 .macro c4_to_c7
 PUSHROOT
 CTOS
@@ -1096,7 +1163,13 @@ IFJMPREF {
 		.inline __setVote
 	}
 	DUP
-	PUSHINT 1666339416
+	PUSHINT 1321526914
+	EQUAL
+	IFJMPREF {
+		.inline __getValidatorId
+	}
+	DUP
+	PUSHINT 1409149045
 	EQUAL
 	IFJMPREF {
 		.inline __getDetails

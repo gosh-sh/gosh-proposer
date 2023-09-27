@@ -84,7 +84,7 @@ public:
     dest_handle(5e8, 1).askEvers(wallet_pubkey_, owner_address_);
   }
 
-  void burn_tokens(uint128 tokens, uint256 to) {
+  void burnTokens(uint128 tokens, uint256 to) {
     check_owner({
       .allowed_for_original_owner_in_lend_state = false,
       .allowed_lend_pubkey                      = false,
@@ -94,10 +94,10 @@ public:
     require(balance_ >= tokens, error_code::not_enough_balance);
     balance_ -= tokens;
     IRootTokenContractPtr dest_handle(root_address_);
-    dest_handle(5e8, 1).burn_tokens(wallet_pubkey_, owner_address_, tokens, to);
+    dest_handle(5e8, 1).burnTokens(wallet_pubkey_, owner_address_, tokens, to);
   }
 
-  void burn_tokens_to_new_root(uint128 tokens) {
+  void burnTokensToNewRoot(uint128 tokens) {
     check_owner({
       .allowed_for_original_owner_in_lend_state = false,
       .allowed_lend_pubkey                      = false,
@@ -107,7 +107,7 @@ public:
     require(balance_ >= tokens, error_code::not_enough_balance);
     balance_ -= tokens;
     IRootTokenContractPtr dest_handle(root_address_);
-    dest_handle(5e8, 1).burn_tokens_to_new_root(wallet_pubkey_, owner_address_, tokens);
+    dest_handle(5e8, 1).burnTokensToNewRoot(wallet_pubkey_, owner_address_, tokens);
   }
 
   void lock(

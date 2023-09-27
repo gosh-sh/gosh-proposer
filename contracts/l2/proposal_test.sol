@@ -32,7 +32,7 @@ contract Proposal_Test {
 
     uint256 _hash;
     uint256 _newhash;
-    address static _root;
+    address static  _checker;
     TransactionBatch[] _transactions;
     uint128 static _index;
 
@@ -45,12 +45,12 @@ contract Proposal_Test {
     ) accept {
         _hash = hash;
         _newhash = newhash;
-        require (_root == msg.sender, ERR_WRONG_SENDER);
+        require ( _checker == msg.sender, ERR_WRONG_SENDER);
         _transactions = transactions;
 //        (optional(TvmCell) data) = tvm.rawConfigParam(34);
 //        ValidatorSet vset = data.get().toSlice().load(ValidatorSet);
 //        _vdict = vset.vdict;
-//        if (data.hasValue() == false) { selfdestruct(_root); }
+//        if (data.hasValue() == false) { selfdestruct( _checker); }
     }
 
     function setvdict(uint256 key) public accept {
@@ -67,13 +67,13 @@ contract Proposal_Test {
             optional(uint256) deleted = _vdict.getDel(id);
             deleted;
             if (_vdict.empty()) {
-                Checker(_root).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index, _transactions);
+                Checker( _checker).setNewHash{value: 0.1 ton, flag: 1}(_hash, _newhash, _index, _transactions);
             }
         }
     }
 
-    function destroy() public senderIs(_root) accept {
-        selfdestruct(_root);
+    function destroy() public senderIs( _checker) accept {
+        selfdestruct( _checker);
     }
 
     
@@ -110,5 +110,23 @@ contract Proposal_Test {
             res = _vdict.next(newkey);
         }*/
         return _vdict;
+    }
+
+    
+    function getValidatorId(uint256 pubkey) external view returns (optional(uint16)) {
+/*        uint16 key;
+        optional(uint16) result;
+        optional(uint16, TvmSlice) res = _vdict.next(key);
+        while (res.hasValue()) {
+            (uint16 newkey, TvmSlice data) = res.get();
+            data.skip(4 * 8);
+            uint256 pub = data.load(uint256);
+            if (pubkey == pub) {
+                result = newkey;
+                return result;
+            }
+        }
+        return result;*/
+        return 0;
     }
 }

@@ -136,14 +136,14 @@ __interface ITONTokenWallet {
 
   TIP3_EXTERNAL
   [[internal, answer_id]]
-  void burn_tokens(
+  void burnTokens(
     uint128 tokens,
     uint256 to
   ) = 1003;
 
   TIP3_EXTERNAL
   [[internal, answer_id]]
-  void burn_tokens_to_new_root(
+  void burnTokensToNewRoot(
     uint128 tokens
   ) = 1004;
 
