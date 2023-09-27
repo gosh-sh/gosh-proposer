@@ -6,6 +6,7 @@ use common::{
 };
 use serde::Deserialize;
 use std::env;
+use serde_json::json;
 
 const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 const PROPOSAL_ABI_PATH: &str = "contracts/l2/proposal.abi.json";
@@ -77,14 +78,33 @@ pub async fn find_proposals(context: &EverClient) -> anyhow::Result<Vec<Proposal
     Ok(res)
 }
 
+#[derive(Deserialize)]
+struct GetValidatorIdResult {
+    #[serde(rename = "value0")]
+    id: Option<u16>,
+}
+
 pub async fn approve_proposal(
     context: &EverClient,
     proposal_address: String,
-    index: u128,
 ) -> anyhow::Result<()> {
     let proposal_abi = "contracts/l2/proposal_test.abi.json";
     let key_path = env::var("VALIDATORS_KEY_PATH")?;
-    let keys = Some(load_keys(&key_path)?);
+    let keys = load_keys(&key_path)?;
+    let pubkey = format!("0x{}", keys.public);
+    let keys = Some(keys);
+
+    let id_val = call_getter(
+        context,
+        &proposal_address,
+        proposal_abi,
+        "getValidatorId",
+        Some(json!({"pubkey": pubkey}))
+    ).await?;
+    let id: GetValidatorIdResult = serde_json::from_value(id_val)?;
+    let id = id.id.ok_or(
+        anyhow::format_err!("Failed to get id for proposal")
+    )?;
 
     call_function(
         context,
@@ -92,7 +112,7 @@ pub async fn approve_proposal(
         proposal_abi,
         keys,
         "setVote",
-        Some(serde_json::json!({"id": index})),
+        Some(serde_json::json!({"id": id})),
     )
     .await?;
     Ok(())
