@@ -20,7 +20,7 @@ contract Checker {
     address _root;
     uint128 _index = 0;
 
-    uint128 a = 1000;
+    uint128 a = 10;
     uint128 b = 0;
 
     TvmCell _proposalCode;
