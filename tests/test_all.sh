@@ -108,7 +108,7 @@ if [[ "$TOKEN_BALANCE" -gt "200000000000000" ]]; then
 fi
 
 # Burn tokens
-gosh-cli callx --addr $TOKEN_WALLET_ADDRESS --abi ../contracts/l2/TONTokenWallet.abi --keys keys.json -m burn_tokens --_answer_id 0 --to $ETH_WALLET_ADDR --tokens $TOKEN_BALANCE
+gosh-cli callx --addr $TOKEN_WALLET_ADDRESS --abi ../contracts/l2/TONTokenWallet.abi --keys keys.json -m burnTokens --_answer_id 0 --to $ETH_WALLET_ADDR --tokens $TOKEN_BALANCE
 
 sleep 10
 

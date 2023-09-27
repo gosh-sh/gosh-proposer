@@ -1,3 +1,4 @@
+use std::env;
 use crate::gosh::monitor::query_messages;
 use common::gosh::helper::EverClient;
 use serde::Deserialize;
@@ -5,7 +6,6 @@ use std::sync::Arc;
 use ton_client::abi::{decode_message_body, Abi, ParamsOfDecodeMessageBody};
 
 const ROOT_ABI_PATH: &str = "contracts/l2/RootTokenContract.abi";
-const ROOT_FUNCTION_NAME: &str = "burn_tokens";
 
 #[derive(Debug, PartialEq)]
 pub struct Burn {
@@ -35,6 +35,7 @@ pub async fn find_burns(
 
     let abi_json = std::fs::read_to_string(ROOT_ABI_PATH)?;
     let abi = Abi::Json(abi_json);
+    let root_function_name = env::var("ROOT_FUNCTION_NAME")?;
 
     let mut res = vec![];
     for message in messages {
@@ -50,7 +51,7 @@ pub async fn find_burns(
         };
         let decode_result = decode_message_body(Arc::clone(context), decode_params).await;
         if let Ok(decode_result) = decode_result {
-            if decode_result.name != ROOT_FUNCTION_NAME {
+            if decode_result.name != root_function_name {
                 continue;
             }
             let args: BurnArguments = serde_json::from_value(decode_result.value.unwrap())?;
