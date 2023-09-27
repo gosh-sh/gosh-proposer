@@ -10,8 +10,7 @@ use std::sync::Arc;
 use web3::transports::WebSocket;
 use web3::types::H256;
 use web3::Web3;
-
-const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
+use common::helper::abi::CHECKER_ABI;
 
 pub async fn propose_blocks(
     web3s: Arc<Web3<WebSocket>>,
@@ -49,7 +48,7 @@ pub async fn propose_blocks(
     call_function(
         client,
         &checker_address,
-        CHECKER_ABI_PATH,
+        CHECKER_ABI,
         None,
         "checkData",
         Some(args),

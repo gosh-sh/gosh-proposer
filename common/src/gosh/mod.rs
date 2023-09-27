@@ -12,11 +12,11 @@ pub mod helper;
 pub async fn call_getter(
     context: &EverClient,
     address: &str,
-    abi_path: &str,
+    abi_str: &str,
     function_name: &str,
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<serde_json::Value> {
-    tracing::info!("call_getter: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
+    tracing::info!("call_getter: address={address}, function_name={function_name}, args={args:?}");
     let filter = Some(serde_json::json!({
         "id": { "eq": address }
     }));
@@ -49,8 +49,7 @@ pub async fn call_getter(
         None => CallSet::some_with_function(function_name),
     };
 
-    let abi_json = std::fs::read_to_string(abi_path)?;
-    let abi = Abi::Json(abi_json);
+    let abi = Abi::Json(abi_str.to_string());
 
     let encoded = encode_message(
         Arc::clone(context),
@@ -89,12 +88,12 @@ pub async fn call_getter(
 pub async fn call_function(
     context: &EverClient,
     address: &str,
-    abi_path: &str,
+    abi_str: &str,
     keys: Option<KeyPair>,
     function_name: &str,
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<()> {
-    tracing::info!("call_function: address={address}, abi_path={abi_path}, function_name={function_name}, args={args:?}");
+    tracing::info!("call_function: address={address}, function_name={function_name}, args={args:?}");
 
     let call_set = match args {
         Some(value) => CallSet::some_with_function_and_input(function_name, value),
@@ -106,8 +105,7 @@ pub async fn call_function(
         None => Signer::None,
     };
 
-    let abi_json = std::fs::read_to_string(abi_path)?;
-    let abi = Abi::Json(abi_json);
+    let abi = Abi::Json(abi_str.to_string());
 
     let message_encode_params = ParamsOfEncodeMessage {
         abi: abi.clone(),

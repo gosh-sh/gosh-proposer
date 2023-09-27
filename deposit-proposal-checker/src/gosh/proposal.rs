@@ -7,9 +7,7 @@ use common::{
 use serde::Deserialize;
 use serde_json::json;
 use std::env;
-
-const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
-const PROPOSAL_ABI_PATH: &str = "contracts/l2/proposal.abi.json";
+use common::helper::abi::{CHECKER_ABI, PROPOSAL_ABI};
 
 #[derive(Deserialize)]
 struct AllProposals {
@@ -41,7 +39,7 @@ pub async fn find_proposals(context: &EverClient) -> anyhow::Result<Vec<Proposal
     let proposal_addresses = call_getter(
         context,
         &checker_address,
-        CHECKER_ABI_PATH,
+        CHECKER_ABI,
         "getAllProposalAddr",
         None,
     )
@@ -63,7 +61,7 @@ pub async fn find_proposals(context: &EverClient) -> anyhow::Result<Vec<Proposal
         let proposal_details = call_getter(
             context,
             &proposal_address,
-            PROPOSAL_ABI_PATH,
+            PROPOSAL_ABI,
             "getDetails",
             None,
         )
@@ -81,14 +79,13 @@ pub async fn find_proposals(context: &EverClient) -> anyhow::Result<Vec<Proposal
 #[derive(Deserialize)]
 struct GetValidatorIdResult {
     #[serde(rename = "value0")]
-    id: Option<u16>,
+    id: Option<String>,
 }
 
 pub async fn approve_proposal(
     context: &EverClient,
     proposal_address: String,
 ) -> anyhow::Result<()> {
-    let proposal_abi = "contracts/l2/proposal_test.abi.json";
     let key_path = env::var("VALIDATORS_KEY_PATH")?;
     let keys = load_keys(&key_path)?;
     let pubkey = format!("0x{}", keys.public);
@@ -97,7 +94,7 @@ pub async fn approve_proposal(
     let id_val = call_getter(
         context,
         &proposal_address,
-        proposal_abi,
+        PROPOSAL_ABI,
         "getValidatorId",
         Some(json!({"pubkey": pubkey})),
     )
@@ -110,7 +107,7 @@ pub async fn approve_proposal(
     call_function(
         context,
         &proposal_address,
-        proposal_abi,
+        PROPOSAL_ABI,
         keys,
         "setVote",
         Some(json!({"id": id})),

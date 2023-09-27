@@ -1,6 +1,7 @@
 use serde::{Deserialize, Deserializer};
 
 pub mod tracing;
+pub mod abi;
 
 pub fn deserialize_u128<'de, D>(deserializer: D) -> Result<u128, D::Error>
 where

@@ -10,8 +10,7 @@ use web3::signing::SecretKey;
 use web3::transports::WebSocket;
 use web3::types::{Address, BlockId, BlockNumber};
 use web3::Web3;
-
-const ELOCK_ABI_PATH: &str = "resources/elock.abi.json";
+use common::helper::abi::ELOCK_ABI;
 
 pub async fn create_new_proposal() -> anyhow::Result<()> {
     let context = create_client()?;
@@ -24,8 +23,7 @@ pub async fn create_new_proposal() -> anyhow::Result<()> {
 
     let elock_address_str = env::var("ETH_CONTRACT_ADDRESS")?;
     tracing::info!("elock address: {elock_address_str}");
-    let abi_file = std::fs::File::open(ELOCK_ABI_PATH)?;
-    let elock_abi = web3::ethabi::Contract::load(abi_file)
+    let elock_abi = web3::ethabi::Contract::load(ELOCK_ABI.as_bytes())
         .map_err(|e| anyhow::format_err!("Failed to load elock abi: {e}"))?;
     let elock_address = Address::from_str(&elock_address_str)?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
@@ -57,8 +55,7 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
 
     let elock_address_str = env::var("ETH_CONTRACT_ADDRESS")?;
     tracing::info!("elock address: {elock_address_str}");
-    let abi_file = std::fs::File::open(ELOCK_ABI_PATH)?;
-    let elock_abi = web3::ethabi::Contract::load(abi_file)
+    let elock_abi = web3::ethabi::Contract::load(ELOCK_ABI.as_bytes())
         .map_err(|e| anyhow::format_err!("Failed to load elock abi: {e}"))?;
     let elock_address = Address::from_str(&elock_address_str)?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);

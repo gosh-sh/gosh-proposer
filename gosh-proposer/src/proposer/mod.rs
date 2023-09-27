@@ -11,6 +11,7 @@ use std::sync::Arc;
 use web3::transports::WebSocket;
 use web3::types::{BlockId, BlockNumber, H256};
 use web3::Web3;
+use common::helper::abi::CHECKER_ABI;
 
 mod propose;
 
@@ -22,7 +23,6 @@ struct Status {
     _index: u128,
 }
 
-const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 const DEFAULT_MAX_BLOCK_IN_ONE_CHUNK: u64 = 20;
 
 pub async fn get_block_from_checker(client: &EverClient) -> anyhow::Result<H256> {
@@ -31,7 +31,7 @@ pub async fn get_block_from_checker(client: &EverClient) -> anyhow::Result<H256>
     let value = call_getter(
         client,
         &checker_address,
-        CHECKER_ABI_PATH,
+        CHECKER_ABI,
         "getStatus",
         None,
     )

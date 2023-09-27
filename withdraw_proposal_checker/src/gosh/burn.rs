@@ -4,8 +4,7 @@ use common::gosh::helper::EverClient;
 use serde::Deserialize;
 use std::sync::Arc;
 use ton_client::abi::{decode_message_body, Abi, ParamsOfDecodeMessageBody};
-
-const ROOT_ABI_PATH: &str = "contracts/l2/RootTokenContract.abi";
+use common::helper::abi::ROOT_ABI;
 
 #[derive(Debug, PartialEq)]
 pub struct Burn {
@@ -33,8 +32,7 @@ pub async fn find_burns(
 ) -> anyhow::Result<Vec<Burn>> {
     let messages = query_messages(context, root_address, start_seq_no, end_seq_no).await?;
 
-    let abi_json = std::fs::read_to_string(ROOT_ABI_PATH)?;
-    let abi = Abi::Json(abi_json);
+    let abi = Abi::Json(ROOT_ABI.to_string());
     let root_function_name = env::var("ROOT_FUNCTION_NAME")?;
 
     let mut res = vec![];

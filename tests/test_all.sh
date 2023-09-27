@@ -90,7 +90,7 @@ gosh-cli -j callx --addr $PROP_ADDRESS --abi ../contracts/l2/proposal_test.abi.j
 
 # run deposit_proposal_checker to check proposal and vote for it
 cd ..
-ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS CHECKER_ADDRESS=$CHECKER_ADDRESS make run_deposit
+VALIDATORS_KEY_PATH=tests/keys.json ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS CHECKER_ADDRESS=$CHECKER_ADDRESS make run_deposit
 cd tests
 
 # Get checker status
