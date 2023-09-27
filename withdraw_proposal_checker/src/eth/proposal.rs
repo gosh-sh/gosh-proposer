@@ -3,6 +3,7 @@ use crate::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 use crate::gosh::burn::{find_burns, Burn};
 use common::gosh::helper::EverClient;
 use ethereum_types::BigEndianHash;
+use std::env;
 use std::str::FromStr;
 use web3::contract::{Contract, Options};
 use web3::ethabi::Token;
@@ -14,7 +15,7 @@ use web3::Web3;
 // const ETH_CALL_VALUE: u128 = 1000000000000000;
 const ETH_CALL_GAS_LIMIT: u128 = 1000000;
 const ETH_TRANSACTION_TYPE: u64 = 2;
-const CONFIRMATIONS_CNT: usize = 1;
+const DEFAULT_CONFIRMATIONS_CNT: usize = 1;
 
 #[derive(Debug)]
 pub struct ProposalData {
@@ -33,13 +34,16 @@ pub async fn vote_for_withdrawal(
     tracing::info!("Vote for proposal: {prop_str}");
 
     let options = get_options();
-
+    let confirmation_cnt = env::var("ETH_CONFIRMATIONS_CNT")
+        .ok()
+        .and_then(|s| usize::from_str(&s).ok())
+        .unwrap_or(DEFAULT_CONFIRMATIONS_CNT);
     let res = elock_contract
         .signed_call_with_confirmations(
             "voteForWithdrawal",
             prop_key,
             options,
-            CONFIRMATIONS_CNT,
+            confirmation_cnt,
             key,
         )
         .await?;
@@ -79,12 +83,16 @@ pub async fn create_proposal(
 
     let options = get_options();
 
+    let confirmations_cnt = env::var("ETH_CONFIRMATIONS_CNT")
+        .ok()
+        .and_then(|s| usize::from_str(&s).ok())
+        .unwrap_or(DEFAULT_CONFIRMATIONS_CNT);
     let res = elock_contract
         .signed_call_with_confirmations(
             "proposeWithdrawal",
             (first_block, last_block, burns),
             options,
-            CONFIRMATIONS_CNT,
+            confirmations_cnt,
             key,
         )
         .await?;
@@ -133,19 +141,14 @@ pub async fn get_proposals(
                 }
             })
             .collect();
-        let from = format!(
-            "{:0>64}",
-            web3::helpers::to_string(&H256::from_uint(&proposals_data.0))
-                .replace('"', "")
-                .trim_start_matches("0x")
-                .to_string()
-        );
-        let till = format!(
-            "{:0>64}",
-            web3::helpers::to_string(&H256::from_uint(&proposals_data.1))
-                .replace('"', "")
-                .trim_start_matches("0x")
-        );
+        let from = web3::helpers::to_string(&H256::from_uint(&proposals_data.0))
+            .replace('"', "")
+            .trim_start_matches("0x")
+            .to_string();
+        let till = web3::helpers::to_string(&H256::from_uint(&proposals_data.1))
+            .replace('"', "")
+            .trim_start_matches("0x")
+            .to_string();
         res.push(ProposalData {
             proposal_key: proposal,
             from,
@@ -166,6 +169,10 @@ pub async fn check_proposal(
     let start_seq_no = get_master_block_seq_no(context, &proposal.from).await?;
 
     let end_seq_no = get_master_block_seq_no(context, &proposal.till).await?;
+
+    if start_seq_no >= end_seq_no {
+        anyhow::bail!("Proposal start block seq_no is greater than end's");
+    }
 
     let burns = find_burns(context, root_address, start_seq_no, end_seq_no).await?;
     tracing::info!("Found burns: {burns:?}");

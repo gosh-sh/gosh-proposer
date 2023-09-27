@@ -1,11 +1,13 @@
 use crate::eth::helper::{get_signatures_table, wei_to_eth};
 use std::collections::BTreeMap;
 use std::env;
+use std::str::FromStr;
 use std::sync::Arc;
 
 use crate::eth::block::FullBlock;
 use serde::{Deserialize, Serialize};
 use tokio::task::JoinSet;
+use web3::ethabi::Address;
 use web3::transports::WebSocket;
 use web3::types::{Transaction, TransactionId, H256, U64};
 use web3::{helpers as w3h, Web3};
@@ -41,14 +43,12 @@ pub fn decode_transfer(
                 .ok_or(anyhow::format_err!("Failed to decode function signature"))?
         ),
         _ => {
-            tracing::trace!("Function not found.");
             anyhow::bail!("Function not found.");
         }
     };
 
     let function_name = env::var("ETH_FUNCTION_NAME")?;
     if function_name != func_signature.replace('"', "") {
-        tracing::trace!("Wrong function name: {function_name} != {func_signature}");
         anyhow::bail!("Wrong function name: {function_name} != {func_signature}");
     }
 
@@ -89,7 +89,6 @@ pub async fn filter_and_decode_block_transactions(
     web3s: Arc<Web3<WebSocket>>,
     block: &FullBlock<H256>,
     eth_contract_address: &str,
-    _code_sig_lookup: &BTreeMap<String, Vec<String>>,
 ) -> anyhow::Result<Vec<Transfer>> {
     // Parse block transactions
 
@@ -99,7 +98,7 @@ pub async fn filter_and_decode_block_transactions(
         // tracing::info!("tx: {}", w3h::to_string(transaction_hash));
         let transaction_hash = *transaction_hash;
         let web3s_clone = web3s.clone();
-        let eth_contract_address_clone = eth_contract_address.to_string();
+        let eth_contract_address_clone = Address::from_str(eth_contract_address)?;
         parallel.spawn(async move {
             let tx = match web3s_clone
                 .eth()
@@ -114,16 +113,9 @@ pub async fn filter_and_decode_block_transactions(
 
             // Check that transaction destination is equal to the specified address
             if let Some(address) = tx.to {
-                let dest = w3h::to_string(&address)
-                    .trim()
-                    .trim_end_matches('"')
-                    .trim_start_matches('"')
-                    .to_lowercase();
-                // tracing::info!("Txn destination address: {dest}");
-                if dest != eth_contract_address_clone {
+                if address != eth_contract_address_clone {
                     anyhow::bail!(
-                    "Wrong destination address, skip it. `{}` != `{eth_contract_address_clone}`",
-                    dest
+                    "Wrong destination address, skip it. `{address}` != `{eth_contract_address_clone}`",
                 );
                 }
             } else {

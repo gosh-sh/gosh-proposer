@@ -29,7 +29,9 @@ pub async fn create_new_proposal() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to load elock abi: {e}"))?;
     let elock_address = Address::from_str(&elock_address_str)?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
-    let key = SecretKey::from_str(&env::var("ETH_PRIVATE_KEY")?)
+
+    let key_path = env::var("ETH_PRIVATE_KEY_PATH")?;
+    let key = SecretKey::from_str(&std::fs::read_to_string(&key_path)?)
         .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
 
     create_proposal(

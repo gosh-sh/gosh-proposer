@@ -50,7 +50,7 @@ pub async fn get_master_block_seq_no(context: &EverClient, block_id: &str) -> an
         .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
     tracing::info!("queried seq_no: {seq_no:?}");
     if seq_no.workchain_id != -1 {
-        anyhow::bail!("Specified block is not a master chain block");
+        anyhow::bail!("Specified block is not a masterchain block");
     }
     Ok(seq_no.seq_no)
 }

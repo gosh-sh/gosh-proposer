@@ -83,8 +83,8 @@ pub async fn approve_proposal(
     index: u128,
 ) -> anyhow::Result<()> {
     let proposal_abi = "contracts/l2/proposal_test.abi.json";
-    let key_path = "tests/keys.json";
-    let keys = Some(load_keys(key_path)?);
+    let key_path = env::var("VALIDATORS_KEY_PATH")?;
+    let keys = Some(load_keys(&key_path)?);
 
     call_function(
         context,

@@ -65,7 +65,6 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
     let end_tx_counter = get_tx_counter(web3s, eth_address, till_block_num).await?;
 
     if from_block_num >= till_block_num {
-        tracing::info!("Wrong block chain: {from_block_num} >= {till_block_num}");
         anyhow::bail!("Wrong block chain: {from_block_num} >= {till_block_num}");
     }
 
