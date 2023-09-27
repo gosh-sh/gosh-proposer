@@ -17,6 +17,7 @@ pub async fn propose_blocks(
     client: &EverClient,
     blocks: Vec<FullBlock<H256>>,
 ) -> anyhow::Result<()> {
+    tracing::info!("start propose block");
     let checker_address = env::var("CHECKER_ADDRESS")?;
 
     // ELOCK contract address

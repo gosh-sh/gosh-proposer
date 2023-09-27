@@ -91,7 +91,7 @@ pub async fn filter_and_decode_block_transactions(
     eth_contract_address: &str,
 ) -> anyhow::Result<Vec<Transfer>> {
     // Parse block transactions
-
+    tracing::info!("start search of transfers");
     let mut parallel: JoinSet<anyhow::Result<Transfer>> = JoinSet::new();
     for transaction_hash in &block.transactions {
         // Load transaction
