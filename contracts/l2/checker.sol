@@ -59,7 +59,7 @@ contract Checker {
         b = b_from_ax_div10000_plus_b;
     }
 
-    function checkData(BlockData[] data, TransactionBatch[] transactions) public view onlyOwner accept {
+    function checkData(BlockData[] data, TransactionBatch[] transactions) public pure accept {
         tvm.accept();
         if (data.length == 0) {
             return;
