@@ -182,11 +182,6 @@ SETGLOB 14
 DROP
 GETGLOB 6
 THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	.inline __c4_to_c7
-}
 .loc checker.sol, 62
 OVER
 PUSHCONT {
@@ -227,18 +222,6 @@ THROW 0
 .inline __checkData_4ef37aa1_internal_macro
 
 .macro checkData_4ef37aa1_internal_macro
-.loc checker.sol, 29
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-GETGLOB 2
-EQUAL
-THROWIFNOT 100
 .loc checker.sol, 34
 ACCEPT
 .loc checker.sol, 35
