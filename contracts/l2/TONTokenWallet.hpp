@@ -336,6 +336,8 @@ struct DTONTokenWallet {
   address          root_address_;  ///< Address of the related RootTokenContract.
   uint256          wallet_pubkey_; ///< Public key of wallet owner.
   address_opt      owner_address_; ///< Owner contract address for internal ownership.
+  bool             flag_;
+  uint32           money_timestamp_;
 #ifdef TIP3_ENABLE_LEND_OWNERSHIP
   opt<uint256>     lend_pubkey_;   ///< Lend ownership pubkey.
   lend_owners_map  lend_owners_;   ///< Lend ownership map (service owner => lend_owner).
@@ -395,7 +397,7 @@ DTONTokenWallet prepare_wallet_data(
   return {
     name, symbol, decimals,
     uint128(0), uint128(0), root_pubkey, root_address,
-    wallet_pubkey, wallet_owner,
+    wallet_pubkey, wallet_owner, false, uint32(0),
 #ifdef TIP3_ENABLE_LEND_OWNERSHIP
     {}, {}, {},
 #endif

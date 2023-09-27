@@ -223,6 +223,8 @@
     { "name":"root_address_", "type":"address" },
     { "name":"wallet_pubkey_", "type":"uint256" },
     { "name":"owner_address_", "type":"optional(address)" },
+    { "name":"flag_", "type":"bool" },
+    { "name":"money_timestamp_", "type":"uint32" },
     { "name":"code_hash_", "type":"uint256" },
     { "name":"code_depth_", "type":"uint16" },
     { "name":"workchain_id_", "type":"int8" }

@@ -75,6 +75,11 @@ public:
 
   void getMoney() {
     if (tvm_balance() > 5e10) { return; }
+    if (tvm_now() - money_timestamp_ < 300) {
+      if (flag_ == true) { return; }
+    }
+    flag_ = true;
+    money_timestamp_ = tvm_now();
     IRootTokenContractPtr dest_handle(root_address_);
     dest_handle(5e8, 1).askEvers(wallet_pubkey_, owner_address_);
   }
@@ -449,7 +454,8 @@ public:
     return 0;
   }
   // default processing of empty messages or func_id=0
-  __always_inline static int _receive([[maybe_unused]] cell msg, [[maybe_unused]] slice msg_body) {
+  __always_inline int _receive([[maybe_unused]] cell msg, [[maybe_unused]] slice msg_body) {
+    if (int_sender() == root_address_) { flag_ = false; }
     return 0;
   }
 private:
@@ -539,7 +545,7 @@ private:
     DTONTokenWallet wallet_data {
       name_, symbol_, decimals_,
       0u128, 0u128, root_pubkey_, root_address_,
-      sender_pubkey, sender_owner,
+      sender_pubkey, sender_owner, false, uint32(0),
 #ifdef TIP3_ENABLE_LEND_OWNERSHIP
       {}, {}, {},
 #endif
@@ -555,7 +561,7 @@ private:
     DTONTokenWallet wallet_data {
       name_, symbol_, decimals_,
       0u128, 0u128, root_pubkey_, root_address_,
-      pubkey, owner,
+      pubkey, owner, false, uint32(0),
 #ifdef TIP3_ENABLE_LEND_OWNERSHIP
       {}, {}, {},
 #endif
