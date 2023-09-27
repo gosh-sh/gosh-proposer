@@ -98,10 +98,11 @@ public:
     require(wallet_code.cdepth() == wallet_code_depth, error_code::wrong_wallet_code_hash);
     wallet_code_ = wallet_code;
 
-    if constexpr (Internal) {
-      tvm_rawreserve(tvm_balance() - int_value().get(), rawreserve_flag::up_to);
-      set_int_return_flag(SEND_ALL_GAS);
-    }
+    uint128 evers = uint128(1000000000);
+    auto [wallet_init, dest] = calc_wallet_init(root_pubkey_, root_owner_);
+    ITONTokenWalletPtr dest_handle(dest);
+    dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
+
     return true;
   }
 
@@ -217,29 +218,30 @@ public:
     uint128 a,
     uint128 b
   ) {
-    uint128 value = transactions.get_at(unsigned(index)).tokens * a / 1000 + b;
-    total_supply_ += value;
-    require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
     require(tvm_myaddr() == int_sender(), error_code::message_sender_is_not_my_owner);
+    uint128 value = transactions.get_at(unsigned(index)).tokens;
+    uint128 value_c = value * a / 10000 + b;
+    tvm_accept(); 
+    if (value_c < value) {
+      require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
+      total_supply_ += value;
+      value -= value_c;
+      uint128 evers = uint128(1000000000);
+      unsigned msg_flags = 0;
+      address answer_addr;
+      total_granted_ += value;
+      address_opt owner;
+      auto [wallet_init, dest_addr] = calc_wallet_init(transactions.get_at(unsigned(index)).pubkey, owner);
+      ITONTokenWalletPtr dest_handle(dest_addr);
+      opt<cell> notify;
+      dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
+      dest_handle(Evers(evers.get()), 1).acceptMint(value, answer_addr, 0u128, notify);
 
-    tvm_accept();
-    uint128 evers = uint128(1000000000);
-    unsigned msg_flags = 0;
-    address answer_addr;
-    if constexpr (Internal) {
-      tvm_rawreserve(tvm_balance() - int_value().get() * 4, rawreserve_flag::up_to);
-      answer_addr = int_sender();
-    } else {
-      answer_addr = address{tvm_myaddr()};
+      auto [wallet_init_root, dest_root] = calc_wallet_init(root_pubkey_, root_owner_);
+      ITONTokenWalletPtr dest_handle_root_wallet(dest_root);
+      dest_handle_root_wallet(Evers(evers.get()), 1).acceptMint(value_c, answer_addr, 0u128, notify);
     }
-    total_granted_ += value;
-    address_opt owner;
-    auto [wallet_init, dest_addr] = calc_wallet_init(transactions.get_at(unsigned(index)).pubkey, owner);
-    ITONTokenWalletPtr dest_handle(dest_addr);
-    opt<cell> notify;
-    dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
-    dest_handle(Evers(evers.get()), 1).acceptMint(value, answer_addr, 0u128, notify);
-    
+
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());
     index += 1;
     dest_handle_next(Evers(1e9), 1).grantbatchindex(transactions, uint128(index), a, b);
