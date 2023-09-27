@@ -30,8 +30,8 @@
 		{
 			"name": "setCommission",
 			"inputs": [
-				{"name":"a_from_ax_div10000_plus_b","type":"uint128"},
-				{"name":"b_from_ax_div10000_plus_b","type":"uint128"}
+				{"name":"a_from_ax_div1000_plus_b","type":"uint128"},
+				{"name":"b_from_ax_div1000_plus_b","type":"uint128"}
 			],
 			"outputs": [
 			]

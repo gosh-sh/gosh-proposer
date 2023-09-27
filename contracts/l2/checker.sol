@@ -20,7 +20,7 @@ contract Checker {
     address _root;
     uint128 _index = 0;
 
-    uint128 a = 0;
+    uint128 a = 1000;
     uint128 b = 0;
 
     TvmCell _proposalCode;
@@ -54,9 +54,9 @@ contract Checker {
         _proposalCode = code;
     }
 
-    function setCommission(uint128 a_from_ax_div10000_plus_b, uint128 b_from_ax_div10000_plus_b) public onlyOwner accept {
-        a = a_from_ax_div10000_plus_b;
-        b = b_from_ax_div10000_plus_b;
+    function setCommission(uint128 a_from_ax_div1000_plus_b, uint128 b_from_ax_div1000_plus_b) public onlyOwner accept {
+        a = a_from_ax_div1000_plus_b;
+        b = b_from_ax_div1000_plus_b;
     }
 
     function checkData(BlockData[] data, TransactionBatch[] transactions) public view onlyOwner accept {
