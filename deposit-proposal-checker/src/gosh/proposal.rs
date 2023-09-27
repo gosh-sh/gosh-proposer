@@ -5,8 +5,8 @@ use common::{
     gosh::{call_function, call_getter, helper::load_keys},
 };
 use serde::Deserialize;
-use std::env;
 use serde_json::json;
+use std::env;
 
 const CHECKER_ABI_PATH: &str = "contracts/l2/checker.abi.json";
 const PROPOSAL_ABI_PATH: &str = "contracts/l2/proposal.abi.json";
@@ -99,12 +99,13 @@ pub async fn approve_proposal(
         &proposal_address,
         proposal_abi,
         "getValidatorId",
-        Some(json!({"pubkey": pubkey}))
-    ).await?;
+        Some(json!({"pubkey": pubkey})),
+    )
+    .await?;
     let id: GetValidatorIdResult = serde_json::from_value(id_val)?;
-    let id = id.id.ok_or(
-        anyhow::format_err!("Failed to get id for proposal")
-    )?;
+    let id = id
+        .id
+        .ok_or(anyhow::format_err!("Failed to get id for proposal"))?;
 
     call_function(
         context,
@@ -112,7 +113,7 @@ pub async fn approve_proposal(
         proposal_abi,
         keys,
         "setVote",
-        Some(serde_json::json!({"id": id})),
+        Some(json!({"id": id})),
     )
     .await?;
     Ok(())
