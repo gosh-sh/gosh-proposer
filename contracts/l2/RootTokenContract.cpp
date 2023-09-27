@@ -160,6 +160,19 @@ public:
     return dest;
   }
 
+  address deployEmptyWalletFree(
+    uint256     pubkey
+  ) {
+    require(hasWalletCode(), error_code::wallet_code_not_initialized);
+    require(pubkey != 0, error_code::define_pubkey_or_internal_owner);
+    address_opt owner;
+    uint128 evers = uint128(1000000000);
+    auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
+    ITONTokenWalletPtr dest_handle(dest);
+    dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
+    return dest;
+  }
+
   void burnTokens(uint256 pubkey, address_opt owner, uint128 tokens, uint256 to) {
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);

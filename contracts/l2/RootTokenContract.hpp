@@ -143,6 +143,11 @@ __interface IRootTokenContract {
     cell  newcode
   ) = 1018;
 
+  [[internal, answer_id]]
+  address deployEmptyWalletFree(
+    uint256     pubkey  ///< New wallet's public key.
+  ) = 1023;
+
   /// Mint tokens. Allocates new tokens (increases total_supply_).
   [[internal, external, answer_id]]
   bool mint(uint128 tokens) = 15;

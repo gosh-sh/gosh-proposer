@@ -188,6 +188,17 @@
     "id": "0x3fa"
   },
   {
+    "name": "deployEmptyWalletFree",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"pubkey", "type":"uint256" }
+    ],
+    "outputs": [
+    { "name":"value0", "type":"address" }
+    ],
+    "id": "0x3ff"
+  },
+  {
     "name": "mint",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
