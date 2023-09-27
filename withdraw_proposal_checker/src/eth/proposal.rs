@@ -11,7 +11,7 @@ use web3::transports::WebSocket;
 use web3::types::{Address, H256, U256, U64};
 use web3::Web3;
 
-const ETH_CALL_VALUE: u128 = 1000000000000000;
+// const ETH_CALL_VALUE: u128 = 1000000000000000;
 const ETH_CALL_GAS_LIMIT: u128 = 1000000;
 const ETH_TRANSACTION_TYPE: u64 = 2;
 const CONFIRMATIONS_CNT: usize = 1;
@@ -29,7 +29,7 @@ pub async fn vote_for_withdrawal(
     elock_contract: &Contract<WebSocket>,
     key: &SecretKey,
 ) -> anyhow::Result<()> {
-    let prop_str = web3::helpers::to_string(&prop_key);
+    let prop_str = web3::helpers::to_string(&H256::from_uint(&prop_key));
     tracing::info!("Vote for proposal: {prop_str}");
 
     let options = get_options();
@@ -192,7 +192,7 @@ fn convert_burns(burns: Vec<Burn>) -> anyhow::Result<Vec<Token>> {
 
 fn get_options() -> Options {
     let mut options = Options::default();
-    options.value = Some(U256::from(ETH_CALL_VALUE));
+    // options.value = Some(U256::from(ETH_CALL_VALUE));
     options.transaction_type = Some(U64::from(ETH_TRANSACTION_TYPE));
     options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
     options

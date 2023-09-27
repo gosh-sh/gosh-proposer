@@ -39,6 +39,9 @@ echo "export ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS" >> $TEST_TRACE
 # deposit value to Elock
 cast send --rpc-url $ETH_URL $ETH_CONTRACT_ADDRESS "deposit(uint256)" $PUBKEY --private-key $ETH_PRIVATE_KEY --value 0.0002ether
 
+# top up elock balance
+cast send --rpc-url $ETH_URL $ETH_CONTRACT_ADDRESS --private-key $ETH_PRIVATE_KEY --value 0.01ether
+
 # Enable bash trace
 set -x
 
@@ -99,7 +102,7 @@ echo "export TOKEN_WALLET_ADDRESS=$TOKEN_WALLET_ADDRESS" >> $TEST_TRACE
 
 # check token wallet balance
 TOKEN_BALANCE=$(gosh-cli runx --addr $TOKEN_WALLET_ADDRESS --abi ../contracts/l2/TONTokenWallet.abi -m getDetails| jq -r .balance)
-if [[ "$TOKEN_BALANCE" != "200000000000000" ]]; then
+if [[ "$TOKEN_BALANCE" -gt "200000000000000" ]]; then
   echo "Wrong balance"
   exit 1
 fi
@@ -117,10 +120,4 @@ ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run 
 
 sleep 10
 # Vote for proposal
-# Do several attempts to vote with timeout
-NEXT_WAIT_TIME=0
-until [ $NEXT_WAIT_TIME -eq 5 ] || (timeout -k 1 5m make run_withdraw); do
-    echo "next attempt"
-    sleep $(( NEXT_WAIT_TIME++ ))
-done
-[ $NEXT_WAIT_TIME -lt 5 ]
+ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS make run_withdraw

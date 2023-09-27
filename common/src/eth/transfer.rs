@@ -96,7 +96,7 @@ pub async fn filter_and_decode_block_transactions(
     let mut parallel: JoinSet<anyhow::Result<Transfer>> = JoinSet::new();
     for transaction_hash in &block.transactions {
         // Load transaction
-        tracing::info!("tx: {}", w3h::to_string(transaction_hash));
+        // tracing::info!("tx: {}", w3h::to_string(transaction_hash));
         let transaction_hash = *transaction_hash;
         let web3s_clone = web3s.clone();
         let eth_contract_address_clone = eth_contract_address.to_string();
@@ -119,7 +119,7 @@ pub async fn filter_and_decode_block_transactions(
                     .trim_end_matches('"')
                     .trim_start_matches('"')
                     .to_lowercase();
-                tracing::info!("Txn destination address: {dest}");
+                // tracing::info!("Txn destination address: {dest}");
                 if dest != eth_contract_address_clone {
                     anyhow::bail!(
                     "Wrong destination address, skip it. `{}` != `{eth_contract_address_clone}`",
