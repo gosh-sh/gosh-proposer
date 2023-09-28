@@ -102,7 +102,7 @@ contract Proposal {
         mapping(uint16 => uint256) result;
         while (res.hasValue()) {
             (uint16 newkey, TvmSlice data) = res.get();
-            data.skip(4 * 8);
+            data.skip(5 * 8);
             uint256 pub = data.load(uint256);
             result[newkey] = pub;
             res = _vdict.next(newkey);
@@ -117,7 +117,7 @@ contract Proposal {
         while (res.hasValue()) {
             (uint16 newkey, TvmSlice data) = res.get();
             key = newkey;
-            data.skip(4 * 8);
+            data.skip(5 * 8);
             uint256 pub = data.load(uint256);
             if (pubkey == pub) {
                 result = newkey;
