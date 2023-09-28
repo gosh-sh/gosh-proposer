@@ -13,7 +13,7 @@ withdraw_proposal_checker get_last_blocks
 
 ```bash
 cd contracts/l1
-forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK $ETH_WALLET_ADDRS [$ETH_WALLET_ADDRS]
+forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK $FEE_RECEIVER_WALLET_ADDR [$ETH_WALLET_ADDRS]
 ```
 
 4) Send some funds to the ELock contract for it to have operational balance
@@ -94,6 +94,9 @@ Deposit service checks `deposit` function calls of ELock and creates similar tra
 blocks to GOSH and for sync should be run often (once in a minute or even more often, in example this time is `30 sec`).
 Withdrawal flow can be triggered less often to save ETH operational balance. In example this flow is called once in 
 `1 hour`. 
+
+NOTE: calls of `withdraw_proposal_checker` can stuck due to ETH library issues, so it should be run with timeout of
+approximately `5 minutes` and retried in case of error. 
 
 1) On each validator run checkers in loop:
 
