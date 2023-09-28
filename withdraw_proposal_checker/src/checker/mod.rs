@@ -12,6 +12,16 @@ use web3::transports::WebSocket;
 use web3::types::{Address, BlockId, BlockNumber};
 use web3::Web3;
 
+fn get_secret() -> anyhow::Result<SecretKey> {
+    let key_path = env::var("ETH_PRIVATE_KEY_PATH")
+        .map_err(|e| anyhow::format_err!("Failed to get env ETH_PRIVATE_KEY_PATH: {e}"))?;
+    SecretKey::from_str(
+        std::fs::read_to_string(&key_path)
+            .map_err(|e| anyhow::format_err!("Failed to read ETH_PRIVATE_KEY_PATH: {e}"))?.trim(),
+    )
+        .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))
+}
+
 pub async fn create_new_proposal() -> anyhow::Result<()> {
     let context = create_client()?;
 
@@ -36,13 +46,7 @@ pub async fn create_new_proposal() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to convert ETH address: {e}"))?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
 
-    let key_path = env::var("ETH_PRIVATE_KEY_PATH")
-        .map_err(|e| anyhow::format_err!("Failed to get env ETH_PRIVATE_KEY_PATH: {e}"))?;
-    let key = SecretKey::from_str(
-        &std::fs::read_to_string(&key_path)
-            .map_err(|e| anyhow::format_err!("Failed to read ETH_PRIVATE_KEY_PATH: {e}"))?,
-    )
-    .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
+    let key = get_secret()?;
 
     create_proposal(
         &context,
@@ -79,13 +83,8 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
     let elock_address = Address::from_str(&elock_address_str)
         .map_err(|e| anyhow::format_err!("Failed to convert ETH address: {e}"))?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
-    let key_path = env::var("ETH_PRIVATE_KEY_PATH")
-        .map_err(|e| anyhow::format_err!("Failed to get env ETH_PRIVATE_KEY_PATH: {e}"))?;
-    let key = SecretKey::from_str(
-        &std::fs::read_to_string(&key_path)
-            .map_err(|e| anyhow::format_err!("Failed to read ETH_PRIVATE_KEY_PATH: {e}"))?,
-    )
-    .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))?;
+
+    let key = get_secret()?;
 
     let current_proposals = get_proposals(&elock_contract).await?;
     for proposal in current_proposals {
