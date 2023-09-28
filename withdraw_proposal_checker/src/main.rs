@@ -1,4 +1,5 @@
 use crate::checker::{check_proposals_and_accept, create_new_proposal, get_last_blocks};
+use crate::gosh::burn::find_all_burns;
 use common::helper::tracing::init_default_tracing;
 use std::env;
 
@@ -21,6 +22,9 @@ async fn main() -> anyhow::Result<()> {
             } else if args[1] == "create" {
                 tracing::info!("Create proposal");
                 create_new_proposal().await
+            } else if args[1] == "find_burns" {
+                tracing::info!("Find burns");
+                find_all_burns().await
             } else {
                 anyhow::bail!("Unknown subcommand");
             }

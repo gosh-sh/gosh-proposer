@@ -92,8 +92,10 @@ There are 2 complex services: `deposit` and `withdrawal`.
 
 Deposit service checks `deposit` function calls of ELock and creates similar transfers in GOSH. This service sends ETH
 blocks to GOSH and for sync should be run often (once in a minute or even more often, in example this time is `30 sec`).
+
 Withdrawal flow can be triggered less often to save ETH operational balance. In example this flow is called once in 
-`1 hour`. 
+`1 hour`. Fixed time interval can be changed to interactive by querying amount of withdrawals (see paragraph 3 of the 
+current section) and comparing them to some value.
 
 NOTE: calls of `withdraw_proposal_checker` can stuck due to ETH library issues, so it should be run with timeout of
 approximately `5 minutes` and retried in case of error. 
@@ -125,6 +127,20 @@ loop:
     # retry if timeout expired
   sleep 1 hour
 ```
+
+3) Query amount of withdrawals
+
+Call of `withdraw_proposal_checker` with `find_burns` subcommand will print all found withdrawals: 
+
+```bash
+$ withdraw_proposal_checker find_burns
+{
+  "count": 1,
+  "total_value": 19980000000000000
+}
+```
+
+`total_value` can be used to determine whether it is good time to run `withdrawal` service.
 
 # Monitoring
 

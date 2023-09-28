@@ -129,6 +129,9 @@ sleep 10
 # run withdraw proposal checker
 cd ..
 
+# Find all burns
+ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw_proposal_checker --release  -- find_burns
+
 # Create proposal in Elock
 ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw_proposal_checker --release  -- create
 
