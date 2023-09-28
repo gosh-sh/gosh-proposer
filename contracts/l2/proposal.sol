@@ -58,7 +58,7 @@ contract Proposal {
     function setVote(uint16 id) public {
         if (_vdict.exists(id)) {
             TvmSlice data = _vdict[id];
-            data.skip(4 * 8);
+            data.skip(5 * 8);
             uint256 pub = data.load(uint256);
             require(pub == msg.pubkey(), ERR_WRONG_SENDER);
             tvm.accept();
