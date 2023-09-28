@@ -613,10 +613,12 @@ IFREF {
 THROW 0
 
 .macro getValidatorId_822a5628_internal_macro
+.loc proposal.sol, 114
+PUSHINT 0
 .loc proposal.sol, 115
 NULL
 .loc proposal.sol, 116
-PUSHINT 0
+OVER
 GETGLOB 16
 PUSHINT 16
 DICTUGETNEXT
@@ -640,34 +642,49 @@ PUSHCONT {
 	THROWIF 63
 	UNPAIR
 	.loc proposal.sol, 119
+	OVER
+	POP S6
+	.loc proposal.sol, 120
 	PUSHINT 32
 	SDSKIPFIRST
-	.loc proposal.sol, 120
+	.loc proposal.sol, 121
 	DUP
 	PLDU 256
-	.loc proposal.sol, 121
-	PUSH S6
+	.loc proposal.sol, 122
+	PUSH S7
 	EQUAL
 	PUSHCONT {
-		.loc proposal.sol, 122
+		.loc proposal.sol, 123
 		DROP
 		POP S3
-		.loc proposal.sol, 123
+		.loc proposal.sol, 124
 		ROT
-		BLKDROP2 3, 1
+		BLKDROP2 4, 1
 		PUSHINT 4
 		RETALT
 		.loc proposal.sol, 0
 	}
 	IFJMP
-	.loc proposal.sol, 0
+	.loc proposal.sol, 126
 	DROP2
+	PUSH S3
+	GETGLOB 16
+	PUSHINT 16
+	DICTUGETNEXT
+	NULLSWAPIFNOT
+	PUSHCONT {
+		SWAP
+		PAIR
+	}
+	IF
+	POP S2
+	.loc proposal.sol, 0
 }
 WHILEBRK
 IFRET
-.loc proposal.sol, 126
+.loc proposal.sol, 128
 DROP
-NIP
+BLKDROP2 2, 1
 .loc proposal.sol, 0
 
 .macro c4_to_c7
