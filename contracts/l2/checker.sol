@@ -70,6 +70,15 @@ contract Checker {
     function checkDataIndex(BlockData[] data, TransactionBatch[] transactions, uint128 index) public senderIs(this) accept {
         for (uint i = 0; i <= BATCH_SIZE; i++) {
             if (index >=  data.length) { 
+                TvmSlice dataslicenew = TvmSlice(data[0].data);
+                (uint8 countnew) = dataslicenew.load(uint8);
+                countnew -= 247;
+                dataslicenew.skip(countnew * 8);
+                dataslicenew.skip(8);
+                (uint256 newhashagain) = dataslicenew.load(uint256);
+                if (_prevhash != newhashagain) {
+                    return;
+                }
                 TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _proposalCount, this);
                 new Proposal{stateInit: s1, value: 10 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
                 _proposalCount += 1;        
