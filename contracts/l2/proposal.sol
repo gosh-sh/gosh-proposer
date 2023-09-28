@@ -116,12 +116,14 @@ contract Proposal {
         optional(uint16, TvmSlice) res = _vdict.next(key);
         while (res.hasValue()) {
             (uint16 newkey, TvmSlice data) = res.get();
+            key = newkey;
             data.skip(4 * 8);
             uint256 pub = data.load(uint256);
             if (pubkey == pub) {
                 result = newkey;
                 return result;
             }
+            res = _vdict.next(key);
         }
         return result;
     }
