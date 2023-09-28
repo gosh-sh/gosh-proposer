@@ -21,7 +21,12 @@ pub async fn check_proposals() -> anyhow::Result<()> {
         let address = proposal.address.clone();
         match validate_proposal(&web3s, proposal).await {
             Ok(()) => {
-                approve_proposal(&gosh_client, address).await?;
+                match approve_proposal(&gosh_client, address).await {
+                    Ok(()) => {},
+                    Err(e) => {
+                        tracing::info!("Proposal {} approval failed: {e}", address);
+                    }
+                }
             }
             Err(e) => {
                 tracing::info!("Proposal {} validation failed: {e}", address);
