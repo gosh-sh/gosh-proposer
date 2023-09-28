@@ -287,8 +287,7 @@ contract Elock {
     }
 
     function _calculateFinalizeProposalFee() private pure returns (uint256) {
-        // todo
-        return 0;
+        return 400_000;
     }
 
     function _cleanWithdrawProposals() private {
