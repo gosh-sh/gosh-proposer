@@ -1,7 +1,7 @@
 use crate::eth::block::FullBlock;
 use std::env;
 use web3::transports::WebSocket;
-use web3::types::{Address, BlockId, BlockNumber, Bytes, H256, U256};
+use web3::types::{Address, BlockId, BlockNumber, Bytes, H256, U256, U64};
 use web3::Web3;
 use web3::{helpers as w3h, Transport};
 
@@ -9,6 +9,8 @@ pub mod block;
 pub mod encoder;
 pub mod helper;
 pub mod transfer;
+
+const COUNTERS_INDEX: u8 = 1;
 
 #[derive(Debug)]
 pub struct StorageProofValue {
@@ -83,6 +85,28 @@ pub async fn _get_storage_proof(
     };
 
     Ok(storage_proofs)
+}
+
+pub async fn get_tx_counter(
+    web3s: &Web3<WebSocket>,
+    eth_address: Address,
+    block_num: U64,
+) -> anyhow::Result<U256> {
+    let counters = web3s
+        .eth()
+        .storage(
+            eth_address,
+            U256::from(COUNTERS_INDEX),
+            Some(BlockNumber::Number(block_num)),
+        )
+        .await?;
+    let counters_str = web3::helpers::to_string(&counters)
+        .replace('"', "")
+        .trim_start_matches("0x")
+        .to_string();
+    tracing::info!("counters: {counters_str}");
+    let res = U256::from_str_radix(&counters_str[33..64], 16)?;
+    Ok(res)
 }
 
 #[cfg(test)]

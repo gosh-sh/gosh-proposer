@@ -16,10 +16,11 @@ fn get_secret() -> anyhow::Result<SecretKey> {
     let key_path = env::var("ETH_PRIVATE_KEY_PATH")
         .map_err(|e| anyhow::format_err!("Failed to get env ETH_PRIVATE_KEY_PATH: {e}"))?;
     SecretKey::from_str(
-        std::fs::read_to_string(&key_path)
-            .map_err(|e| anyhow::format_err!("Failed to read ETH_PRIVATE_KEY_PATH: {e}"))?.trim(),
+        std::fs::read_to_string(key_path)
+            .map_err(|e| anyhow::format_err!("Failed to read ETH_PRIVATE_KEY_PATH: {e}"))?
+            .trim(),
     )
-        .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))
+    .map_err(|e| anyhow::format_err!("Failed to load private key: {e}"))
 }
 
 pub async fn create_new_proposal() -> anyhow::Result<()> {

@@ -16,6 +16,7 @@ pub async fn propose_blocks(
     web3s: Arc<Web3<WebSocket>>,
     client: &EverClient,
     blocks: Vec<FullBlock<H256>>,
+    mut tx_cnt: usize,
 ) -> anyhow::Result<()> {
     tracing::info!("start propose block");
     let checker_address = env::var("CHECKER_ADDRESS")
@@ -32,9 +33,15 @@ pub async fn propose_blocks(
     // TODO: use eth_getLogs api function instead to get all account transactions
 
     for block in blocks {
-        let mut transfers =
-            filter_and_decode_block_transactions(web3s.clone(), &block, &eth_contract_address)
-                .await?;
+        let mut transfers = if tx_cnt != 0 {
+            let txns =
+                filter_and_decode_block_transactions(web3s.clone(), &block, &eth_contract_address)
+                    .await?;
+            tx_cnt -= txns.len();
+            txns
+        } else {
+            vec![]
+        };
         all_transfers.append(&mut transfers);
         let hash = format!("{:?}", block.hash.unwrap());
         let data = serialize_block(block)

@@ -1,5 +1,5 @@
 use crate::proposer::propose::propose_blocks;
-use common::eth::read_block;
+use common::eth::{get_tx_counter, read_block};
 use common::gosh::call_getter;
 use common::gosh::helper::{create_client, EverClient};
 use common::helper::deserialize_u128;
@@ -10,7 +10,7 @@ use std::sync::Arc;
 
 use common::helper::abi::CHECKER_ABI;
 use web3::transports::WebSocket;
-use web3::types::{BlockId, BlockNumber, H256};
+use web3::types::{Address, BlockId, BlockNumber, H256};
 use web3::Web3;
 
 mod propose;
@@ -61,7 +61,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     // Start from the latest block
     let mut block_id = BlockId::Number(BlockNumber::Latest);
 
-    let last_block_number = read_block(&web3s, block_id)
+    let mut last_block_number = read_block(&web3s, block_id)
         .await?
         .number
         .ok_or(anyhow::format_err!("Failed to read latest Eth block"))?;
@@ -78,10 +78,28 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
         .unwrap_or(DEFAULT_MAX_BLOCK_IN_ONE_CHUNK);
 
     if block_diff > max_blocks {
+        last_block_number = first_block_number + max_blocks;
         block_id = BlockId::Number(BlockNumber::Number(first_block_number + max_blocks));
         tracing::info!("Difference in block numbers is too high, send till the block {block_id:?}");
         block_diff = max_blocks;
     }
+
+    let eth_address = Address::from_str(
+        &env::var("ETH_CONTRACT_ADDRESS")
+            .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?
+            .to_lowercase(),
+    )
+    .map_err(|e| anyhow::format_err!("Failed to covert ETH address: {e}"))?;
+
+    let start_tx_counter = get_tx_counter(&web3s, eth_address, first_block_number)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
+
+    let end_tx_counter = get_tx_counter(&web3s, eth_address, last_block_number)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
+
+    let tx_cnt = (end_tx_counter - start_tx_counter).as_usize();
 
     let mut blocks = vec![];
 
@@ -102,7 +120,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     );
 
     let web3s = Arc::new(web3s);
-    propose_blocks(web3s, &client, blocks).await?;
+    propose_blocks(web3s, &client, blocks, tx_cnt).await?;
 
     Ok(())
 }
