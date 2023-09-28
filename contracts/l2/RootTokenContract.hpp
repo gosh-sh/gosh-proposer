@@ -130,12 +130,12 @@ __interface IRootTokenContract {
 
   [[internal, external, answer_id]]
   void setOldRoot(
-    address oldroot
+    address_opt oldroot
   ) = 1021;
 
   [[internal, external, answer_id]]
   void setNewRoot(
-    address newroot 
+    address_opt newroot 
   ) = 1022;
 
   [[internal, external, answer_id]]
