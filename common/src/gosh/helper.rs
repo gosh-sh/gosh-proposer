@@ -14,7 +14,8 @@ static WAIT_FOR_TIMEOUT: &str = "GOSH_WAIT_FOR_TIMEOUT_SEC";
 static QUERY_TIMEOUT: &str = "GOSH_QUERY_TIMEOUT_SEC";
 
 pub fn create_client() -> anyhow::Result<EverClient> {
-    let endpoints = env::var("GOSH_ENDPOINTS")?
+    let endpoints = env::var("GOSH_ENDPOINTS")
+        .map_err(|e| anyhow::format_err!("Failed to get GOSH_ENDPOINTS env var: {e}"))?
         .split(',')
         .map(|e| e.to_string())
         .collect::<Vec<String>>();

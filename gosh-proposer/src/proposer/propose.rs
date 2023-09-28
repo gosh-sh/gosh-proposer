@@ -4,13 +4,13 @@ use common::eth::encoder::serialize_block;
 use common::eth::transfer::filter_and_decode_block_transactions;
 use common::gosh::call_function;
 use common::gosh::helper::EverClient;
+use common::helper::abi::CHECKER_ABI;
 use serde_json::json;
 use std::env;
 use std::sync::Arc;
 use web3::transports::WebSocket;
 use web3::types::H256;
 use web3::Web3;
-use common::helper::abi::CHECKER_ABI;
 
 pub async fn propose_blocks(
     web3s: Arc<Web3<WebSocket>>,
@@ -18,10 +18,13 @@ pub async fn propose_blocks(
     blocks: Vec<FullBlock<H256>>,
 ) -> anyhow::Result<()> {
     tracing::info!("start propose block");
-    let checker_address = env::var("CHECKER_ADDRESS")?;
+    let checker_address = env::var("CHECKER_ADDRESS")
+        .map_err(|e| anyhow::format_err!("Failed to get env CHECKER_ADDRESS: {e}"))?;
 
     // ELOCK contract address
-    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")?.to_lowercase();
+    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")
+        .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?
+        .to_lowercase();
 
     let mut all_transfers = vec![];
     let mut json_blocks = vec![];
@@ -34,7 +37,8 @@ pub async fn propose_blocks(
                 .await?;
         all_transfers.append(&mut transfers);
         let hash = format!("{:?}", block.hash.unwrap());
-        let data = serialize_block(block)?;
+        let data = serialize_block(block)
+            .map_err(|e| anyhow::format_err!("Failed to serialize ETH block: {e}"))?;
         let data_str = data
             .iter()
             .fold(String::new(), |acc, el| format!("{acc}{:02x}", el));
@@ -54,6 +58,7 @@ pub async fn propose_blocks(
         "checkData",
         Some(args),
     )
-    .await?;
+    .await
+    .map_err(|e| anyhow::format_err!("Failed to call GOSH function: {e}"))?;
     Ok(())
 }

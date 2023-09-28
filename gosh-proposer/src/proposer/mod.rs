@@ -8,10 +8,10 @@ use std::env;
 use std::str::FromStr;
 use std::sync::Arc;
 
+use common::helper::abi::CHECKER_ABI;
 use web3::transports::WebSocket;
 use web3::types::{BlockId, BlockNumber, H256};
 use web3::Web3;
-use common::helper::abi::CHECKER_ABI;
 
 mod propose;
 
@@ -27,23 +27,24 @@ const DEFAULT_MAX_BLOCK_IN_ONE_CHUNK: u64 = 20;
 
 pub async fn get_block_from_checker(client: &EverClient) -> anyhow::Result<H256> {
     tracing::info!("get block from checker");
-    let checker_address = env::var("CHECKER_ADDRESS")?;
-    let value = call_getter(
-        client,
-        &checker_address,
-        CHECKER_ABI,
-        "getStatus",
-        None,
-    )
-    .await?;
+    let checker_address = env::var("CHECKER_ADDRESS")
+        .map_err(|e| anyhow::format_err!("Failed to get CHECKER_ADDRESS env var: {e}"))?;
+    let value = call_getter(client, &checker_address, CHECKER_ABI, "getStatus", None).await?;
     tracing::info!("getter res: {value}");
-    let status: Status = serde_json::from_value(value)?;
-    Ok(H256::from_str(&status.prevhash)?)
+    let status: Status = serde_json::from_value(value)
+        .map_err(|e| anyhow::format_err!("Failed to serialize checker status: {e}"))?;
+    H256::from_str(&status.prevhash)
+        .map_err(|e| anyhow::format_err!("Failed to convert prev hash: {e}"))
 }
 
 pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     // Load variables from .env
-    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+    let websocket = WebSocket::new(
+        &env::var("ETH_NETWORK")
+            .map_err(|e| anyhow::format_err!("Failed to get ETH_NETWORK env var: {e}"))?,
+    )
+    .await
+    .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
     let web3s = Web3::new(websocket);
 
     let client = create_client()?;

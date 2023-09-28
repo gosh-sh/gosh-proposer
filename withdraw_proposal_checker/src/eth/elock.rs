@@ -4,7 +4,7 @@ use web3::types::{Address, U256};
 use web3::Web3;
 
 // uint256 public lastProcessedBlock; // 0x4
-const LAST_PROCESSED_BLOCK_INDEX: u8 = 4;
+const LAST_PROCESSED_BLOCK_INDEX: u8 = 3;
 
 pub async fn get_last_gosh_block_id(
     elock_address: &str,
@@ -15,7 +15,8 @@ pub async fn get_last_gosh_block_id(
     let last_gosh_block = web3s
         .eth()
         .storage(address, U256::from(LAST_PROCESSED_BLOCK_INDEX), None)
-        .await?;
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get ETH contract storage value: {e}"))?;
 
     let res = web3::helpers::to_string(&last_gosh_block)
         .replace('"', "")

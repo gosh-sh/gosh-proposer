@@ -9,7 +9,12 @@ use crate::gosh::proposal::{approve_proposal, find_proposals};
 pub async fn check_proposals() -> anyhow::Result<()> {
     let gosh_client = create_client()?;
     let proposals = find_proposals(&gosh_client).await?;
-    let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+    let websocket = WebSocket::new(
+        &env::var("ETH_NETWORK")
+            .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
+    )
+    .await
+    .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
     let web3s = Web3::new(websocket);
 
     for proposal in proposals {

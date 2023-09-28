@@ -114,7 +114,10 @@ pub async fn query_messages(
             if msg.body.is_some() && msg.msg_type == 0 && !node.node.aborted {
                 let id = msg.id.trim_start_matches("message/").to_string();
                 let tx_id = node.node.id.trim_start_matches("transaction/").to_string();
-                let lt = node.node.lt.parse::<u128>()?;
+                let lt =
+                    node.node.lt.parse::<u128>().map_err(|e| {
+                        anyhow::format_err!("Failed to convert block lt to u128: {e}")
+                    })?;
                 let message = Message {
                     body: msg.body.unwrap(),
                     id,

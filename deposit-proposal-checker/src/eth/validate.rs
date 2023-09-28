@@ -36,11 +36,20 @@ async fn get_tx_counter(
 
 pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> anyhow::Result<()> {
     tracing::info!("Validate proposal: {proposal:?}");
-    let from_block = BlockId::Hash(H256::from_str(&proposal.details.hash)?);
-    let till_block = BlockId::Hash(H256::from_str(&proposal.details.new_hash)?);
+    let from_block = BlockId::Hash(
+        H256::from_str(&proposal.details.hash)
+            .map_err(|e| anyhow::format_err!("Failed to convert proposal from block: {e}"))?,
+    );
+    let till_block = BlockId::Hash(
+        H256::from_str(&proposal.details.new_hash)
+            .map_err(|e| anyhow::format_err!("Failed to convert proposal from block: {e}"))?,
+    );
     let verifying_transfers = proposal.details.transactions;
-    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")?.to_lowercase();
-    let eth_address = Address::from_str(&eth_contract_address)?;
+    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")
+        .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?
+        .to_lowercase();
+    let eth_address = Address::from_str(&eth_contract_address)
+        .map_err(|e| anyhow::format_err!("Failed to convert eth address: {e}"))?;
 
     let from_block_num = {
         let FullBlock { number, .. } = eth_read_block(web3s, from_block).await.map_err(|e| {
@@ -51,7 +60,9 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
             None => anyhow::bail!("Failed to fetch block with proposal hash"),
         }
     };
-    let start_tx_counter = get_tx_counter(web3s, eth_address, from_block_num).await?;
+    let start_tx_counter = get_tx_counter(web3s, eth_address, from_block_num)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
 
     let till_block_num = {
         let FullBlock { number, .. } = eth_read_block(web3s, till_block).await.map_err(|e| {
@@ -62,7 +73,9 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
             None => anyhow::bail!("Failed to fetch block with proposal new_hash"),
         }
     };
-    let end_tx_counter = get_tx_counter(web3s, eth_address, till_block_num).await?;
+    let end_tx_counter = get_tx_counter(web3s, eth_address, till_block_num)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
 
     if from_block_num >= till_block_num {
         anyhow::bail!("Wrong block chain: {from_block_num} >= {till_block_num}");
@@ -74,7 +87,8 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
         anyhow::bail!("Number of transfers in prpposal is not equal to tx counter change");
     }
 
-    let code_sig_lookup = get_signatures_table()?;
+    let code_sig_lookup = get_signatures_table()
+        .map_err(|e| anyhow::format_err!("Failed to get signatures table: {e}"))?;
 
     for transfer in verifying_transfers {
         let tx = match web3s
@@ -87,7 +101,8 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
                 anyhow::bail!("Failed to fetch transaction: {}", transfer.hash);
             }
         };
-        let actual_transfer = decode_transfer(tx, &code_sig_lookup)?;
+        let actual_transfer = decode_transfer(tx, &code_sig_lookup)
+            .map_err(|e| anyhow::format_err!("Failed to decode transfer: {e}"))?;
         if transfer != actual_transfer {
             tracing::info!("{:?} != {:?}", transfer, actual_transfer);
             anyhow::bail!("Fetched transaction is not equal to the one in proposal.")

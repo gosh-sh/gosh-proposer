@@ -46,7 +46,8 @@ pub async fn vote_for_withdrawal(
             confirmation_cnt,
             key,
         )
-        .await?;
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to call ELock function voteForWithdrawal: {e}"))?;
     tracing::info!("Call result: {}", web3::helpers::to_string(&res));
     Ok(())
 }
@@ -59,10 +60,16 @@ pub async fn create_proposal(
     elock_contract: &Contract<WebSocket>,
     key: &SecretKey,
 ) -> anyhow::Result<()> {
-    let first_block = get_last_gosh_block_id(elock_address, web3s).await?;
-    let first_seq_no = get_master_block_seq_no(context, &first_block).await?;
+    let first_block = get_last_gosh_block_id(elock_address, web3s)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get last GOSH block from ELock: {e}"))?;
+    let first_seq_no = get_master_block_seq_no(context, &first_block)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get seq no for block from ETH: {e}"))?;
 
-    let current_master_block = get_latest_master_block(context).await?;
+    let current_master_block = get_latest_master_block(context)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get latest GOSH block: {e}"))?;
     let burns = find_burns(
         context,
         root_address,
@@ -75,8 +82,14 @@ pub async fn create_proposal(
     let burns =
         convert_burns(burns).map_err(|e| anyhow::format_err!("Failed to convert burns: {e}"))?;
 
-    let first_block = Token::Uint(U256::from_str(&first_block)?);
-    let last_block = Token::Uint(U256::from_str(&current_master_block.block_id)?);
+    let first_block = Token::Uint(
+        U256::from_str(&first_block)
+            .map_err(|e| anyhow::format_err!("Failed to convert first block to U256: {e}"))?,
+    );
+    let last_block = Token::Uint(
+        U256::from_str(&current_master_block.block_id)
+            .map_err(|e| anyhow::format_err!("Failed to convert latest block to U256: {e}"))?,
+    );
 
     tracing::info!("Start call of proposeWithdrawal");
     tracing::info!("{first_block} {last_block} {burns:?}");
@@ -95,7 +108,8 @@ pub async fn create_proposal(
             confirmations_cnt,
             key,
         )
-        .await?;
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to call ETH contract proposeWithdrawal: {e}"))?;
     tracing::info!("Call result: {}", web3::helpers::to_string(&res));
 
     Ok(())
@@ -106,7 +120,8 @@ pub async fn get_proposals(
 ) -> anyhow::Result<Vec<ProposalData>> {
     let proposals: Vec<U256> = elock_contract
         .query("getProposalList", (), None, Options::default(), None)
-        .await?;
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to call ELock getter getProposalList: {e}"))?;
 
     tracing::info!("getProposalList: {proposals:?}");
 
@@ -120,7 +135,8 @@ pub async fn get_proposals(
                 Options::default(),
                 None,
             )
-            .await?;
+            .await
+            .map_err(|e| anyhow::format_err!("Failed to call ELock getter getProposal: {e}"))?;
         tracing::info!("{proposals_data:?}");
         let transfers = proposals_data
             .2
@@ -166,9 +182,13 @@ pub async fn check_proposal(
     proposal: &ProposalData,
 ) -> anyhow::Result<()> {
     tracing::info!("check proposal: {}", proposal.proposal_key);
-    let start_seq_no = get_master_block_seq_no(context, &proposal.from).await?;
+    let start_seq_no = get_master_block_seq_no(context, &proposal.from)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get master block from seq no: {e}"))?;
 
-    let end_seq_no = get_master_block_seq_no(context, &proposal.till).await?;
+    let end_seq_no = get_master_block_seq_no(context, &proposal.till)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get master block till seq no: {e}"))?;
 
     if start_seq_no >= end_seq_no {
         anyhow::bail!("Proposal start block seq_no is greater than end's");

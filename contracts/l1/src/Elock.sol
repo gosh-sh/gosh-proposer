@@ -9,29 +9,29 @@ contract Elock {
     uint128 public trxDepositCount; // 0x1
     uint128 public trxWithdrawCount; // 0x1
     uint256 elockStartBlock; // 0x2
-    uint256 immutable glockStartBlock; // 0x3
-    uint256 public lastProcessedL2Block; // 0x4
+    uint256 immutable glockStartBlock; //
+    uint256 public lastProcessedL2Block; // 0x3
 
-    address[] validators; // 0x5
-    address[] proposedValidators; // 0x6
-    uint256 validatorsProposalRound; // 0x7
+    address[] validators; // 0x4
+    address[] proposedValidators; // 0x5
+    uint256 validatorsProposalRound; // 0x6
 
-    mapping (uint256 => WithdrawProposal) withdrawals; // 0x8
-    uint256[] private _proposalKeys; // 0x9
+    mapping (uint256 => WithdrawProposal) withdrawals; // 0x7
+    uint256[] private _proposalKeys; // 0x8
 
-    uint256 votesRequired; // 0xa
+    uint256 votesRequired; // 0x9
 
-    mapping (address => bool) votingForChangeValidators; // 0xb
-    uint256 collectedVotesForChangeValidators; // 0xc
-    uint256 collectedVotesAgainstChangeValidators; // 0xd
+    mapping (address => bool) votingForChangeValidators; // 0xa
+    uint256 collectedVotesForChangeValidators; // 0xb
+    uint256 collectedVotesAgainstChangeValidators; // 0xc
 
-    mapping (uint256 => mapping (address => bool)) votingForWithdrawal; // 0xe
-    mapping (uint256 => uint256) votesPerProposal; // 0xf
-    uint256 votingDisposalFee; // 0x10
+    mapping (uint256 => mapping (address => bool)) votingForWithdrawal; // 0xd
+    mapping (uint256 => uint256) votesPerProposal; // 0xe
+    uint256 votingDisposalFee; // 0xf
 
-    mapping (address => FreezeVote) votingForFreeze; // 0x11
-    address[] votedForFreeze; // 0x12
-    bool isDepositsFreezed; // 0x13
+    mapping (address => FreezeVote) votingForFreeze; // 0x10
+    address[] votedForFreeze; // 0x11
+    bool isDepositsFreezed; // 0x12
 
     struct Transfer {
         address payable to;

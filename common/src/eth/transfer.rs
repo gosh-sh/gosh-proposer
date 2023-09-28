@@ -47,7 +47,8 @@ pub fn decode_transfer(
         }
     };
 
-    let function_name = env::var("ETH_FUNCTION_NAME")?;
+    let function_name = env::var("ETH_FUNCTION_NAME")
+        .map_err(|e| anyhow::format_err!("Failed to get env ETH_FUNCTION_NAME: {e}"))?;
     if function_name != func_signature.replace('"', "") {
         anyhow::bail!("Wrong function name: {function_name} != {func_signature}");
     }
@@ -98,7 +99,8 @@ pub async fn filter_and_decode_block_transactions(
         // tracing::info!("tx: {}", w3h::to_string(transaction_hash));
         let transaction_hash = *transaction_hash;
         let web3s_clone = web3s.clone();
-        let eth_contract_address_clone = Address::from_str(eth_contract_address)?;
+        let eth_contract_address_clone = Address::from_str(eth_contract_address)
+            .map_err(|e| anyhow::format_err!("Failed to convert eth address: {e}"))?;
         parallel.spawn(async move {
             let tx = match web3s_clone
                 .eth()
@@ -121,14 +123,17 @@ pub async fn filter_and_decode_block_transactions(
             } else {
                 anyhow::bail!("No destination address, skip it.");
             }
-            let code_sig_lookup = get_signatures_table()?;
+            let code_sig_lookup = get_signatures_table()
+                .map_err(|e| anyhow::format_err!("Failed to get signatures table: {e}"))?;
             decode_transfer(tx, &code_sig_lookup)
         });
     }
 
     let mut transfers = vec![];
     while let Some(res) = parallel.join_next().await {
-        let val = res?;
+        let val = res.map_err(|e| {
+            anyhow::format_err!("Failed to get result of parallel thread of transaction query: {e}")
+        })?;
         if let Ok(trans) = val {
             transfers.push(trans);
         }

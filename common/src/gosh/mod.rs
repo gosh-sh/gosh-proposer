@@ -31,7 +31,8 @@ pub async fn call_getter(
         },
     )
     .await
-    .map(|r| r.result)?;
+    .map(|r| r.result)
+    .map_err(|e| anyhow::format_err!("Failed to query account state: {e}"))?;
 
     if query.is_empty() {
         anyhow::bail!(
@@ -93,7 +94,9 @@ pub async fn call_function(
     function_name: &str,
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<()> {
-    tracing::info!("call_function: address={address}, function_name={function_name}, args={args:?}");
+    tracing::info!(
+        "call_function: address={address}, function_name={function_name}, args={args:?}"
+    );
 
     let call_set = match args {
         Some(value) => CallSet::some_with_function_and_input(function_name, value),
@@ -127,7 +130,7 @@ pub async fn call_function(
     )
     .await;
     if let Err(ref e) = sdk_result {
-        tracing::trace!("process_message error: {:#?}", e);
+        tracing::error!("process_message error: {:#?}", e);
     }
     let ResultOfProcessMessage {
         transaction, /* decoded, */

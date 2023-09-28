@@ -45,9 +45,11 @@ pub async fn read_block(
                 .execute("eth_getBlockByNumber", vec![num, include_txs])
         }
     }
-    .await?;
+    .await
+    .map_err(|e| anyhow::format_err!("Failed to query ETH block {block_id:?}: {e}"))?;
 
-    Ok(serde_json::from_value(block)?)
+    serde_json::from_value(block)
+        .map_err(|e| anyhow::format_err!("Failed to serialize ETH block: {e}"))
 }
 
 pub async fn _get_storage_proof(
@@ -101,7 +103,12 @@ mod tests {
         let block_id = BlockId::Number(BlockNumber::Number(
             U64::from_str_radix("400000", 10).unwrap(),
         ));
-        let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+        let websocket = WebSocket::new(
+            &env::var("ETH_NETWORK")
+                .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
+        )
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
         let web3s = Web3::new(websocket);
         let block = read_block(&web3s, block_id).await?;
         serialize_block(block)?;
@@ -112,7 +119,12 @@ mod tests {
     pub async fn ensure_got_storage_proof() -> anyhow::Result<()> {
         dotenv::dotenv().ok();
         init_default_tracing();
-        let websocket = WebSocket::new(&env::var("ETH_NETWORK")?).await?;
+        let websocket = WebSocket::new(
+            &env::var("ETH_NETWORK")
+                .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
+        )
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
         let web3s = Web3::new(websocket);
 
         let block_num = Some(BlockNumber::Latest);

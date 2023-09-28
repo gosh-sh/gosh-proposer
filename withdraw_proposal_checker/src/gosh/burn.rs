@@ -1,10 +1,10 @@
-use std::env;
 use crate::gosh::monitor::query_messages;
 use common::gosh::helper::EverClient;
+use common::helper::abi::ROOT_ABI;
 use serde::Deserialize;
+use std::env;
 use std::sync::Arc;
 use ton_client::abi::{decode_message_body, Abi, ParamsOfDecodeMessageBody};
-use common::helper::abi::ROOT_ABI;
 
 #[derive(Debug, PartialEq)]
 pub struct Burn {
@@ -30,10 +30,13 @@ pub async fn find_burns(
     start_seq_no: u128,
     end_seq_no: u128,
 ) -> anyhow::Result<Vec<Burn>> {
-    let messages = query_messages(context, root_address, start_seq_no, end_seq_no).await?;
+    let messages = query_messages(context, root_address, start_seq_no, end_seq_no)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to query messages to ROOT: {e}"))?;
 
     let abi = Abi::Json(ROOT_ABI.to_string());
-    let root_function_name = env::var("ROOT_FUNCTION_NAME")?;
+    let root_function_name = env::var("ROOT_FUNCTION_NAME")
+        .map_err(|e| anyhow::format_err!("Failed to get env ROOT_FUNCTION_NAME: {e}"))?;
 
     let mut res = vec![];
     for message in messages {
@@ -52,12 +55,16 @@ pub async fn find_burns(
             if decode_result.name != root_function_name {
                 continue;
             }
-            let args: BurnArguments = serde_json::from_value(decode_result.value.unwrap())?;
+            let args: BurnArguments = serde_json::from_value(decode_result.value.unwrap())
+                .map_err(|e| anyhow::format_err!("Failed to serialize burn arguments: {e}"))?;
             let trimmed_to = args.to[26..].to_string();
             let dest = format!("0x{}", trimmed_to);
             res.push(Burn {
                 dest,
-                value: args.tokens.parse::<u128>()?,
+                value: args
+                    .tokens
+                    .parse::<u128>()
+                    .map_err(|e| anyhow::format_err!("Failed to convert tokens to u128: {e}"))?,
                 tx_id: message.tx_id,
             })
         } else {
