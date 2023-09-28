@@ -163,13 +163,11 @@ contract Elock {
             collectedVotesForChangeValidators += 1;
             if (collectedVotesForChangeValidators >= votesRequired) {
                 _updateValidators();
-                // TODO clear voting structs
             }
         } else {
             collectedVotesAgainstChangeValidators += 1;
             if (collectedVotesAgainstChangeValidators > validators.length - votesRequired) {
                 delete proposedValidators;
-                // TODO clear voting structs
             }
         }
     }
@@ -282,6 +280,7 @@ contract Elock {
             collectedCommission += validatorCosts;
             if (collectedCommission > COMMISSION_WITHDRAWAL_THRESHOLD) {
                 commissionWallet.transfer(COMMISSION_WITHDRAWAL_THRESHOLD);
+                collectedCommission -= COMMISSION_WITHDRAWAL_THRESHOLD;
             }
         }
         return true;
