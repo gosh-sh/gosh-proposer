@@ -119,7 +119,9 @@ loop:
   sleep 1 hour
 ```
 
-3) Add monitoring for checker's last ETH block if it is too Old decrease sleep time
+# Monitoring
+
+1) Monitoring for checker's last ETH block if it is too Old decrease sleep time for `deposit` flow
 
 Get checker's last verified block:
 
@@ -139,4 +141,7 @@ Get latest block number:
 curl --location --request POST 'https://eth.getblock.io/sepolia/' --header 'x-api-key: 7d0e158c-a55e-46dc-9ca3-ef7586215225' --header 'Content-Type: application/json' --data-raw '{"jsonrpc": "2.0","method":"eth_getBlockByNumber","params": ["latest", true],"id": "getblock.io"}' | jq .result.number
 ```
 
-if latest block num is too far from the latest sleep time can be reduced in both loops (7 and 8) to catch up
+if latest block num is too far from the latest sleep time can be reduced in both `deposit` loops to catch up
+
+2) Validator ETH wallets balance also should be monitored because when Validators create proposals for withdrawal and
+vote for them, they consume their balance.
