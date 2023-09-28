@@ -1,5 +1,7 @@
 Project working scheme
 
+# One time initial set up
+
 1) Deploy validator ETH wallet and get private key and wallet address
 2) Get latest ETH and GOSH blocks:
 
@@ -10,6 +12,7 @@ withdraw_proposal_checker get_last_blocks
 3) Deploy ELock contract to the ETH network with latest GOSH block and validator wallet addresses
 
 ```bash
+cd contracts/l1
 forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK [$ETH_WALLET_ADDRS] 
 ```
 
@@ -20,7 +23,41 @@ cast send --rpc-url $ETH_URL $ETH_CONTRACT_ADDRESS --private-key $ETH_PRIVATE_KE
 ```
 
 5) Deploy checker contract to the GOSH network with latest ETH block
+
+```bash
+#generate checker address
+CHECKER_ADDRESS=$(gosh-cli -j genaddr --save --abi contracts/l2/checker.abi.json --setkey <CHECKER_KEY_PATH> contracts/l2/checker.tvc | jq -r .raw_address)
+
+# call giver to top up CHECKER_ADDRESS balance
+
+# deploy checker
+gosh-cli -j deployx --abi ../contracts/l2/checker.abi.json --keys <CHECKER_KEY_PATH> contracts/l2/checker.tvc --prevhash $LAST_ETH_BLOCK
+```
+
 6) Deploy root token contract to the GOSH network and set root in checker
+
+```bash
+# get proposal code
+PROP_CODE=$(gosh-cli -j decode stateinit --tvc contracts/l2/proposal.tvc | jq .code | cut -d '"' -f 2)
+gosh-cli -j callx --abi contracts/l2/checker.abi.json --keys <CHECKER_KEY_PATH> --addr $CHECKER_ADDRESS -m setProposalCode --code $PROP_CODE
+
+#generate Root address
+ROOT_PUBKEY="0x$(cat <ROOT_KEY_PATH> | jq  -r .public)"
+ROOT_ADDRESS=$(gosh-cli -j genaddr --save --abi contracts/l2/RootTokenContract.abi --setkey root_keys.json contracts/l2/RootTokenContract.tvc | jq -r .raw_address)
+
+# call giver to top up ROOT_ADDRESS balance
+
+# deploy Root
+gosh-cli -j deployx --abi ../contracts/l2/RootTokenContract.abi --keys root_keys.json ../contracts/l2/RootTokenContract.tvc --name "geth" --symbol "gth" --decimals 18 --root_pubkey $ROOT_PUBKEY --root_owner null --total_supply 0 --checker $CHECKER_ADDRESS --oldroot_ null --newroot_ null
+
+# set token wallet code
+CODE_WALLET=$(gosh-cli -j decode stateinit --tvc ../contracts/l2/TONTokenWallet.tvc | jq .code | cut -d '"' -f 2)
+gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys root_keys.json --addr $ROOT_ADDRESS -m setWalletCode --wallet_code $CODE_WALLET --_answer_id 0
+
+# set root in checker
+gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys keys.json --addr $CHECKER_ADDRESS -m setRootContract --root $ROOT_ADDRESS
+```
+
 7) Create `.env` file on each validator
 
 Example with comments (better to remove them before usage)
@@ -49,25 +86,40 @@ VALIDATORS_KEY_PATH=/home/user/GOSH/gosh-proposer/tests/keys.json
 ETH_PRIVATE_KEY_PATH=/home/user/GOSH/gosh-proposer/tests/eth.private.key
 ```
 
-8) On each validator run checkers in loop:
+# Loops that should run on validators
+
+There are 2 complex services: `deposit` and `withdrawal`.
+
+Deposit service checks `deposit` function calls of ELock and creates similar transfers in GOSH. This service sends ETH
+blocks to GOSH and for sync should be run often (once in a minute or even more often, in example this time is `30 sec`).
+Withdrawal flow can be triggered less often to save ETH operational balance. In example this flow is called once in 
+`1 hour`. 
+
+1) On each validator run checkers in loop:
 
 ```bash
 loop:
   deposit-proposal-checker
-  withdraw_proposal_checker
   sleep 30 sec
+  
+loop:
+  withdraw_proposal_checker
+  sleep 1 hour
 ```
 
-9) On ONE! validator  (only one for not to spam with proposals) also run in loop:
+2) On ONE! validator  (only one for not to spam with proposals) also run in loop:
 
 ```bash
 loop:
   gosh_proposer
-  withdraw_proposal_checker create
   sleep 30 sec
+  
+loop:
+  withdraw_proposal_checker create
+  sleep 1 hour
 ```
 
-10) Add monitoring for checker's last ETH block if it is too Old decrease sleep time
+3) Add monitoring for checker's last ETH block if it is too Old decrease sleep time
 
 Get checker's last verified block:
 
