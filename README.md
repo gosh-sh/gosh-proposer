@@ -102,11 +102,17 @@ approximately `5 minutes` and retried in case of error.
 
 1) On each validator run checkers in loop:
 
+`deposit` service
+
 ```bash
 loop:
   deposit-proposal-checker
   sleep 30 sec
-  
+```
+
+`withdrawal` service
+
+```bash
 loop:
   loop:
     timeout -k 1 5m withdraw_proposal_checker
@@ -114,18 +120,48 @@ loop:
   sleep 1 hour
 ```
 
+or
+
+```bash
+loop:
+  TOTAL_VALUE=$(withdraw_proposal_checker find_burns | jq -r .total_value)
+  if [[ $TOTAL_VALUE -ge $APPROPRIATE_AMOUNT ]]; then
+    loop:
+      timeout -k 1 5m withdraw_proposal_checker
+      # retry if timeout expired
+  fi
+```
+
 2) On ONE! validator  (only one for not to spam with proposals) also run in loop:
+
+`deposit` service
 
 ```bash
 loop:
   gosh_proposer
   sleep 30 sec
-  
+```
+
+`withdrawal` service
+
+```bash
 loop:
   loop:
     timeout -k 1 5m withdraw_proposal_checker create
     # retry if timeout expired
   sleep 1 hour
+```
+
+or 
+
+```bash
+loop:
+  TOTAL_VALUE=$(withdraw_proposal_checker find_burns | jq -r .total_value)
+  if [[ $TOTAL_VALUE -ge $APPROPRIATE_AMOUNT ]]; then
+    loop:
+      timeout -k 1 5m withdraw_proposal_checker
+      # retry if timeout expired
+  fi
 ```
 
 3) Query amount of withdrawals
