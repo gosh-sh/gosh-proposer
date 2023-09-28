@@ -11,9 +11,11 @@ contract ElockTest is Test {
     address foreign = address(0xdeadbeef);
     address user2 = address(0x200);
     address user3 = address(0x300);
-    uint256 startGlockBlock = 1;
+    uint256 startGlockBlock = 0x1ace7b2f05e684509d1e93c045eff589aa2c1f27477f9bbdce66b2f0ff8746a1;
 
-    event VoteRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
+    event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
+    event WithdrawExecuted(uint256 indexed proposalKey);
+    event Withdrawal(address indexed recepient, uint256 value);
 
     function setUp() public {
         address[] memory validators = new address[](2);
@@ -23,7 +25,7 @@ contract ElockTest is Test {
     }
 
     function test_constructorRun() public {
-        assertEq(elock.lastProcessedBlock(), startGlockBlock);
+        assertEq(elock.lastProcessedL2Block(), startGlockBlock);
         address[] memory validators = elock.getValidators();
         assertEq(validators.length, 2);
         assertEq(validators[0], owner);
@@ -86,14 +88,13 @@ contract ElockTest is Test {
     }
 
     function test_proposeWithdrawal_1() public {
-        uint blockA = elock.lastProcessedBlock();
+        uint blockA = elock.lastProcessedL2Block();
         uint blockB1 = 0xb10cb1;
         uint blockB2 = 0xb10cb2;
 
         Elock.Transfer[] memory transfers = create_transfers(4);
-        Elock.Transfer[] memory transfers1 = new Elock.Transfer[](2);
+        Elock.Transfer[] memory transfers1 = new Elock.Transfer[](1);
         transfers1[0] = transfers[0];
-        transfers1[1] = transfers[1];
         Elock.Transfer[] memory transfers2 = new Elock.Transfer[](4);
         transfers2 = transfers;
 
@@ -117,28 +118,42 @@ contract ElockTest is Test {
         assertEq(elock.getVotesForWithdrawal(proposalKey), 1);
 
         // ensure that voting for 2nd proposal as `validator1` will be failed
-        vm.expectRevert("Already voted");
+        // vm.expectRevert("Already voted");
         vm.prank(validator1);
         elock.voteForWithdrawal(proposalKey);
         assertEq(elock.getVotesForWithdrawal(proposalKey), 1);
 
         // vote for 2nd proposal as `owner`
         vm.expectEmit(true, true, false, true);
-        emit VoteRejected(proposalKey, owner, 3); // vote not counted because not enough funds
+        emit WithdrawRejected(proposalKey, owner, 3);
         elock.voteForWithdrawal(proposalKey);
-        assertEq(elock.getVotesForWithdrawal(proposalKey), 1);
+        // vote counted but withdraws aren't executed because not enough funds
+        assertEq(elock.getVotesForWithdrawal(proposalKey), 2);
+        assertEq(elock.trxWithdrawCount(), 0);
 
         elock.deposit{value: 10 ether}(uint(0xdeadbeef));
         assertEq(elock.totalSupply(), 10 ether);
 
+        // finalization
+        for (uint256 i = 0; i < transfers.length; i++) {
+            // vm.expectEmit();
+            // emit Withdrawal(transfers[i].to, transfers[i].value);
+        }
+        vm.expectEmit(true, false, false, true);
+        emit WithdrawExecuted(proposalKey);
+
         elock.voteForWithdrawal(proposalKey);
+
+        assertEq(elock.trxWithdrawCount(), 4);
         assertEq(elock.getVotesForWithdrawal(proposalKey), 0); // withdrawal was executed, all propsals were deleted
-        assertEq(elock.lastProcessedBlock(), blockB2);
+        assertEq(elock.getProposalList().length, 0);
+        assertEq(elock.lastProcessedL2Block(), blockB2);
         uint totalWithdrawn;
         for (uint256 i = 0; i < transfers.length; i++) {
             totalWithdrawn += transfers[i].value;
         }
         assertEq(elock.totalSupply() + totalWithdrawn, 10 ether);
+
     }
 
     // function test_voteForWithdrawal() public {
@@ -166,22 +181,22 @@ contract ElockTest is Test {
 
 
     function create_transfers(uint count)
-        private pure
+        private view
         returns (Elock.Transfer[] memory transfers)
     {
         address payable[5] memory users = [
-            payable(address(0xd00d1)),
-            payable(address(0xd00d2)),
-            payable(address(0xd00d3)),
-            payable(address(0xd00d4)),
+            payable(owner/* address(0xd00d1) */),
+            payable(validator1/* address(0xd00d2) */),
+            payable(validator2/* address(0xd00d3) */),
+            payable(foreign/* address(0xd00d4) */),
             payable(address(0xd00d5))
         ];
         uint256[5] memory values = [
-            uint256(0xf00d1),
-            0xf00d2,
-            0xf00d3,
-            0xf00d4,
-            0xf00d5
+            uint256(0xff00000f00d1),
+            0xff00000f00d2,
+            0xff00000f00d3,
+            0xff00000f00d4,
+            0xff00000f00d5
         ];
 
         uint256[5] memory txn = [

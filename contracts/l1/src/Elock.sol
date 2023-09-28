@@ -1,37 +1,37 @@
 pragma solidity ^0.8.13;
 
-// todo
-// * check if elock's balance is enough for execute withdrawals
-// * processing if not enough funds for some withdrawals (mark proposal as unfeasible?)
-// * calculate how many withdrawals we can do per transaction
-//
 contract Elock {
-    event VoteRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
+    event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
+    event WithdrawExecuted(uint256 indexed proposalKey);
+    event Withdrawal(address indexed recepient, uint256 value, uint256 commission);
 
     uint256 public totalSupply; // 0x0
     uint128 public trxDepositCount; // 0x1
     uint128 public trxWithdrawCount; // 0x1
     uint256 elockStartBlock; // 0x2
-    uint256 glockStartBlock; // 0x3
-    uint256 public lastProcessedBlock; // 0x4
+    uint256 immutable glockStartBlock; // 0x3
+    uint256 public lastProcessedL2Block; // 0x4
 
     address[] validators; // 0x5
     address[] proposedValidators; // 0x6
+    uint256 validatorsProposalRound; // 0x7
 
-    mapping (uint256 => WithdrawProposal) withdrawals; // 0x7
-    uint256[] private _proposalKeys; // 0x8
+    mapping (uint256 => WithdrawProposal) withdrawals; // 0x8
+    uint256[] private _proposalKeys; // 0x9
 
-    uint256 votesRequired; // 0x9
+    uint256 votesRequired; // 0xa
 
-    mapping (address => bool) votingForChangeValidators; // 0xa
-    uint256 collectedVotesForChangeValidators; // 0xb
+    mapping (address => bool) votingForChangeValidators; // 0xb
+    uint256 collectedVotesForChangeValidators; // 0xc
+    uint256 collectedVotesAgainstChangeValidators; // 0xd
 
-    mapping (uint256 => mapping (address => bool)) votingForWithdrawal; // 0xc
-    mapping (uint256 => uint256) votesPerProposal; // 0xd
+    mapping (uint256 => mapping (address => bool)) votingForWithdrawal; // 0xe
+    mapping (uint256 => uint256) votesPerProposal; // 0xf
+    uint256 votingDisposalFee; // 0x10
 
-    bool isFreezed;
-    mapping (address => FreezeVote) votingForFreeze;
-    address[] votedForFreeze;
+    mapping (address => FreezeVote) votingForFreeze; // 0x11
+    address[] votedForFreeze; // 0x12
+    bool isDepositsFreezed; // 0x13
 
     struct Transfer {
         address payable to;
@@ -56,24 +56,23 @@ contract Elock {
         _;
     }
 
-    constructor(uint256 startBlock, address[] memory validatorSet) {
+    constructor(uint256 initialL2Block, address[] memory validatorSet) {
+        require(initialL2Block > 0);
         require(validatorSet.length > 0);
 
         elockStartBlock = uint256(blockhash(block.number));
-        glockStartBlock = startBlock;
-        lastProcessedBlock = startBlock;
+        glockStartBlock = initialL2Block;
+        lastProcessedL2Block = initialL2Block;
         validators = validatorSet;
-        votesRequired = _calcVotes(validatorSet.length);
+        votesRequired = _calcRequiredVotes(validatorSet.length);
     }
 
-    receive() external payable {
-        //
-    }
+    receive() external payable {}
 
     /// pubkey - GOSH pubkey (32 bytes)
     function deposit(uint256 pubkey) public payable {
-        require(isFreezed == false);
-        require(msg.value > 100 wei);
+        require(isDepositsFreezed == false);
+        require(msg.value > 1 gwei);
         pubkey;
 
         unchecked {
@@ -87,9 +86,8 @@ contract Elock {
         uint256 tillBlock,
         Transfer[] calldata transfers
     ) public payable onlyGoshValidators() {
-        if (lastProcessedBlock > 0) {
-            require(uint256(fromBlock) == lastProcessedBlock);
-        }
+        require(fromBlock == lastProcessedL2Block);
+
         bytes memory blockRange = bytes.concat(bytes32(fromBlock), bytes32(tillBlock));
         uint256 proposalKey = uint256(keccak256(blockRange));
 
@@ -102,23 +100,25 @@ contract Elock {
             wp.transfers.push(transfers[index]);
         }
         _proposalKeys.push(proposalKey);
+        votingDisposalFee += _calculateFinalizeProposalFee();
     }
 
     function voteForWithdrawal(uint256 proposalKey) public payable onlyGoshValidators() {
-        require(votingForWithdrawal[proposalKey][msg.sender] == false, "Already voted");
+        require(withdrawals[proposalKey].fromBlock != 0, "Unknown proposal key");
 
-        votingForWithdrawal[proposalKey][msg.sender] = true;
-        votesPerProposal[proposalKey] += 1;
+        if (votingForWithdrawal[proposalKey][msg.sender] == false) {
+            votingForWithdrawal[proposalKey][msg.sender] = true;
+            votesPerProposal[proposalKey] += 1;
+        }
 
         if (votesPerProposal[proposalKey] >= votesRequired) {
             bool isExecuted = _executeWithdrawals(proposalKey);
-            if (!isExecuted) {
-                // revert vote
-                votingForWithdrawal[proposalKey][msg.sender] = false;
-                votesPerProposal[proposalKey] -= 1;
-                emit VoteRejected(proposalKey, msg.sender, 3); // reason not enough funds
+            if (isExecuted) {
+                lastProcessedL2Block = withdrawals[proposalKey].tillBlock;
+                _cleanWithdrawProposals();
+                emit WithdrawExecuted(proposalKey);
             } else {
-                _finalizeProposal(proposalKey);
+                emit WithdrawRejected(proposalKey, msg.sender, 3); // reason not enough funds
             }
         }
     }
@@ -129,30 +129,37 @@ contract Elock {
         require(proposedValidators.length == 0);
         require(validatorSet.length > 0);
         proposedValidators = validatorSet;
+        validatorsProposalRound += 1;
+        collectedVotesForChangeValidators = 0;
+        collectedVotesAgainstChangeValidators = 0;
     }
 
-
-    function voteForChangeValidators() public payable onlyGoshValidators() {
+    function voteForChangeValidators(bool vote) public payable onlyGoshValidators() {
         require(votingForChangeValidators[msg.sender] == false, "Already voted");
 
         votingForChangeValidators[msg.sender] = true;
-        collectedVotesForChangeValidators += 1;
-
-        if (collectedVotesForChangeValidators >= votesRequired) {
-            _updateValidators();
+        if (vote) {
+            collectedVotesForChangeValidators += 1;
+            if (collectedVotesForChangeValidators >= votesRequired) {
+                _updateValidators();
+                // TODO clear voting structs
+            }
+        } else {
+            collectedVotesAgainstChangeValidators += 1;
+            if (collectedVotesAgainstChangeValidators > validators.length - votesRequired) {
+                delete proposedValidators;
+                // TODO clear voting structs
+            }
         }
     }
 
-    // function proposeCancelValidatorsChange() public onlyGoshValidators() {}
-    // function voteForCancelValidatorsChange() public onlyGoshValidators() {}
-
-    function freeze() public payable onlyGoshValidators() {
-        require(isFreezed == false, "Deposit already unfreezed");
+    function freezeDeposits() public payable onlyGoshValidators() {
+        require(isDepositsFreezed == false, "Deposit already unfreezed");
         require(collectedVotesForChangeValidators == 0, "Validators changing is in progress");
         require(votingForFreeze[msg.sender] != FreezeVote.Freeze);
 
         if ((votedForFreeze.length + 1) >= votesRequired) {
-            isFreezed = true;
+            isDepositsFreezed = true;
             for (uint256 i = 0; i < votedForFreeze.length; i++) {
                 address validator = votedForFreeze[i];
                 votingForFreeze[validator] = FreezeVote.None;
@@ -164,13 +171,13 @@ contract Elock {
         }
     }
 
-    function unfreeze() public payable onlyGoshValidators() {
-        require(isFreezed == true, "Deposit already unfreezed");
+    function unfreezeDeposits() public payable onlyGoshValidators() {
+        require(isDepositsFreezed == true, "Deposit already unfreezed");
         require(collectedVotesForChangeValidators == 0, "Validators changing is in progress");
         require(votingForFreeze[msg.sender] != FreezeVote.Unfreeze);
 
         if ((votedForFreeze.length + 1) >= votesRequired) {
-            isFreezed = false;
+            isDepositsFreezed = false;
             for (uint256 i = 0; i < votedForFreeze.length; i++) {
                 address validator = votedForFreeze[i];
                 votingForFreeze[validator] = FreezeVote.None;
@@ -218,26 +225,21 @@ contract Elock {
         return false;
     }
 
-    function _calcVotes(uint256 validatorsCount) private pure returns (uint256) {
-        if (validatorsCount == 1) {
-            return 1;
-        } else if (validatorsCount <= 3) {
-            return 2;
-        } else {
-            return validatorsCount / uint256(2) + 1;
-        }
+    function _calcRequiredVotes(uint256 validatorsCount) private pure returns (uint256) {
+        return validatorsCount / uint256(2) + 1;
     }
 
     function _updateValidators() private {
-        collectedVotesForChangeValidators = 0;
         validators = proposedValidators;
-        votesRequired = _calcVotes(proposedValidators.length);
+        votesRequired = _calcRequiredVotes(proposedValidators.length);
         delete proposedValidators;
     }
 
     function _executeWithdrawals(uint256 proposalKey) private returns (bool) {
         Transfer[] memory transfers = withdrawals[proposalKey].transfers;
         uint256 requiredFunds;
+        uint256 transactionFeeInGas =
+            21_000 * tx.gasprice + votingDisposalFee * tx.gasprice / transfers.length;
         for (uint256 index = 0; index < transfers.length; index++) {
             requiredFunds += transfers[index].value;
         }
@@ -247,17 +249,24 @@ contract Elock {
 
         for (uint256 index = 0; index < transfers.length; index++) {
             Transfer memory transfer = transfers[index];
-            transfer.to.transfer(transfer.value);
+            if (transfer.value > transactionFeeInGas) {
+                uint256 withdrawalValue = transfer.value - transactionFeeInGas;
+                transfer.to.transfer(withdrawalValue);
+                emit Withdrawal(transfer.to, withdrawalValue, transactionFeeInGas);
+            }
+
             trxWithdrawCount += 1;
             totalSupply -= transfer.value;
         }
         return true;
     }
 
-    function _finalizeProposal(uint256 proposalKey) private {
-        lastProcessedBlock = withdrawals[proposalKey].tillBlock;
+    function _calculateFinalizeProposalFee() private pure returns (uint256) {
+        // todo
+        return 0;
+    }
 
-        // delete all proposals
+    function _cleanWithdrawProposals() private {
         for (uint256 i = 0; i < _proposalKeys.length; i++) {
             uint256 key = _proposalKeys[i];
             delete withdrawals[key];
@@ -267,8 +276,13 @@ contract Elock {
                 address validator = validators[j];
                 delete votingForWithdrawal[key][validator];
             }
+            delete votesPerProposal[key];
         }
-        delete votesPerProposal[proposalKey];
         delete _proposalKeys;
+        votingDisposalFee = 0;
+    }
+
+    function gasPrice() public view returns (uint256) {
+        return tx.gasprice;
     }
 }
