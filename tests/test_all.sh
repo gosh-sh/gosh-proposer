@@ -10,6 +10,8 @@ TEST_TRACE="/home/user/GOSH/gosh-proposer/tests/trace.log"
 ETH_URL="https://sepolia.infura.io/v3/df557e910fb2496e8d854046cbedb99a"
 GOSH_URL="https://sh.network.gosh.sh"
 
+ETH_VALIDATOR_CONTRACT_ADDRESS=$ETH_WALLET_ADDR
+
 # Generate keypair
 gosh-cli genphrase --dump keys.json
 PUBKEY="0x$(cat keys.json | jq  -r .public)"

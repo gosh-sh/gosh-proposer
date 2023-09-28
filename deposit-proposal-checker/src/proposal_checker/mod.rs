@@ -29,14 +29,12 @@ pub async fn check_proposals() -> anyhow::Result<()> {
         let address = proposal.address.clone();
         let id = proposal.validator_id.clone();
         match validate_proposal(&web3s, proposal).await {
-            Ok(()) => {
-                match approve_proposal(&gosh_client, address, &id, keys.clone()).await {
-                    Ok(()) => {},
-                    Err(e) => {
-                        tracing::info!("Proposal approval failed: {e}");
-                    }
+            Ok(()) => match approve_proposal(&gosh_client, address, &id, keys.clone()).await {
+                Ok(()) => {}
+                Err(e) => {
+                    tracing::info!("Proposal approval failed: {e}");
                 }
-            }
+            },
             Err(e) => {
                 tracing::info!("Proposal {} validation failed: {e}", address);
             }

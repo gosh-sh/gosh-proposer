@@ -116,12 +116,11 @@ pub async fn get_validator_id(
         "getValidatorId",
         Some(json!({"pubkey": pubkey})),
     )
-        .await
-        .map_err(|e| anyhow::format_err!("Failed to call getter getValidatorId: {e}"))?;
+    .await
+    .map_err(|e| anyhow::format_err!("Failed to call getter getValidatorId: {e}"))?;
     let id: GetValidatorIdResult = serde_json::from_value(id_val)
         .map_err(|e| anyhow::format_err!("Failed to serialize ValidatorId: {e}"))?;
-    id
-        .id
+    id.id
         .ok_or(anyhow::format_err!("Failed to get id for proposal"))
 }
 
@@ -129,7 +128,7 @@ pub async fn approve_proposal(
     context: &EverClient,
     proposal_address: String,
     id: &str,
-    keys: Option<KeyPair>
+    keys: Option<KeyPair>,
 ) -> anyhow::Result<()> {
     call_function(
         context,

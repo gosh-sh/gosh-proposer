@@ -3,14 +3,19 @@ use crate::gosh::block::get_latest_master_block;
 use common::eth::read_block;
 use common::gosh::helper::create_client;
 use common::helper::abi::ELOCK_ABI;
+use ethereum_types::BigEndianHash;
 use serde_json::json;
+use sha3::{Digest, Keccak256};
 use std::env;
 use std::str::FromStr;
 use web3::contract::Contract;
 use web3::signing::SecretKey;
 use web3::transports::WebSocket;
-use web3::types::{Address, BlockId, BlockNumber};
+use web3::types::{Address, BlockId, BlockNumber, H256, U256};
 use web3::Web3;
+
+const VOTE_FOR_PROPOSAL_STORAGE_ID: &str =
+    "000000000000000000000000000000000000000000000000000000000000000D";
 
 fn get_secret() -> anyhow::Result<SecretKey> {
     let key_path = env::var("ETH_PRIVATE_KEY_PATH")
@@ -61,6 +66,34 @@ pub async fn create_new_proposal() -> anyhow::Result<()> {
     Ok(())
 }
 
+pub async fn check_vote(
+    web3s: &Web3<WebSocket>,
+    elock_address: Address,
+    proposal_key: &H256,
+    validator_address: &H256,
+) -> anyhow::Result<bool> {
+    tracing::info!("Check validators vote for proposal");
+    // keccak256(
+    //     uint256(VALIDATOR_ADDR) . keccak256(uint256(PROPOSAL_KEY) . uint256(0xd))
+    // )
+    let mut hasher = Keccak256::new();
+    hasher.update(proposal_key.as_bytes());
+    let index = H256::from_str(VOTE_FOR_PROPOSAL_STORAGE_ID)?;
+    hasher.update(index.as_bytes());
+    let hash = hasher.finalize();
+
+    let mut hasher = Keccak256::new();
+    hasher.update(validator_address.as_bytes());
+    hasher.update(hash);
+    let storage_key = hasher.finalize();
+    let idx = U256::from_big_endian(storage_key.as_ref());
+
+    let res = web3s.eth().storage(elock_address, idx, None).await?;
+    tracing::info!("Check validators vote for proposal result: {res}");
+
+    Ok(!res.is_zero())
+}
+
 pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
     let context = create_client()?;
 
@@ -87,8 +120,40 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
 
     let key = get_secret()?;
 
+    let validator_address_str = env::var("ETH_VALIDATOR_CONTRACT_ADDRESS").map_err(|e| {
+        anyhow::format_err!("Failed to get env ETH_VALIDATOR_CONTRACT_ADDRESS: {e}")
+    })?;
+    let validator_address = Address::from_str(&validator_address_str)
+        .map_err(|e| anyhow::format_err!("Failed to convert ETH address: {e}"))?;
+    let validator_address_bytes = validator_address.to_fixed_bytes();
+    let mut validator_address_padded = [0_u8; 32];
+    for i in 0..20 {
+        validator_address_padded[i + 12] = validator_address_bytes[i];
+    }
+
+    let validator_address = H256::from(validator_address_padded);
+    tracing::info!("validator_address: {validator_address:?}");
+
     let current_proposals = get_proposals(&elock_contract).await?;
     for proposal in current_proposals {
+        match check_vote(
+            &web3s,
+            elock_address,
+            &H256::from_uint(&proposal.proposal_key),
+            &validator_address,
+        )
+        .await
+        {
+            Ok(val) => {
+                if val {
+                    continue;
+                }
+            }
+            Err(e) => {
+                tracing::info!("Failed to check vote: {e}");
+                continue;
+            }
+        };
         match check_proposal(&context, &root_address, &proposal).await {
             Ok(()) => {
                 vote_for_withdrawal(proposal.proposal_key, &elock_contract, &key).await?;

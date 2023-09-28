@@ -3471,6 +3471,7 @@ dependencies = [
  "ethereum-types",
  "serde",
  "serde_json",
+ "sha3",
  "tokio",
  "ton_client",
  "tracing",
