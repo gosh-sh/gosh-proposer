@@ -2,6 +2,15 @@
   "b6b55f25": [
     "deposit(uint256)"
   ],
+  "bcb999ca": [
+    "freezeDeposits()"
+  ],
+  "fe173b97": [
+    "gasPrice()"
+  ],
+  "afc20615": [
+    "getMyVoteForWithdrawal(uint256)"
+  ],
   "c7f758a8": [
     "getProposal(uint256)"
   ],
@@ -14,8 +23,11 @@
   "b7ab4db5": [
     "getValidators()"
   ],
-  "33de61d2": [
-    "lastProcessedBlock()"
+  "4fb01f21": [
+    "getVotesForWithdrawal(uint256)"
+  ],
+  "65581f50": [
+    "lastProcessedL2Block()"
   ],
   "d00f128b": [
     "proposeChangeValidators(address[])"
@@ -32,8 +44,11 @@
   "939947b8": [
     "trxWithdrawCount()"
   ],
-  "c9ce3367": [
-    "voteForChangeValidators()"
+  "ef8ae1f9": [
+    "unfreezeDeposits()"
+  ],
+  "641840e1": [
+    "voteForChangeValidators(bool)"
   ],
   "bb1b2ba2": [
     "voteForWithdrawal(uint256)"

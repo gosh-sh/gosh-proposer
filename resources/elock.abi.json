@@ -3,12 +3,17 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "startBlock",
+        "name": "_initialL2Block",
         "type": "uint256"
       },
       {
+        "internalType": "address payable",
+        "name": "_commissionWallet",
+        "type": "address"
+      },
+      {
         "internalType": "address[]",
-        "name": "validatorSet",
+        "name": "_goshValidators",
         "type": "address[]"
       }
     ],
@@ -21,6 +26,94 @@
     "type": "error"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "initialGas",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "finalGas",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "func",
+        "type": "string"
+      }
+    ],
+    "name": "GasConsumption",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "proposalKey",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawExecuted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "proposalKey",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "voter",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "reason",
+        "type": "uint8"
+      }
+    ],
+    "name": "WithdrawRejected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "recepient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "commission",
+        "type": "uint256"
+      }
+    ],
+    "name": "Withdrawal",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -31,6 +124,45 @@
     "name": "deposit",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "freezeDeposits",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gasPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalKey",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMyVoteForWithdrawal",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "isVoted",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -119,8 +251,27 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "proposalKey",
+        "type": "uint256"
+      }
+    ],
+    "name": "getVotesForWithdrawal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "votes",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "lastProcessedBlock",
+    "name": "lastProcessedL2Block",
     "outputs": [
       {
         "internalType": "uint256",
@@ -225,6 +376,19 @@
   },
   {
     "inputs": [],
+    "name": "unfreezeDeposits",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "vote",
+        "type": "bool"
+      }
+    ],
     "name": "voteForChangeValidators",
     "outputs": [],
     "stateMutability": "payable",
