@@ -79,6 +79,10 @@ pub async fn create_proposal(
     .await?;
     tracing::info!("burns: {burns:?}");
 
+    if burns.is_empty() {
+        tracing::info!("There were no burns, do not create proposal");
+        return Ok(());
+    }
     let burns =
         convert_burns(burns).map_err(|e| anyhow::format_err!("Failed to convert burns: {e}"))?;
 
