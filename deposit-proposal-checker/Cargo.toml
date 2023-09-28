@@ -10,5 +10,6 @@ dotenv.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true
+ton_client.workspace = true
 tracing.workspace = true
 web3.workspace = true
