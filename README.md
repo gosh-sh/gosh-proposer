@@ -106,7 +106,9 @@ loop:
   sleep 30 sec
   
 loop:
-  withdraw_proposal_checker
+  loop:
+    timeout -k 1 5m withdraw_proposal_checker
+    # retry if timeout expired
   sleep 1 hour
 ```
 
@@ -118,7 +120,9 @@ loop:
   sleep 30 sec
   
 loop:
-  withdraw_proposal_checker create
+  loop:
+    timeout -k 1 5m withdraw_proposal_checker create
+    # retry if timeout expired
   sleep 1 hour
 ```
 
