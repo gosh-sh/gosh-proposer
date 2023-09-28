@@ -91,6 +91,8 @@ public:
       .allowed_lend_owner                       = false
     });
     tvm_accept();
+    require(tvm_balance() > 2e9, error_code::not_enough_balance);
+    getMoney();
     require(balance_ >= tokens, error_code::not_enough_balance);
     balance_ -= tokens;
     IRootTokenContractPtr dest_handle(root_address_);
@@ -104,6 +106,7 @@ public:
       .allowed_lend_owner                       = false
     });
     tvm_accept();
+    require(tvm_balance() > 2e9, error_code::not_enough_balance);
     require(balance_ >= tokens, error_code::not_enough_balance);
     balance_ -= tokens;
     IRootTokenContractPtr dest_handle(root_address_);
@@ -134,6 +137,7 @@ public:
       .allowed_lend_owner                       = false
     });
     getMoney();
+    require(tvm_balance() > 2e9, error_code::not_enough_balance);
     locked_balance_ -= tokens;
     balance_ += tokens;
   }
@@ -147,6 +151,7 @@ public:
     opt<cell>   notify_payload
   ) {
     getMoney();
+    require(tvm_balance() > 2e9, error_code::not_enough_balance);
     // performing `tail call` - requesting dest to answer to our caller
     temporary_data::setglob(global_id::answer_id, return_func_id()->get());
     transfer_impl(answer_addr, to, tokens, evers, return_ownership, notify_payload);
@@ -163,6 +168,7 @@ public:
     opt<cell>   notify_payload
   ) {
     getMoney();
+    require(tvm_balance() > 2e9, error_code::not_enough_balance);
     // performing `tail call` - requesting dest to answer to our caller
     temporary_data::setglob(global_id::answer_id, return_func_id()->get());
     transfer_to_recipient_impl(answer_addr, to.pubkey, to.owner,
@@ -263,6 +269,7 @@ public:
     });
     tvm_accept();
     getMoney();
+    require(tvm_balance() > 2e9, error_code::not_enough_balance);
     IWrapperPtr root_ptr(root_address_);
     unsigned flags = SEND_ALL_GAS | SENDER_WANTS_TO_PAY_FEES_SEPARATELY | DELETE_ME_IF_I_AM_EMPTY;
     root_ptr(Evers(0), flags).

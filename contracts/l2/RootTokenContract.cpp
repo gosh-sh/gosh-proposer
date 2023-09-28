@@ -98,7 +98,7 @@ public:
     require(wallet_code.cdepth() == wallet_code_depth, error_code::wrong_wallet_code_hash);
     wallet_code_ = wallet_code;
 
-    uint128 evers = uint128(1000000000);
+    uint128 evers = uint128(10000000000);
     auto [wallet_init, dest] = calc_wallet_init(root_pubkey_, root_owner_);
     ITONTokenWalletPtr dest_handle(dest);
     dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
@@ -167,7 +167,7 @@ public:
     require(hasWalletCode(), error_code::wallet_code_not_initialized);
     require(pubkey != 0, error_code::define_pubkey_or_internal_owner);
     address_opt owner;
-    uint128 evers = uint128(1000000000);
+    uint128 evers = uint128(10000000000);
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest);
     dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
@@ -200,7 +200,7 @@ public:
   void deployUpgradeWallet(uint256 pubkey, address_opt owner, uint128 tokens) {
     require(oldroot_.has_value(), error_code::message_sender_is_not_my_owner);
     require(*oldroot_ == int_sender(), error_code::message_sender_is_not_my_owner);
-    uint128 evers = uint128(1000000000);
+    uint128 evers = uint128(10000000000);
     auto [wallet_init, dest_addr] = calc_wallet_init(pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest_addr);
     opt<cell> notify;
@@ -239,7 +239,7 @@ public:
       total_supply_ += value;
       require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
       value -= value_c;
-      uint128 evers = uint128(1000000000);
+      uint128 evers = uint128(10000000000);
       address answer_addr = address{tvm_myaddr()};
       total_granted_ += value + value_c;
       address_opt owner;
@@ -256,7 +256,7 @@ public:
     else {
       total_supply_ += value;
       require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
-      uint128 evers = uint128(1000000000);
+      uint128 evers = uint128(10000000000);
       opt<cell> notify;
       address answer_addr = address{tvm_myaddr()};
       total_granted_ += value;
