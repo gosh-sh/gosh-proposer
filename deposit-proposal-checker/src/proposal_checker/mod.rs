@@ -24,7 +24,7 @@ pub async fn check_proposals() -> anyhow::Result<()> {
                 match approve_proposal(&gosh_client, address).await {
                     Ok(()) => {},
                     Err(e) => {
-                        tracing::info!("Proposal {} approval failed: {e}", address);
+                        tracing::info!("Proposal approval failed: {e}");
                     }
                 }
             }
