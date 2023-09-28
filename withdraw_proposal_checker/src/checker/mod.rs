@@ -145,6 +145,7 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
         .await
         {
             Ok(val) => {
+                tracing::info!("Vote query result: {val}");
                 if val {
                     continue;
                 }
