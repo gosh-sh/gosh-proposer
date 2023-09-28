@@ -13,7 +13,7 @@ withdraw_proposal_checker get_last_blocks
 
 ```bash
 cd contracts/l1
-forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK [$ETH_WALLET_ADDRS] 
+forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK $ETH_WALLET_ADDRS [$ETH_WALLET_ADDRS]
 ```
 
 4) Send some funds to the ELock contract for it to have operational balance

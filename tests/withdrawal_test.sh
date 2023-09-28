@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 cd ../contracts/l1/
-ELOCK_ADDRESS=$(forge create --rpc-url https://sepolia.infura.io/v3/df557e910fb2496e8d854046cbedb99a --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args "5cbc704d975acc44f8af56c9bcc6f90e3900ac59bb572a9b07a52f2ac5289124" ["0xA2Cd57002cD089b7166ad40Bb1402664afc64067"] | grep "Deployed to: " | cut -d ' ' -f 3)
+ELOCK_ADDRESS=$(forge create --rpc-url https://sepolia.infura.io/v3/df557e910fb2496e8d854046cbedb99a --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args "5cbc704d975acc44f8af56c9bcc6f90e3900ac59bb572a9b07a52f2ac5289124" "0xA2Cd57002cD089b7166ad40Bb1402664afc64067" ["0xA2Cd57002cD089b7166ad40Bb1402664afc64067"] | grep "Deployed to: " | cut -d ' ' -f 3)
 
 echo "ELOCK_ADDRESS=$ELOCK_ADDRESS"
 

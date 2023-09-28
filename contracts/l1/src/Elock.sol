@@ -4,12 +4,16 @@ contract Elock {
     event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
     event WithdrawExecuted(uint256 indexed proposalKey);
     event Withdrawal(address indexed recepient, uint256 value, uint256 commission);
+    event GasConsumption(uint initialGas, uint finalGas, string func);
+
+    uint256 constant COMMISSION_WITHDRAWAL_THRESHOLD = 0.25 ether;
+    uint256 immutable glockStartBlock;
+    address payable immutable commissionWallet;
 
     uint256 public totalSupply; // 0x0
     uint128 public trxDepositCount; // 0x1
     uint128 public trxWithdrawCount; // 0x1
     uint256 elockStartBlock; // 0x2
-    uint256 immutable glockStartBlock; //
     uint256 public lastProcessedL2Block; // 0x3
 
     address[] validators; // 0x4
@@ -32,6 +36,7 @@ contract Elock {
     mapping (address => FreezeVote) votingForFreeze; // 0x10
     address[] votedForFreeze; // 0x11
     bool isDepositsFreezed; // 0x12
+    uint256 collectedCommission;
 
     struct Transfer {
         address payable to;
@@ -56,15 +61,27 @@ contract Elock {
         _;
     }
 
-    constructor(uint256 initialL2Block, address[] memory validatorSet) {
-        require(initialL2Block > 0);
-        require(validatorSet.length > 0);
+    modifier collectGasConsumption(string memory f) {
+        uint initialGas = gasleft();
+        _;
+        uint finalGas = gasleft();
+        emit GasConsumption(initialGas, finalGas, f);
+    }
+
+    constructor(
+        uint256 _initialL2Block,
+        address payable _commissionWallet,
+        address[] memory _goshValidators)
+    {
+        require(_initialL2Block > 0);
+        require(_goshValidators.length > 0);
 
         elockStartBlock = uint256(blockhash(block.number));
-        glockStartBlock = initialL2Block;
-        lastProcessedL2Block = initialL2Block;
-        validators = validatorSet;
-        votesRequired = _calcRequiredVotes(validatorSet.length);
+        glockStartBlock = _initialL2Block;
+        lastProcessedL2Block = _initialL2Block;
+        commissionWallet = _commissionWallet;
+        validators = _goshValidators;
+        votesRequired = _calcRequiredVotes(_goshValidators.length);
     }
 
     receive() external payable {}
@@ -85,7 +102,9 @@ contract Elock {
         uint256 fromBlock,
         uint256 tillBlock,
         Transfer[] calldata transfers
-    ) public payable onlyGoshValidators() {
+    )
+        public payable onlyGoshValidators() collectGasConsumption("proposeWithdrawal")
+    {
         require(fromBlock == lastProcessedL2Block);
 
         bytes memory blockRange = bytes.concat(bytes32(fromBlock), bytes32(tillBlock));
@@ -103,7 +122,9 @@ contract Elock {
         votingDisposalFee += _calculateFinalizeProposalFee();
     }
 
-    function voteForWithdrawal(uint256 proposalKey) public payable onlyGoshValidators() {
+    function voteForWithdrawal(uint256 proposalKey)
+        public payable onlyGoshValidators() collectGasConsumption("proposeWithdrawal")
+    {
         require(withdrawals[proposalKey].fromBlock != 0, "Unknown proposal key");
 
         if (votingForWithdrawal[proposalKey][msg.sender] == false) {
@@ -226,7 +247,7 @@ contract Elock {
     }
 
     function _calcRequiredVotes(uint256 validatorsCount) private pure returns (uint256) {
-        return validatorsCount / uint256(2) + 1;
+        return validatorsCount / uint256(2) + 1; // 50% + 1 vote
     }
 
     function _updateValidators() private {
@@ -238,8 +259,9 @@ contract Elock {
     function _executeWithdrawals(uint256 proposalKey) private returns (bool) {
         Transfer[] memory transfers = withdrawals[proposalKey].transfers;
         uint256 requiredFunds;
+        uint256 validatorCosts = votingDisposalFee * tx.gasprice;
         uint256 transactionFeeInGas =
-            21_000 * tx.gasprice + votingDisposalFee * tx.gasprice / transfers.length;
+            21_000 * tx.gasprice + validatorCosts / transfers.length;
         for (uint256 index = 0; index < transfers.length; index++) {
             requiredFunds += transfers[index].value;
         }
@@ -257,6 +279,10 @@ contract Elock {
 
             trxWithdrawCount += 1;
             totalSupply -= transfer.value;
+            collectedCommission += validatorCosts;
+            if (collectedCommission > COMMISSION_WITHDRAWAL_THRESHOLD) {
+                commissionWallet.transfer(COMMISSION_WITHDRAWAL_THRESHOLD);
+            }
         }
         return true;
     }

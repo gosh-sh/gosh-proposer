@@ -34,7 +34,7 @@ set +x
 cd contracts/l1/
 
 # deploy Elock
-ETH_CONTRACT_ADDRESS=$(forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK [$ETH_WALLET_ADDR] | grep "Deployed to: " | cut -d ' ' -f 3)
+ETH_CONTRACT_ADDRESS=$(forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args $LAST_GOSH_BLOCK $ETH_WALLET_ADDR [$ETH_WALLET_ADDR] | grep "Deployed to: " | cut -d ' ' -f 3)
 echo "export ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS" >> $TEST_TRACE
 # deposit value to Elock
 cast send --rpc-url $ETH_URL $ETH_CONTRACT_ADDRESS "deposit(uint256)" $PUBKEY --private-key $ETH_PRIVATE_KEY --value 0.02ether

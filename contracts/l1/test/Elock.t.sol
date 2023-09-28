@@ -21,7 +21,7 @@ contract ElockTest is Test {
         address[] memory validators = new address[](2);
         validators[0] = owner;
         validators[1] = validator1;
-        elock = new Elock(startGlockBlock, validators);
+        elock = new Elock(startGlockBlock, payable(owner), validators);
     }
 
     function test_constructorRun() public {
@@ -65,7 +65,7 @@ contract ElockTest is Test {
     }
 
     function test_proposeWithdrawal_creation() public {
-        uint256 fromBlock = 1;
+        uint256 fromBlock = elock.lastProcessedL2Block();
         uint256 tillBlock = 2;
         Elock.Transfer memory transfer1 = Elock.Transfer({
             to: payable(address(this)),
@@ -91,12 +91,15 @@ contract ElockTest is Test {
         uint blockA = elock.lastProcessedL2Block();
         uint blockB1 = 0xb10cb1;
         uint blockB2 = 0xb10cb2;
+        uint blockB3 = 0xb10cb3;
 
         Elock.Transfer[] memory transfers = create_transfers(4);
         Elock.Transfer[] memory transfers1 = new Elock.Transfer[](1);
         transfers1[0] = transfers[0];
         Elock.Transfer[] memory transfers2 = new Elock.Transfer[](4);
         transfers2 = transfers;
+        Elock.Transfer[] memory transfers3 = new Elock.Transfer[](4);
+        transfers3 = transfers;
 
         // propose 1st withdrawals
         elock.proposeWithdrawal(blockA, blockB1, transfers1);
@@ -107,6 +110,12 @@ contract ElockTest is Test {
         elock.proposeWithdrawal(blockA, blockB2, transfers2);
         proposalKeys = elock.getProposalList();
         assertEq(proposalKeys.length, 2);
+
+        // propose 3rd withdrawals
+        elock.proposeWithdrawal(blockA, blockB3, transfers3);
+        proposalKeys = elock.getProposalList();
+        assertEq(proposalKeys.length, 3);
+
 
         // ensure that aren't votes yet
         uint proposalKey = proposalKeys[1];
@@ -142,6 +151,7 @@ contract ElockTest is Test {
         vm.expectEmit(true, false, false, true);
         emit WithdrawExecuted(proposalKey);
 
+        assertEq(elock.getProposalList().length, 3);
         elock.voteForWithdrawal(proposalKey);
 
         assertEq(elock.trxWithdrawCount(), 4);
