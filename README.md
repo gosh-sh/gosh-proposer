@@ -91,7 +91,10 @@ ETH_PRIVATE_KEY_PATH=/home/user/GOSH/gosh-proposer/tests/eth.private.key
 There are 2 complex services: `deposit` and `withdrawal`.
 
 Deposit service checks `deposit` function calls of ELock and creates similar transfers in GOSH. This service sends ETH
-blocks to GOSH and for sync should be run often (once in a minute or even more often, in example this time is `30 sec`).
+blocks to GOSH and for sync should be run often (once in a minute or even more often, in example this time is `60 sec`).
+
+`deposit-proposal-checker` needs validator keys for voting but keys are stored in inconvenient way,
+so we have a Python script that extracts keys and runs this program.
 
 Withdrawal flow can be triggered less often to save ETH operational balance. In example this flow is called once in 
 `1 hour`. Fixed time interval can be changed to interactive by querying amount of withdrawals (see paragraph 3 of the 
@@ -106,8 +109,8 @@ approximately `5 minutes` and retried in case of error.
 
 ```bash
 loop:
-  deposit-proposal-checker
-  sleep 30 sec
+  VALIDATOR_CONFIG_PATH=<CONFIG_PATH> python3 tools/run_deposit_checker_with_validator_keys.py
+  sleep 60 sec
 ```
 
 `withdrawal` service
@@ -130,6 +133,7 @@ loop:
       timeout -k 1 5m withdraw_proposal_checker
       # retry if timeout expired
   fi
+  sleep 15 min
 ```
 
 2) On ONE! validator  (only one for not to spam with proposals) also run in loop:
@@ -139,7 +143,7 @@ loop:
 ```bash
 loop:
   gosh_proposer
-  sleep 30 sec
+  sleep 60 sec
 ```
 
 `withdrawal` service
@@ -162,6 +166,7 @@ loop:
       timeout -k 1 5m withdraw_proposal_checker
       # retry if timeout expired
   fi
+  sleep 15 min
 ```
 
 3) Query amount of withdrawals
