@@ -186,7 +186,7 @@ PUSHCONT {
 	}
 	IFNOT
 	.loc proposal.sol, 61
-	PUSHINT 32
+	PUSHINT 40
 	SDSKIPFIRST
 	.loc proposal.sol, 62
 	PLDU 256
