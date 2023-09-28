@@ -554,8 +554,6 @@ PUSHCONT {
 	IFRET
 	DROP
 	.loc checker.sol, 99
-	INC
-	UFITS 128
 	XCHG S2
 	MYADDR
 	NEWC

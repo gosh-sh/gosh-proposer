@@ -96,7 +96,7 @@ contract Checker {
             }
             index += 1;
         }
-        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
+        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index);
     }
 
     function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
