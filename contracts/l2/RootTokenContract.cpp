@@ -72,16 +72,16 @@ public:
     newroot_ = newroot;
   }
 
-  void setOldRoot(address oldroot) {
+  void setOldRoot(address_opt oldroot) {
     check_owner(true);
     tvm_accept();
-    *oldroot_ = oldroot;
+    oldroot_ = oldroot;
   }
 
-  void setNewRoot(address newroot) {
+  void setNewRoot(address_opt newroot) {
     check_owner(true);
     tvm_accept();
-    *newroot_ = newroot;
+    newroot_ = newroot;
   }
 
   void askEvers(uint256 pubkey, address_opt owner) {
