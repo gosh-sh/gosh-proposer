@@ -64,15 +64,23 @@ pub async fn find_proposals(context: &EverClient) -> anyhow::Result<Vec<Proposal
         match call_getter(context, &proposal_address, PROPOSAL_ABI, "getDetails", None).await {
             Ok(value) => {
                 tracing::info!("Proposal details: {}", value);
-                let proposal_details: ProposalDetails = serde_json::from_value(value)
-                    .map_err(|e| anyhow::format_err!("Failed to serialize proposal details: {e}"))?;
+                let proposal_details = match serde_json::from_value::<ProposalDetails>(value) {
+                    Ok(data) => data,
+                    Err(e) => {
+                        tracing::info!("Failed to deserialize proposal details: {e}");
+                        continue;
+                    }
+                };
                 res.push(Proposal {
                     address: proposal_address,
                     details: proposal_details,
                 });
-            },
+            }
             Err(e) => {
-                tracing::info!("Failed to get details of proposal {}: {e}", proposal_address);
+                tracing::info!(
+                    "Failed to get details of proposal {}: {e}",
+                    proposal_address
+                );
             }
         }
     }
