@@ -68,32 +68,44 @@ contract Checker {
     }
 
     function checkDataIndex(BlockData[] data, TransactionBatch[] transactions, uint128 index) public senderIs(this) accept {
-        if (index >=  data.length) { 
-            TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _proposalCount, this);
-            new Proposal{stateInit: s1, value: 10 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
-            _proposalCount += 1;        
-            return; 
-        }
-        TvmSlice dataslice = TvmSlice(data[index].data);
-        (uint8 count) = dataslice.load(uint8);
-        count -= 247;
-        dataslice.skip(count * 8);
-        dataslice.skip(8);
-        (uint256 newhash) = dataslice.load(uint256);
-        if (index == 0) {
-            if (_prevhash != newhash) {
+        for (uint i = 0; i <= BATCH_SIZE; i++) {
+            if (index >=  data.length) { 
+                TvmSlice dataslicenew = TvmSlice(data[0].data);
+                (uint8 countnew) = dataslicenew.load(uint8);
+                countnew -= 247;
+                dataslicenew.skip(countnew * 8);
+                dataslicenew.skip(8);
+                (uint256 newhashagain) = dataslicenew.load(uint256);
+                if (_prevhash != newhashagain) {
                     return;
+                }
+                TvmCell s1 =  ProposalLib.composeProposalStateInit(_proposalCode, _prevhash, _proposalCount, this);
+                new Proposal{stateInit: s1, value: 10 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
+                _proposalCount += 1;        
+                return; 
             }
-        }
-        else {
-            if (data[index - 1].hash != newhash) {
-                return;
+            TvmSlice dataslice = TvmSlice(data[index].data);
+            (uint8 count) = dataslice.load(uint8);
+            count -= 247;
+            dataslice.skip(count * 8);
+            dataslice.skip(8);
+            (uint256 newhash) = dataslice.load(uint256);
+            if (index == 0) {
+                if (_prevhash != newhash) {
+                    return;
+                }
             }
+            else {
+                if (data[index - 1].hash != newhash) {
+                    return;
+                }
+            }
+            if (gosh.keccak256(data[index].data) != data[index].hash) {
+                return; 
+            }
+            index += 1;
         }
-        if (gosh.keccak256(data[index].data) != data[index].hash) {
-            return; 
-        }
-        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index + 1);
+        this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index);
     }
 
     function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{

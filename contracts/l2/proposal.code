@@ -520,7 +520,7 @@ PUSHCONT {
 	THROWIF 63
 	UNPAIR
 	.loc proposal.sol, 105
-	PUSHINT 32
+	PUSHINT 40
 	SDSKIPFIRST
 	.loc proposal.sol, 106
 	PLDU 256
@@ -645,7 +645,7 @@ PUSHCONT {
 	OVER
 	POP S6
 	.loc proposal.sol, 120
-	PUSHINT 32
+	PUSHINT 40
 	SDSKIPFIRST
 	.loc proposal.sol, 121
 	DUP
