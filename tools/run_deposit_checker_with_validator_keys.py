@@ -9,35 +9,9 @@ import base64
 
 # path to the validators config
 CONFIG_PATH = os.environ.get('VALIDATOR_CONFIG_PATH', '/opt/ton/ton-node/configs/config.json')
-CHECKER_ADDRESS = os.environ.get('CHECKER_ADDRESS')
 GOSH_CLI = os.environ.get('GOSH_CLI_PATH', 'gosh-cli')
 VALIDATORS_KEY_PATH = os.environ.get('VALIDATORS_KEY_PATH', 'keys.json')
 DEPOSIT_PROPOSAL_CHECKER = os.environ.get('DEPOSIT_PROPOSAL_CHECKER', 'deposit-proposal-checker')
-
-
-CHECKER_ABI = '''
-{
-    "ABI version": 2,
-    "version": "2.3",
-    "header": ["pubkey", "time", "expire"],
-    "functions": [
-        {
-            "name": "getAllProposalAddr",
-            "inputs": [
-            ],
-            "outputs": [
-                {"name":"value0","type":"address[]"}
-            ]
-        }
-    ],
-    "data": [
-    ],
-    "events": [
-    ],
-    "fields": [
-    ]
-}
-'''
 
 
 def execute_cmd(cmd: str):
@@ -52,10 +26,6 @@ def execute_cmd(cmd: str):
 
 
 def main():
-    if CHECKER_ADDRESS == "":
-        print("Failed to get CHECKER_ADDRESS")
-        exit(1)
-
     # load data
     with open(CONFIG_PATH) as f:
         data = f.read()
