@@ -66,7 +66,7 @@ pub async fn create_new_proposal() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub async fn check_vote(
+pub async fn has_voted(
     web3s: &Web3<WebSocket>,
     elock_address: Address,
     proposal_key: &H256,
@@ -136,7 +136,7 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
 
     let current_proposals = get_proposals(&elock_contract).await?;
     for proposal in current_proposals {
-        match check_vote(
+        match has_voted(
             &web3s,
             elock_address,
             &H256::from_uint(&proposal.proposal_key),
