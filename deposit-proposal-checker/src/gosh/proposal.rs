@@ -61,17 +61,20 @@ pub async fn find_proposals(context: &EverClient) -> anyhow::Result<Vec<Proposal
     };
     let mut res = vec![];
     for proposal_address in proposal_addresses.addresses {
-        let proposal_details =
-            call_getter(context, &proposal_address, PROPOSAL_ABI, "getDetails", None)
-                .await
-                .map_err(|e| anyhow::format_err!("Failed to call getDetails: {e}"))?;
-        tracing::info!("Proposal details: {}", proposal_details);
-        let proposal_details: ProposalDetails = serde_json::from_value(proposal_details)
-            .map_err(|e| anyhow::format_err!("Failed to serialize proposal details: {e}"))?;
-        res.push(Proposal {
-            address: proposal_address,
-            details: proposal_details,
-        });
+        match call_getter(context, &proposal_address, PROPOSAL_ABI, "getDetails", None).await {
+            Ok(value) => {
+                tracing::info!("Proposal details: {}", value);
+                let proposal_details: ProposalDetails = serde_json::from_value(value)
+                    .map_err(|e| anyhow::format_err!("Failed to serialize proposal details: {e}"))?;
+                res.push(Proposal {
+                    address: proposal_address,
+                    details: proposal_details,
+                });
+            },
+            Err(e) => {
+                tracing::info!("Failed to get details of proposal {}: {e}", proposal_address);
+            }
+        }
     }
     Ok(res)
 }
