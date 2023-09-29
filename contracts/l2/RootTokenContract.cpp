@@ -200,17 +200,12 @@ public:
   void deployUpgradeWallet(uint256 pubkey, address_opt owner, uint128 tokens) {
     require(oldroot_.has_value(), error_code::message_sender_is_not_my_owner);
     require(*oldroot_ == int_sender(), error_code::message_sender_is_not_my_owner);
+    tvm_accept();
     uint128 evers = uint128(10000000000);
     auto [wallet_init, dest_addr] = calc_wallet_init(pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest_addr);
     opt<cell> notify;
-    address answer_addr;
-    if constexpr (Internal) {
-      tvm_rawreserve(tvm_balance() - int_value().get() * 4, rawreserve_flag::up_to);
-      answer_addr = int_sender();
-    } else {
-      answer_addr = address{tvm_myaddr()};
-    }
+    address answer_addr = address{tvm_myaddr()};
     dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
     dest_handle(Evers(evers.get()), 1).acceptMint(tokens, answer_addr, 0u128, notify);
   }
