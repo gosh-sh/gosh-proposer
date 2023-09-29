@@ -337,7 +337,7 @@ IFREF {
 THROW 0
 
 .macro getDetails_fbbf93a0_internal_macro
-.loc proposal_test.sol, 94
+.loc proposal_test.sol, 93
 GETGLOB 10
 GETGLOB 11
 GETGLOB 13
@@ -349,7 +349,7 @@ PUSHINT 0
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc proposal_test.sol, 97
+.loc proposal_test.sol, 96
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
@@ -386,7 +386,7 @@ IFREF {
 THROW 0
 
 .macro getVersion_0d8e6e2c_internal_macro
-.loc proposal_test.sol, 98
+.loc proposal_test.sol, 97
 PUSHREF {
 	.blob x70726f706f73616c5f74657374
 }
@@ -404,7 +404,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc proposal_test.sol, 101
+.loc proposal_test.sol, 100
 ENDS
 .loc proposal_test.sol, 0
 CALLREF {
@@ -438,7 +438,7 @@ IFREF {
 THROW 0
 
 .macro getSet_31f070d9_internal_macro
-.loc proposal_test.sol, 112
+.loc proposal_test.sol, 111
 GETGLOB 15
 .loc proposal_test.sol, 0
 
@@ -1146,10 +1146,10 @@ IFJMPREF {
 		.inline __constructor
 	}
 	DUP
-	PUSHINT 1409149045
+	PUSHINT 1071142485
 	EQUAL
 	IFJMPREF {
-		.inline __setVote
+		.inline __getVersion
 	}
 }
 DUP
@@ -1166,7 +1166,7 @@ IFJMPREF {
 	PUSHINT 1409149045
 	EQUAL
 	IFJMPREF {
-		.inline __getDetails
+		.inline __setVote
 	}
 	DUP
 	PUSHINT 1666339416

@@ -226,9 +226,6 @@ public:
     uint128 a,
     uint128 b
   ) {
-    uint128 value = transactions.get_at(unsigned(index)).tokens * a / 1000 + b;
-    total_supply_ += value;
-    require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
     require(tvm_myaddr() == int_sender(), error_code::message_sender_is_not_my_owner);
     uint128 value = transactions.get_at(unsigned(index)).tokens;
     uint128 value_c = value * a / 10000 + b;
@@ -247,15 +244,9 @@ public:
       dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
       dest_handle(Evers(evers.get()), 1).acceptMint(value, answer_addr, 0u128, notify);
 
-    tvm_accept();
-    uint128 evers = uint128(1000000000);
-    unsigned msg_flags = 0;
-    address answer_addr;
-    if constexpr (Internal) {
-      tvm_rawreserve(tvm_balance() - int_value().get() * 4, rawreserve_flag::up_to);
-      answer_addr = int_sender();
-    } else {
-      answer_addr = address{tvm_myaddr()};
+      auto [wallet_init_root, dest_root] = calc_wallet_init(root_pubkey_, root_owner_);
+      ITONTokenWalletPtr dest_handle_root_wallet(dest_root);
+      dest_handle_root_wallet(Evers(evers.get()), 1).acceptMint(value_c, answer_addr, 0u128, notify);
     }
     else {
       total_supply_ += value;
