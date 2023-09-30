@@ -47,6 +47,10 @@ contract Checker {
         _prevhash = prevhash;
     }
 
+    function setHashRoot(uint256 hash) public onlyOwner accept {
+        _prevhash = hash;
+    }
+
     function setRootContract (address root) public onlyOwner accept {
         _root = root;
     }

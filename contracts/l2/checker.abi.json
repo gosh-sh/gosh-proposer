@@ -12,6 +12,14 @@
 			]
 		},
 		{
+			"name": "setHashRoot",
+			"inputs": [
+				{"name":"hash","type":"uint256"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setRootContract",
 			"inputs": [
 				{"name":"root","type":"address"}

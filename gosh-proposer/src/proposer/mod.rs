@@ -66,6 +66,10 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
         .number
         .ok_or(anyhow::format_err!("Failed to read latest Eth block"))?;
 
+    if (last_block_number != first_block_number) { 
+        last_block_number -= 1; 
+    }
+
     let mut block_diff = (last_block_number - first_block_number).as_u64();
     tracing::info!(
         "Number of blocks to latest: {}",
