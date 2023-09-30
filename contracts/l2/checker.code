@@ -996,7 +996,7 @@ PUSH C3
 EXECUTE
 .loc checker.sol, 0
 
-.internal-alias onCodeUpgrade_0e89a1b9_internal, 2083461128
+.internal-alias onCodeUpgrade_0e89a1b9_internal, 2
 .internal onCodeUpgrade_0e89a1b9_internal
 DROP
 .loc checker.sol, 0
