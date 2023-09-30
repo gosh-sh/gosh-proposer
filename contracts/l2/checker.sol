@@ -134,10 +134,11 @@ contract Checker {
         cell;
         tvm.setcode(newcode);
         tvm.setCurrentCode(newcode);
-        onCodeUpgrade();
+        TvmCell data = abi.encode(_prevhash, _root, _proposalCount, a, b, _proposalCode);
+        onCodeUpgrade(data);
     }
 
-    function onCodeUpgrade() private pure {
+    function onCodeUpgrade(TvmCell cell) private pure {
     }
 
     //Fallback/Receive
