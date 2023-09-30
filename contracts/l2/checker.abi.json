@@ -20,6 +20,14 @@
 			]
 		},
 		{
+			"name": "setReadyRoot",
+			"inputs": [
+				{"name":"ready","type":"bool"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setRootContract",
 			"inputs": [
 				{"name":"root","type":"address"}
@@ -120,6 +128,14 @@
 			]
 		},
 		{
+			"name": "getTransactions",
+			"inputs": [
+			],
+			"outputs": [
+				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"value0","type":"tuple[]"}
+			]
+		},
+		{
 			"name": "getStatus",
 			"inputs": [
 			],
@@ -142,6 +158,8 @@
 		{"name":"_proposalCount","type":"uint128"},
 		{"name":"a","type":"uint128"},
 		{"name":"b","type":"uint128"},
-		{"name":"_proposalCode","type":"cell"}
+		{"name":"_proposalCode","type":"cell"},
+		{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"_transactions","type":"tuple[]"},
+		{"name":"_isReady","type":"bool"}
 	]
 }
