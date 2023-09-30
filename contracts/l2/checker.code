@@ -996,9 +996,18 @@ PUSH C3
 EXECUTE
 .loc checker.sol, 0
 
-.internal-alias onCodeUpgrade_0e89a1b9_internal, 2
+.internal-alias onCodeUpgrade_0e89a1b9_internal, 2083461128
 .internal onCodeUpgrade_0e89a1b9_internal
 DROP
+.loc checker.sol, 0
+CALLREF {
+	.inline __c7_to_c4
+}
+COMMIT
+THROW 0
+
+.internal-alias onCodeUpgrade_fb00cc5e_internal, 749264623
+.internal onCodeUpgrade_fb00cc5e_internal
 .loc checker.sol, 0
 CALLREF {
 	.inline __c7_to_c4
@@ -1038,7 +1047,7 @@ IFREF {
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc checker.sol, 155
+.loc checker.sol, 158
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1075,7 +1084,7 @@ IFREF {
 THROW 0
 
 .macro getVersion_0d8e6e2c_internal_macro
-.loc checker.sol, 156
+.loc checker.sol, 159
 PUSHREF {
 	.blob x636865636b6572
 }
@@ -1093,7 +1102,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 159
+.loc checker.sol, 162
 OVER
 PUSHCONT {
 	LDREF
@@ -1139,7 +1148,7 @@ IFREF {
 THROW 0
 
 .macro getProposalAddr_d14daba4_internal_macro
-.loc checker.sol, 160
+.loc checker.sol, 163
 GETGLOB 15
 GETGLOB 10
 ROT
@@ -1158,7 +1167,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 163
+.loc checker.sol, 166
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1196,11 +1205,11 @@ IFREF {
 THROW 0
 
 .macro getAllProposalAddr_4579dbb3_internal_macro
-.loc checker.sol, 164
+.loc checker.sol, 167
 PUSHINT 0
 NEWDICT
 PAIR
-.loc checker.sol, 165
+.loc checker.sol, 168
 PUSHINT 0
 PUSHCONT {
 	DUP
@@ -1208,7 +1217,7 @@ PUSHCONT {
 	LESS
 }
 PUSHCONT {
-	.loc checker.sol, 166
+	.loc checker.sol, 169
 	OVER
 	GETGLOB 15
 	GETGLOB 10
@@ -1226,7 +1235,7 @@ PUSHCONT {
 	DICTUSET
 	PAIR
 	POP S2
-	.loc checker.sol, 165
+	.loc checker.sol, 168
 	INC
 	UFITS 128
 	.loc checker.sol, 0
@@ -1244,7 +1253,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 171
+.loc checker.sol, 174
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1283,7 +1292,7 @@ IFREF {
 THROW 0
 
 .macro getStatus_4e69d560_internal_macro
-.loc checker.sol, 172
+.loc checker.sol, 175
 GETGLOB 10
 GETGLOB 12
 .loc checker.sol, 0

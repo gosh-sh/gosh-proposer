@@ -137,7 +137,10 @@ contract Checker {
         onCodeUpgrade(cell);
     }
 
-    function onCodeUpgrade(TvmCell cell) private pure functionID(2) {
+    function onCodeUpgrade(TvmCell cell) private pure  {
+    }
+
+    function onCodeUpgrade() private pure  {
     }
 
     //Fallback/Receive
