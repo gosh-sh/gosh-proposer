@@ -954,24 +954,7 @@ EQUAL
 THROWIFNOT 100
 .loc checker.sol, 35
 ACCEPT
-.loc checker.sol, 135
-DUP
-SETCODE
-.loc checker.sol, 136
-CTOS
-DUP
-PUSHSLICE x8adb35
-SDEQ
-PUSHCONT {
-	PLDREFIDX 1
-	CTOS
-}
-IF
-PLDREF
-CTOS
-BLESS
-POP C3
-.loc checker.sol, 137
+.loc checker.sol, 134
 GETGLOB 15
 GETGLOB 14
 GETGLOB 13
@@ -989,7 +972,25 @@ STU 128
 STREF
 STBREFR
 ENDC
-.loc checker.sol, 138
+.loc checker.sol, 135
+OVER
+SETCODE
+.loc checker.sol, 136
+SWAP
+CTOS
+DUP
+PUSHSLICE x8adb35
+SDEQ
+PUSHCONT {
+	PLDREFIDX 1
+	CTOS
+}
+IF
+PLDREF
+CTOS
+BLESS
+POP C3
+.loc checker.sol, 137
 PUSHINT $onCodeUpgrade_0e89a1b9_internal$
 PUSH C3
 EXECUTE
@@ -1037,7 +1038,7 @@ IFREF {
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc checker.sol, 156
+.loc checker.sol, 155
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1074,7 +1075,7 @@ IFREF {
 THROW 0
 
 .macro getVersion_0d8e6e2c_internal_macro
-.loc checker.sol, 157
+.loc checker.sol, 156
 PUSHREF {
 	.blob x636865636b6572
 }
@@ -1092,7 +1093,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 160
+.loc checker.sol, 159
 OVER
 PUSHCONT {
 	LDREF
@@ -1138,7 +1139,7 @@ IFREF {
 THROW 0
 
 .macro getProposalAddr_d14daba4_internal_macro
-.loc checker.sol, 161
+.loc checker.sol, 160
 GETGLOB 15
 GETGLOB 10
 ROT
@@ -1157,7 +1158,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 164
+.loc checker.sol, 163
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1195,11 +1196,11 @@ IFREF {
 THROW 0
 
 .macro getAllProposalAddr_4579dbb3_internal_macro
-.loc checker.sol, 165
+.loc checker.sol, 164
 PUSHINT 0
 NEWDICT
 PAIR
-.loc checker.sol, 166
+.loc checker.sol, 165
 PUSHINT 0
 PUSHCONT {
 	DUP
@@ -1207,7 +1208,7 @@ PUSHCONT {
 	LESS
 }
 PUSHCONT {
-	.loc checker.sol, 167
+	.loc checker.sol, 166
 	OVER
 	GETGLOB 15
 	GETGLOB 10
@@ -1225,7 +1226,7 @@ PUSHCONT {
 	DICTUSET
 	PAIR
 	POP S2
-	.loc checker.sol, 166
+	.loc checker.sol, 165
 	INC
 	UFITS 128
 	.loc checker.sol, 0
@@ -1243,7 +1244,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 172
+.loc checker.sol, 171
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1282,7 +1283,7 @@ IFREF {
 THROW 0
 
 .macro getStatus_4e69d560_internal_macro
-.loc checker.sol, 173
+.loc checker.sol, 172
 GETGLOB 10
 GETGLOB 12
 .loc checker.sol, 0

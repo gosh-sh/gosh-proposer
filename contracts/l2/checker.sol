@@ -131,11 +131,10 @@ contract Checker {
     }
 
     function updateCode(TvmCell newcode, TvmCell cell) public view onlyOwner accept {
-        cell;
+        cell = abi.encode(_prevhash, _root, _proposalCount, a, b, _proposalCode);
         tvm.setcode(newcode);
         tvm.setCurrentCode(newcode);
-        TvmCell data = abi.encode(_prevhash, _root, _proposalCount, a, b, _proposalCode);
-        onCodeUpgrade(data);
+        onCodeUpgrade(cell);
     }
 
     function onCodeUpgrade(TvmCell cell) private pure {
