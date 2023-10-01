@@ -98,18 +98,16 @@ def test_main():
 
         time.sleep(20)
         execute_cmd(f'''MAX_BLOCK_IN_ONE_CHUNK=40 ETH_CONTRACT_ADDRESS={elock_address} CHECKER_ADDRESS={checker_address} make run_proposer''', '../', ignore_error=True)
-        if WAS_ERROR:
-            continue
+        if not WAS_ERROR:
+            prop_address = execute_cmd(f'''gosh-cli runx --addr {checker_address} --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr''')
+            prop_address = json.loads(prop_address)['value0']
+            print(f"{prop_address=}")
+            if len(prop_address) == 0:
+                continue
+            prop_address = prop_address[-1]
+            execute_cmd(f'''gosh-cli -j callx --addr {prop_address} --abi ../contracts/l2/proposal_test.abi.json  -m setvdict --key {main_pubkey}''')
 
-        prop_address = execute_cmd(f'''gosh-cli runx --addr {checker_address} --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr''')
-        prop_address = json.loads(prop_address)['value0']
-        print(f"{prop_address=}")
-        if len(prop_address) == 0:
-            continue
-        prop_address = prop_address[-1]
-        execute_cmd(f'''gosh-cli -j callx --addr {prop_address} --abi ../contracts/l2/proposal_test.abi.json  -m setvdict --key {main_pubkey}''')
-
-        execute_cmd(f'''VALIDATORS_KEY_PATH=tests/{MAIN_KEY} ETH_CONTRACT_ADDRESS={elock_address} CHECKER_ADDRESS={checker_address} make run_deposit''', '../')
+            execute_cmd(f'''VALIDATORS_KEY_PATH=tests/{MAIN_KEY} ETH_CONTRACT_ADDRESS={elock_address} CHECKER_ADDRESS={checker_address} make run_deposit''', '../')
 
         token_wallet = execute_cmd(f'''gosh-cli runx --addr {root_address} --abi ../contracts/l2/RootTokenContract.abi -m getWalletAddress --owner null --pubkey {main_pubkey} | jq -r .value0''', ignore_error=True)
         print(f"{token_wallet=}")
@@ -122,12 +120,6 @@ def test_main():
             continue
         if int(TOKEN_BALANCE) > 0:
             break
-
-    token_wallet = '0:574d2243756b01fd8af4b12e6bc2645a0a1148035636228ae5dfe289355e29e9'
-    TOKEN_BALANCE = '19980000000000000'
-    root_address = '0:4ee932bde06753af9d1ec4dd63663775274b20c4125618cd3f4572f09e227b5b'
-    elock_address = '0xF42b3DA39B4b52473E6779C4545740135Ffea03D'
-
 
     execute_cmd(f'''gosh-cli callx --addr {token_wallet} --abi ../contracts/l2/TONTokenWallet.abi --keys {MAIN_KEY} -m burnTokens --_answer_id 0 --to $ETH_WALLET_ADDR --tokens {TOKEN_BALANCE}''')
 
