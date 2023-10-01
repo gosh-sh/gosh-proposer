@@ -59,15 +59,15 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
         ))?;
 
     // Start from the latest block
-    let mut block_id = BlockId::Number(BlockNumber::Latest);
+    let mut block_id = BlockId::Number(BlockNumber::Finalized);
 
     let mut last_block_number = read_block(&web3s, block_id)
         .await?
         .number
         .ok_or(anyhow::format_err!("Failed to read latest Eth block"))?;
 
-    if last_block_number != first_block_number { 
-        last_block_number = (last_block_number - 1).into(); 
+    if last_block_number <= first_block_number {
+        anyhow::bail!("Saved block in GOSH is newer than queried finalized block.");
     }
 
     let mut block_diff = (last_block_number - first_block_number).as_u64();
