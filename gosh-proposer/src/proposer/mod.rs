@@ -58,6 +58,8 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
             web3::helpers::to_string(&first_block_hash)
         ))?;
 
+    tracing::info!("Saved block number: {}", first_block_number.as_u64());
+
     // Start from the latest block
     let mut block_id = BlockId::Number(BlockNumber::Finalized);
 
@@ -66,8 +68,9 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
         .number
         .ok_or(anyhow::format_err!("Failed to read latest Eth block"))?;
 
+    tracing::info!("Last block number: {}", last_block_number.as_u64());
     if last_block_number <= first_block_number {
-        anyhow::bail!("Saved block in GOSH is newer than queried finalized block.");
+        anyhow::bail!("Saved block in GOSH is newer than queried finalized block. {last_block_number} <= {first_block_number}");
     }
 
     let mut block_diff = (last_block_number - first_block_number).as_u64();

@@ -182,7 +182,7 @@ pub async fn get_last_blocks() -> anyhow::Result<()> {
         .await
         .map_err(|e| anyhow::format_err!("Failed latest master block: {e}"))?;
 
-    let last_eth_block = read_block(&web3s, BlockId::Number(BlockNumber::Latest)).await?;
+    let last_eth_block = read_block(&web3s, BlockId::Number(BlockNumber::Finalized)).await?;
 
     println!(
         "{}",
