@@ -53,6 +53,8 @@ contract Checker {
 
     function setHashRoot(uint256 hash) public onlyOwner accept {
         _prevhash = hash;
+        TransactionBatch[] transactions;
+        _transactions = transactions;
     }
 
     function setReadyRoot(bool ready) public onlyOwner accept {
