@@ -59,9 +59,6 @@ def test_main():
     main_pubkey = load_pubkey(MAIN_KEY)
     last_blocks = get_last_blocks()
 
-    elock_address = '0xffC9184493F3DF3428E8B989981f33228aCa7aEE'
-    print(f"{elock_address=}")
-
     elock_address = execute_cmd(f'''forge create --rpc-url $ETH_URL --private-key $ETH_PRIVATE_KEY src/Elock.sol:Elock --constructor-args {last_blocks["gosh"]["id"]} $ETH_WALLET_ADDR [$ETH_WALLET_ADDR] | grep "Deployed to: " | cut -d ' ' -f 3''', '../contracts/l1/')
     elock_address = elock_address.strip()
     print(f"{elock_address=}")
