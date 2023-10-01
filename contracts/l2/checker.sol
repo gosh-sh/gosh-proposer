@@ -26,6 +26,10 @@ contract Checker {
 
     TvmCell _proposalCode;
 
+    TransactionBatch[] _transactions;
+
+    bool _isReady = false;
+
     modifier onlyOwner {
         require (msg.pubkey() == tvm.pubkey(), ERR_WRONG_SENDER) ;
         _;
@@ -47,6 +51,14 @@ contract Checker {
         _prevhash = prevhash;
     }
 
+    function setHashRoot(uint256 hash) public onlyOwner accept {
+        _prevhash = hash;
+    }
+
+    function setReadyRoot(bool ready) public onlyOwner accept {
+        _isReady = ready;
+    }
+
     function setRootContract (address root) public onlyOwner accept {
         _root = root;
     }
@@ -60,7 +72,8 @@ contract Checker {
         b = b_from_ax_div10000_plus_b;
     }
 
-    function checkData(BlockData[] data, TransactionBatch[] transactions) public pure accept {
+    function checkData(BlockData[] data, TransactionBatch[] transactions) public view accept {
+        if (_isReady == false) { return; }
         if (data.length == 0) {
             return;
         }
@@ -110,7 +123,8 @@ contract Checker {
 
     function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
         require(_prevhash == prevhash, ERR_WRONG_HASH);
-        ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, transactions, a, b);
+        ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, _transactions, a, b);
+        _transactions = transactions;
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _proposalCount, 0);
         _prevhash = newhash;
         _proposalCount = 0;
@@ -126,14 +140,21 @@ contract Checker {
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, indexmax, index + BATCH_SIZE);
     }
 
-    function updateCode(TvmCell newcode, TvmCell cell) public view onlyOwner accept {
-        cell;
+    function updateCode(TvmCell newcode, TvmCell cell) public onlyOwner accept {
         tvm.setcode(newcode);
         tvm.setCurrentCode(newcode);
-        onCodeUpgrade();
+        cell = abi.encode(_prevhash, _root, _proposalCount, a, b, _proposalCode);
+        onCodeUpgrade(cell);
     }
 
-    function onCodeUpgrade() private pure {
+    function onCodeUpgrade(TvmCell cell) private  {
+        (_prevhash, _root, _proposalCount, a, b, _proposalCode) = abi.decode(cell, (uint256, address, uint128, uint128, uint128, TvmCell));
+        _isReady = false;
+        TransactionBatch[] transactions;
+        _transactions = transactions;
+    }
+
+    function onCodeUpgrade() private pure  {
     }
 
     //Fallback/Receive
@@ -162,6 +183,10 @@ contract Checker {
             result.push(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, i, this));
         }
         return result;
+    }
+
+    function getTransactions() external view returns(TransactionBatch[]) {
+        return _transactions;
     }
 
     function getStatus() external view returns(uint256 prevhash, uint128 index) {
