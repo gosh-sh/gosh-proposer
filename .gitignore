@@ -6,3 +6,5 @@
 **/*.log
 **/gosh-cli.conf.json
 tests/eth.private.key
+
+!example.env

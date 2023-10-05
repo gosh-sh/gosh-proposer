@@ -48,7 +48,7 @@ def load_pubkey(path):
 
 
 def get_last_blocks():
-    last_blocks = execute_cmd("cargo run -p withdraw_proposal_checker --release  -- get_last_blocks", "..")
+    last_blocks = execute_cmd("withdraw_proposal_checker get_last_blocks", "..")
     print(f"last blocks out: {last_blocks}")
     res = json.loads(last_blocks)
     return res
@@ -97,7 +97,7 @@ def test_main():
         print(f"{root_address=}")
 
         time.sleep(20)
-        execute_cmd(f'''MAX_BLOCK_IN_ONE_CHUNK=40 ETH_CONTRACT_ADDRESS={elock_address} CHECKER_ADDRESS={checker_address} make run_proposer''', '../', ignore_error=True)
+        execute_cmd(f'''MAX_BLOCK_IN_ONE_CHUNK=40 ETH_CONTRACT_ADDRESS={elock_address} CHECKER_ADDRESS={checker_address} gosh_proposer''', '../', ignore_error=True)
         if not WAS_ERROR:
             prop_address = execute_cmd(f'''gosh-cli runx --addr {checker_address} --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr''')
             prop_address = json.loads(prop_address)['value0']
@@ -107,7 +107,7 @@ def test_main():
             prop_address = prop_address[-1]
             execute_cmd(f'''gosh-cli -j callx --addr {prop_address} --abi ../contracts/l2/proposal_test.abi.json  -m setvdict --key {main_pubkey}''')
 
-            execute_cmd(f'''VALIDATORS_KEY_PATH=tests/{MAIN_KEY} ETH_CONTRACT_ADDRESS={elock_address} CHECKER_ADDRESS={checker_address} make run_deposit''', '../')
+            execute_cmd(f'''VALIDATORS_KEY_PATH=tests/{MAIN_KEY} ETH_CONTRACT_ADDRESS={elock_address} CHECKER_ADDRESS={checker_address} deposit-proposal-checker''', '../')
 
         token_wallet = execute_cmd(f'''gosh-cli runx --addr {root_address} --abi ../contracts/l2/RootTokenContract.abi -m getWalletAddress --owner null --pubkey {main_pubkey} | jq -r .value0''', ignore_error=True)
         print(f"{token_wallet=}")
@@ -125,13 +125,13 @@ def test_main():
 
     time.sleep(10)
 
-    find_burns = execute_cmd(f'''ROOT_ADDRESS={root_address} ETH_CONTRACT_ADDRESS={elock_address} cargo run -p withdraw_proposal_checker --release  -- find_burns''')
+    find_burns = execute_cmd(f'''ROOT_ADDRESS={root_address} ETH_CONTRACT_ADDRESS={elock_address} withdraw_proposal_checker find_burns''')
     print(f'{find_burns=}')
-    execute_cmd(f'''ROOT_ADDRESS={root_address} ETH_CONTRACT_ADDRESS={elock_address} cargo run -p withdraw_proposal_checker --release  -- create''')
+    execute_cmd(f'''ROOT_ADDRESS={root_address} ETH_CONTRACT_ADDRESS={elock_address} withdraw_proposal_checker create''')
 
     time.sleep(10)
 
-    execute_cmd(f'''ROOT_ADDRESS={root_address} ETH_CONTRACT_ADDRESS={elock_address} make run_withdraw''', "../")
+    execute_cmd(f'''ROOT_ADDRESS={root_address} ETH_CONTRACT_ADDRESS={elock_address} withdraw_proposal_checker''', "../")
 
 
 test_main()

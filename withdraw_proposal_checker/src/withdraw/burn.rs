@@ -1,15 +1,15 @@
-use crate::eth::elock::get_last_gosh_block_id;
-use crate::gosh::block::{get_latest_master_block, get_master_block_seq_no};
-use crate::gosh::monitor::query_messages;
+use common::checker::get_root_address;
+use common::elock::{get_elock_address, get_last_gosh_block_id};
+use common::eth::create_web3_socket;
+use common::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 use common::gosh::helper::{create_client, EverClient};
+use common::gosh::message::query_messages;
 use common::helper::abi::ROOT_ABI;
 use serde::Deserialize;
 use serde_json::json;
 use std::env;
 use std::sync::Arc;
 use ton_client::abi::{decode_message_body, Abi, ParamsOfDecodeMessageBody};
-use web3::transports::WebSocket;
-use web3::Web3;
 
 #[derive(Debug, PartialEq)]
 pub struct Burn {
@@ -82,24 +82,14 @@ pub async fn find_burns(
 pub async fn find_all_burns() -> anyhow::Result<()> {
     tracing::info!("Find all burns");
     let context = create_client()?;
-    let websocket = WebSocket::new(
-        &env::var("ETH_NETWORK")
-            .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
-    )
-    .await
-    .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
-    let web3s = Web3::new(websocket);
+    let web3s = create_web3_socket().await?;
 
-    let root_address = env::var("ROOT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ROOT_ADDRESS: {e}"))?;
-    tracing::info!("Root address: {root_address}");
-    let elock_address_str = env::var("ETH_CONTRACT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?;
-    tracing::info!("ELock address: {elock_address_str}");
+    let root_address = get_root_address()?;
 
-    let first_block = get_last_gosh_block_id(&elock_address_str, &web3s)
-        .await
-        .map_err(|e| anyhow::format_err!("Failed to get last GOSH block from ELock: {e}"))?;
+    let elock_address = get_elock_address()?;
+
+    let first_block = get_last_gosh_block_id(elock_address, &web3s).await?;
+
     let first_seq_no = get_master_block_seq_no(&context, &first_block)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get seq no for block from ETH: {e}"))?;

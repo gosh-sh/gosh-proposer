@@ -1,11 +1,10 @@
-use crate::checker::{check_proposals_and_accept, create_new_proposal, get_last_blocks};
-use crate::gosh::burn::find_all_burns;
+use crate::withdraw::burn::find_all_burns;
+use crate::withdraw::validator::{check_proposals_and_accept, create_new_proposal};
+use common::helper::get_last_blocks;
 use common::helper::tracing::init_default_tracing;
 use std::env;
 
-mod checker;
-mod eth;
-mod gosh;
+mod withdraw;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

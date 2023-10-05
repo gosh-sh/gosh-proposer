@@ -1,17 +1,19 @@
-use crate::eth::proposal::{check_proposal, create_proposal, get_proposals, vote_for_withdrawal};
-use crate::gosh::block::get_latest_master_block;
-use common::eth::read_block;
+use crate::withdraw::proposal::{
+    check_proposal, create_proposal, get_proposals, vote_for_withdrawal,
+};
+use common::checker::get_root_address;
+use common::elock::get_elock_address;
+use common::eth::create_web3_socket;
 use common::gosh::helper::create_client;
 use common::helper::abi::ELOCK_ABI;
 use ethereum_types::BigEndianHash;
-use serde_json::json;
 use sha3::{Digest, Keccak256};
 use std::env;
 use std::str::FromStr;
 use web3::contract::Contract;
 use web3::signing::SecretKey;
 use web3::transports::WebSocket;
-use web3::types::{Address, BlockId, BlockNumber, H256, U256};
+use web3::types::{Address, H256, U256};
 use web3::Web3;
 
 const VOTE_FOR_PROPOSAL_STORAGE_ID: &str =
@@ -31,25 +33,13 @@ fn get_secret() -> anyhow::Result<SecretKey> {
 pub async fn create_new_proposal() -> anyhow::Result<()> {
     let context = create_client()?;
 
-    let root_address = env::var("ROOT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ROOT_ADDRESS: {e}"))?;
-    tracing::info!("Root address: {root_address}");
+    let root_address = get_root_address()?;
 
-    let websocket = WebSocket::new(
-        &env::var("ETH_NETWORK")
-            .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
-    )
-    .await
-    .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
-    let web3s = Web3::new(websocket);
+    let web3s = create_web3_socket().await?;
 
-    let elock_address_str = env::var("ETH_CONTRACT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?;
-    tracing::info!("elock address: {elock_address_str}");
+    let elock_address = get_elock_address()?;
     let elock_abi = web3::ethabi::Contract::load(ELOCK_ABI.as_bytes())
         .map_err(|e| anyhow::format_err!("Failed to load elock abi: {e}"))?;
-    let elock_address = Address::from_str(&elock_address_str)
-        .map_err(|e| anyhow::format_err!("Failed to convert ETH address: {e}"))?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
 
     let key = get_secret()?;
@@ -57,7 +47,7 @@ pub async fn create_new_proposal() -> anyhow::Result<()> {
     create_proposal(
         &context,
         &web3s,
-        &elock_address_str,
+        elock_address,
         &root_address,
         &elock_contract,
         &key,
@@ -127,9 +117,10 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to convert ETH address: {e}"))?;
     let validator_address_bytes = validator_address.to_fixed_bytes();
     let mut validator_address_padded = [0_u8; 32];
-    for i in 0..20 {
-        validator_address_padded[i + 12] = validator_address_bytes[i];
-    }
+    // for i in 0..20 {
+    //     validator_address_padded[i + 12] = validator_address_bytes[i];
+    // }
+    validator_address_padded[12..].copy_from_slice(&validator_address_bytes[..]);
 
     let validator_address = H256::from(validator_address_padded);
     tracing::info!("validator_address: {validator_address:?}");
@@ -164,36 +155,5 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
             }
         }
     }
-    Ok(())
-}
-
-pub async fn get_last_blocks() -> anyhow::Result<()> {
-    let context = create_client()?;
-
-    let websocket = WebSocket::new(
-        &env::var("ETH_NETWORK")
-            .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
-    )
-    .await
-    .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
-    let web3s = Web3::new(websocket);
-
-    let last_gosh_block = get_latest_master_block(&context)
-        .await
-        .map_err(|e| anyhow::format_err!("Failed latest master block: {e}"))?;
-
-    let last_eth_block = read_block(&web3s, BlockId::Number(BlockNumber::Finalized)).await?;
-
-    println!(
-        "{}",
-        serde_json::to_string_pretty(&json!({
-            "gosh": last_gosh_block,
-            "eth": {
-                "hash": last_eth_block.hash,
-                "number": last_eth_block.number
-            }
-        }))
-        .map_err(|e| anyhow::format_err!("Failed to serialize last block: {e}"))?
-    );
     Ok(())
 }

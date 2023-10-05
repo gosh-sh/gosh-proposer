@@ -1,10 +1,8 @@
 use common::helper::tracing::init_default_tracing;
 
-mod eth;
-mod gosh;
-mod proposal_checker;
+mod deposit;
 
-use crate::proposal_checker::check_proposals;
+use crate::deposit::check_proposals;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

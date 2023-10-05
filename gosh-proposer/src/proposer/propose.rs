@@ -1,44 +1,48 @@
-use common::eth::block::FullBlock;
 use common::eth::encoder::serialize_block;
+use common::eth::FullBlock;
 
-use common::eth::transfer::filter_and_decode_block_transactions;
+use common::elock::transfer::filter_and_decode_block_transactions;
+use common::elock::{get_elock_address, get_tx_counter};
 use common::gosh::call_function;
 use common::gosh::helper::EverClient;
 use common::helper::abi::CHECKER_ABI;
 use serde_json::json;
-use std::env;
 use std::sync::Arc;
 use web3::transports::WebSocket;
-use web3::types::H256;
+use web3::types::{H256, U64};
 use web3::Web3;
 
 pub async fn propose_blocks(
     web3s: Arc<Web3<WebSocket>>,
     client: &EverClient,
     blocks: Vec<FullBlock<H256>>,
-    mut tx_cnt: usize,
+    checker_address: &str,
+    first_block_number: U64,
 ) -> anyhow::Result<()> {
     tracing::info!("start propose block");
-    let checker_address = env::var("CHECKER_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env CHECKER_ADDRESS: {e}"))?;
 
-    // ELOCK contract address
-    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?
-        .to_lowercase();
+    // ELock contract address
+    let elock_address = get_elock_address()?;
+
+    // Get starting tx counter
+    let mut prev_tx_counter = get_tx_counter(&web3s, elock_address, first_block_number)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
 
     let mut all_transfers = vec![];
     let mut json_blocks = vec![];
 
-    // TODO: use eth_getLogs api function instead to get all account transactions
-
-    for block in blocks {
-        let mut transfers = if tx_cnt != 0 {
-            let txns =
-                filter_and_decode_block_transactions(web3s.clone(), &block, &eth_contract_address)
-                    .await?;
-            tx_cnt -= txns.len();
-            txns
+    for block in blocks.iter().rev() {
+        let block_number = block.number.ok_or(anyhow::format_err!(
+            "Failed to get block number for {block:?}"
+        ))?;
+        let cur_tx_counter = get_tx_counter(&web3s, elock_address, block_number)
+            .await
+            .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
+        tracing::info!("Block number={block_number} prev tx counter={prev_tx_counter}, current counter={cur_tx_counter}");
+        let mut transfers = if cur_tx_counter != prev_tx_counter {
+            prev_tx_counter = cur_tx_counter;
+            filter_and_decode_block_transactions(web3s.clone(), block, elock_address).await?
         } else {
             vec![]
         };
@@ -51,7 +55,8 @@ pub async fn propose_blocks(
             .fold(String::new(), |acc, el| format!("{acc}{:02x}", el));
         json_blocks.push(json!({"data": data_str, "hash": hash}));
     }
-    json_blocks.reverse();
+
+    tracing::info!("Send transaction to checker: {all_transfers:?}");
     let args = json!({
         "data": json_blocks,
         "transactions": all_transfers,
@@ -59,7 +64,7 @@ pub async fn propose_blocks(
 
     call_function(
         client,
-        &checker_address,
+        checker_address,
         CHECKER_ABI,
         None,
         "checkData",

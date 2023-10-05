@@ -4,8 +4,8 @@ use web3::types::H256;
 
 use crate::eth::block::FullBlock;
 
-pub fn serialize_block(block: FullBlock<H256>) -> anyhow::Result<Vec<u8>> {
-    tracing::info!("serialize block: {:?}", block);
+pub fn serialize_block(block: &FullBlock<H256>) -> anyhow::Result<Vec<u8>> {
+    tracing::trace!("serialize block: {:?}", block);
     let list_len = match block.base_fee_per_gas {
         Some(_) => match block.withdrawals_root {
             Some(_) => 17,
@@ -40,7 +40,7 @@ pub fn serialize_block(block: FullBlock<H256>) -> anyhow::Result<Vec<u8>> {
     let out_str = out
         .iter()
         .fold(String::new(), |acc, el| format!("{acc}{:02x}", el));
-    tracing::info!("encode input: {out_str}");
+    tracing::trace!("encode input: {out_str}");
 
     let mut hasher = Keccak256::new();
     hasher.update(&out);
@@ -48,7 +48,7 @@ pub fn serialize_block(block: FullBlock<H256>) -> anyhow::Result<Vec<u8>> {
     let hash_string = hash
         .iter()
         .fold(String::new(), |acc, el| format!("{acc}{:0x}", el));
-    tracing::info!(
+    tracing::trace!(
         "Calculated block hash: {hash_string}.\nOriginal: {:?}",
         block.hash
     );

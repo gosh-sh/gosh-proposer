@@ -1,13 +1,13 @@
+use common::checker::get_checker_address;
 use common::gosh::helper::EverClient;
 use common::helper::abi::{CHECKER_ABI, PROPOSAL_ABI};
 use common::helper::deserialize_u128;
 use common::{
-    eth::transfer::Transfer,
+    elock::transfer::Transfer,
     gosh::{call_function, call_getter},
 };
 use serde::Deserialize;
 use serde_json::json;
-use std::env;
 use ton_client::crypto::KeyPair;
 
 #[derive(Deserialize)]
@@ -35,11 +35,16 @@ pub struct Proposal {
     pub validator_id: String,
 }
 
-pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Result<Vec<Proposal>> {
-    let checker_address = env::var("CHECKER_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env CHECKER_ADDRESS: {e}"))?;
+#[derive(Deserialize)]
+struct GetValidatorIdResult {
+    #[serde(rename = "value0")]
+    id: Option<String>,
+}
 
-    let proposal_addresses = call_getter(
+pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Result<Vec<Proposal>> {
+    let checker_address = get_checker_address()?;
+
+    let proposal_addresses: AllProposals = call_getter(
         context,
         &checker_address,
         CHECKER_ABI,
@@ -48,9 +53,6 @@ pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Res
     )
     .await
     .map_err(|e| anyhow::format_err!("Failed to call getAllProposalAddr: {e}"))?;
-    tracing::info!("Get prop addresses res: {:?}", proposal_addresses);
-    let proposal_addresses: AllProposals = serde_json::from_value(proposal_addresses)
-        .map_err(|e| anyhow::format_err!("Failed to serialize proposal addresses: {e}"))?;
 
     match proposal_addresses.addresses.len() {
         0 => {
@@ -66,21 +68,23 @@ pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Res
         let id = match get_validator_id(context, &proposal_address, &pubkey).await {
             Ok(id) => id,
             Err(e) => {
-                tracing::info!("Failed to query validator id: {e}");
+                tracing::info!(
+                    "Failed to query validator id from proposal {proposal_address}: {e}"
+                );
                 continue;
             }
         };
 
-        match call_getter(context, &proposal_address, PROPOSAL_ABI, "getDetails", None).await {
-            Ok(value) => {
-                tracing::info!("Proposal details: {}", value);
-                let proposal_details = match serde_json::from_value::<ProposalDetails>(value) {
-                    Ok(data) => data,
-                    Err(e) => {
-                        tracing::info!("Failed to deserialize proposal details: {e}");
-                        continue;
-                    }
-                };
+        match call_getter::<ProposalDetails>(
+            context,
+            &proposal_address,
+            PROPOSAL_ABI,
+            "getDetails",
+            None,
+        )
+        .await
+        {
+            Ok(proposal_details) => {
                 res.push(Proposal {
                     address: proposal_address,
                     details: proposal_details,
@@ -98,18 +102,12 @@ pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Res
     Ok(res)
 }
 
-#[derive(Deserialize)]
-struct GetValidatorIdResult {
-    #[serde(rename = "value0")]
-    id: Option<String>,
-}
-
 pub async fn get_validator_id(
     context: &EverClient,
     proposal_address: &str,
     pubkey: &str,
 ) -> anyhow::Result<String> {
-    let id_val = call_getter(
+    let id: GetValidatorIdResult = call_getter(
         context,
         proposal_address,
         PROPOSAL_ABI,
@@ -118,8 +116,7 @@ pub async fn get_validator_id(
     )
     .await
     .map_err(|e| anyhow::format_err!("Failed to call getter getValidatorId: {e}"))?;
-    let id: GetValidatorIdResult = serde_json::from_value(id_val)
-        .map_err(|e| anyhow::format_err!("Failed to serialize ValidatorId: {e}"))?;
+
     id.id
         .ok_or(anyhow::format_err!("Failed to get id for proposal"))
 }

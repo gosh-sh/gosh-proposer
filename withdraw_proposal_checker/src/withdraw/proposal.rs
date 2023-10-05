@@ -1,21 +1,16 @@
-use crate::eth::elock::get_last_gosh_block_id;
-use crate::gosh::block::{get_latest_master_block, get_master_block_seq_no};
-use crate::gosh::burn::{find_burns, Burn};
+use crate::withdraw::burn::{find_burns, Burn};
+use common::elock::get_last_gosh_block_id;
+use common::eth;
+use common::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 use common::gosh::helper::EverClient;
 use ethereum_types::BigEndianHash;
-use std::env;
 use std::str::FromStr;
 use web3::contract::{Contract, Options};
 use web3::ethabi::Token;
 use web3::signing::SecretKey;
 use web3::transports::WebSocket;
-use web3::types::{Address, H256, U256, U64};
+use web3::types::{Address, H256, U256};
 use web3::Web3;
-
-// const ETH_CALL_VALUE: u128 = 1000000000000000;
-const ETH_CALL_GAS_LIMIT: u128 = 1000000;
-const ETH_TRANSACTION_TYPE: u64 = 2;
-const DEFAULT_CONFIRMATIONS_CNT: usize = 1;
 
 #[derive(Debug)]
 pub struct ProposalData {
@@ -33,29 +28,13 @@ pub async fn vote_for_withdrawal(
     let prop_str = web3::helpers::to_string(&H256::from_uint(&prop_key));
     tracing::info!("Vote for proposal: {prop_str}");
 
-    let options = get_options();
-    let confirmation_cnt = env::var("ETH_CONFIRMATIONS_CNT")
-        .ok()
-        .and_then(|s| usize::from_str(&s).ok())
-        .unwrap_or(DEFAULT_CONFIRMATIONS_CNT);
-    let res = elock_contract
-        .signed_call_with_confirmations(
-            "voteForWithdrawal",
-            prop_key,
-            options,
-            confirmation_cnt,
-            key,
-        )
-        .await
-        .map_err(|e| anyhow::format_err!("Failed to call ELock function voteForWithdrawal: {e}"))?;
-    tracing::info!("Call result: {}", web3::helpers::to_string(&res));
-    Ok(())
+    eth::call_function(elock_contract, key, "voteForWithdrawal", prop_key).await
 }
 
 pub async fn create_proposal(
     context: &EverClient,
     web3s: &Web3<WebSocket>,
-    elock_address: &str,
+    elock_address: Address,
     root_address: &str,
     elock_contract: &Contract<WebSocket>,
     key: &SecretKey,
@@ -98,25 +77,13 @@ pub async fn create_proposal(
     tracing::info!("Start call of proposeWithdrawal");
     tracing::info!("{first_block} {last_block} {burns:?}");
 
-    let options = get_options();
-
-    let confirmations_cnt = env::var("ETH_CONFIRMATIONS_CNT")
-        .ok()
-        .and_then(|s| usize::from_str(&s).ok())
-        .unwrap_or(DEFAULT_CONFIRMATIONS_CNT);
-    let res = elock_contract
-        .signed_call_with_confirmations(
-            "proposeWithdrawal",
-            (first_block, last_block, burns),
-            options,
-            confirmations_cnt,
-            key,
-        )
-        .await
-        .map_err(|e| anyhow::format_err!("Failed to call ETH contract proposeWithdrawal: {e}"))?;
-    tracing::info!("Call result: {}", web3::helpers::to_string(&res));
-
-    Ok(())
+    eth::call_function(
+        elock_contract,
+        key,
+        "proposeWithdrawal",
+        (first_block, last_block, burns),
+    )
+    .await
 }
 
 pub async fn get_proposals(
@@ -219,12 +186,4 @@ fn convert_burns(burns: Vec<Burn>) -> anyhow::Result<Vec<Token>> {
         res.push(Token::Tuple(tuple));
     }
     Ok(res)
-}
-
-fn get_options() -> Options {
-    let mut options = Options::default();
-    // options.value = Some(U256::from(ETH_CALL_VALUE));
-    options.transaction_type = Some(U64::from(ETH_TRANSACTION_TYPE));
-    options.gas = Some(U256::from(ETH_CALL_GAS_LIMIT));
-    options
 }
