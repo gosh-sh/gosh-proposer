@@ -133,7 +133,7 @@ mod tests {
         .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
         let web3s = Web3::new(websocket);
         let block = read_block(&web3s, block_id).await?;
-        serialize_block(block)?;
+        serialize_block(&block)?;
         Ok(())
     }
 }

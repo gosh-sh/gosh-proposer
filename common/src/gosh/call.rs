@@ -99,9 +99,7 @@ pub async fn call_function(
     function_name: &str,
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<()> {
-    tracing::info!(
-        "call_function: address={address}, function_name={function_name}"
-    );
+    tracing::info!("call_function: address={address}, function_name={function_name}");
     tracing::trace!(
         "call_function: address={address}, function_name={function_name}, args={args:?}"
     );

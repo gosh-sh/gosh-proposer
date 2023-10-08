@@ -8,12 +8,14 @@ use web3::types::{BlockId, BlockNumber};
 pub mod abi;
 pub mod tracing;
 
-pub fn deserialize_u128<'de, D>(deserializer: D) -> Result<u128, D::Error>
+pub fn deserialize_uint<'de, D, T>(deserializer: D) -> Result<T, D::Error>
 where
     D: Deserializer<'de>,
+    T: std::str::FromStr,
+    T: std::default::Default,
 {
     let s = String::deserialize(deserializer)?;
-    Ok(s.parse::<u128>().unwrap_or_default())
+    Ok(s.parse::<T>().unwrap_or_default())
 }
 
 pub async fn get_last_blocks() -> anyhow::Result<()> {

@@ -1,7 +1,10 @@
 use crate::gosh::helper::EverClient;
+use crate::helper::abi::TOKEN_WALLET_ABI;
+use crate::helper::deserialize_uint;
 use serde::Deserialize;
 use serde_json::json;
 use std::sync::Arc;
+use ton_client::abi::{decode_message_body, Abi, ParamsOfDecodeMessageBody};
 use ton_client::net::ParamsOfQuery;
 
 pub struct Message {
@@ -46,6 +49,20 @@ struct PageInfo {
 struct Messages {
     edges: Vec<WrappedNode>,
     page_info: PageInfo,
+}
+
+#[derive(Deserialize, Debug)]
+struct AcceptArguments {
+    #[serde(rename = "_value")]
+    #[serde(deserialize_with = "deserialize_uint")]
+    value: u128,
+    #[serde(rename = "answer_addr")]
+    _answer_addr: String,
+    #[serde(deserialize_with = "deserialize_uint")]
+    #[serde(rename = "keep_evers")]
+    _keep_evers: u128,
+    #[serde(rename = "notify_payload")]
+    _notify_payload: Option<String>,
 }
 
 pub async fn query_messages(
@@ -108,7 +125,6 @@ pub async fn query_messages(
             .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
 
         after = nodes.page_info.end_cursor;
-        let _found_last_block = false;
         for node in nodes.edges {
             let msg = node.node.message;
             if msg.body.is_some() && msg.msg_type == 0 && !node.node.aborted {
@@ -136,4 +152,96 @@ pub async fn query_messages(
     }
     tracing::info!("Found {} messages to root contract", result_messages.len());
     Ok(result_messages)
+}
+
+pub async fn get_token_wallet_total_mint(
+    gosh_context: &EverClient,
+    wallet_address: &str,
+) -> anyhow::Result<u128> {
+    tracing::info!("query token transfers to wallet, address={wallet_address}");
+    let abi = Abi::Json(TOKEN_WALLET_ABI.to_string());
+    let wallet_function_name = "acceptMint";
+
+    let query = r#"query($addr: String!, $after: String){
+      blockchain {
+        account(address: $addr) {
+          transactions(
+            allow_latest_inconsistent_data: true,
+            after: $after,
+           ) {
+            edges {
+              node {
+                in_message {
+                  id body msg_type
+                }
+                aborted
+                lt(format: DEC)
+                block_id
+                id
+              }
+            }
+            pageInfo { hasNextPage endCursor }
+          }
+        }
+      }
+    }"#
+    .to_string();
+
+    let mut after = "".to_string();
+    let dst_address = wallet_address.to_string();
+    let mut total_value = 0;
+    loop {
+        let result = ton_client::net::query(
+            Arc::clone(gosh_context),
+            ParamsOfQuery {
+                query: query.clone(),
+                variables: Some(json!({
+                    "addr": dst_address.clone(),
+                    "after": after,
+                })),
+            },
+        )
+        .await
+        .map(|r| r.result)
+        .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
+        let nodes = &result["data"]["blockchain"]["account"]["transactions"];
+        let nodes: Messages = serde_json::from_value(nodes.clone())
+            .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
+
+        after = nodes.page_info.end_cursor;
+        for node in nodes.edges {
+            let msg = node.node.message;
+            if msg.body.is_some() && msg.msg_type == 0 && !node.node.aborted {
+                let decode_params = ParamsOfDecodeMessageBody {
+                    abi: abi.clone(),
+                    body: msg.body.unwrap(),
+                    is_internal: true,
+                    allow_partial: false,
+                    function_name: None,
+                    data_layout: None,
+                };
+                let decode_result =
+                    decode_message_body(Arc::clone(gosh_context), decode_params).await;
+                if let Ok(decode_result) = decode_result {
+                    if decode_result.name != wallet_function_name {
+                        continue;
+                    }
+                    let args: AcceptArguments =
+                        serde_json::from_value(decode_result.value.unwrap()).map_err(|e| {
+                            anyhow::format_err!("Failed to serialize burn arguments: {e}")
+                        })?;
+                    tracing::info!("Found accept mint: {args:?}");
+                    total_value += args.value;
+                } else {
+                    tracing::info!("Failed to decode message, skip it. ID={}", msg.id);
+                }
+            }
+        }
+
+        if !nodes.page_info.has_next_page {
+            break;
+        }
+    }
+    tracing::info!("Total value to the wallet {wallet_address}: {total_value}");
+    Ok(total_value)
 }

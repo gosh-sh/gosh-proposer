@@ -1,11 +1,11 @@
 use crate::withdraw::proposal::{
     check_proposal, create_proposal, get_proposals, vote_for_withdrawal,
 };
-use common::checker::get_root_address;
 use common::elock::get_elock_address;
 use common::eth::create_web3_socket;
 use common::gosh::helper::create_client;
 use common::helper::abi::ELOCK_ABI;
+use common::token_root::get_root_address;
 use ethereum_types::BigEndianHash;
 use sha3::{Digest, Keccak256};
 use std::env;

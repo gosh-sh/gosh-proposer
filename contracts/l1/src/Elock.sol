@@ -36,7 +36,7 @@ contract Elock {
     mapping (address => FreezeVote) votingForFreeze; // 0x10
     address[] votedForFreeze; // 0x11
     bool isDepositsFreezed; // 0x12
-    uint256 collectedCommission;
+    uint256 collectedCommission; // 0x13
 
     struct Transfer {
         address payable to;

@@ -1,7 +1,7 @@
-use crate::withdraw::burn::{find_burns, Burn};
 use common::elock::get_last_gosh_block_id;
 use common::eth;
 use common::gosh::block::{get_latest_master_block, get_master_block_seq_no};
+use common::gosh::burn::{find_burns, Burn};
 use common::gosh::helper::EverClient;
 use ethereum_types::BigEndianHash;
 use std::str::FromStr;

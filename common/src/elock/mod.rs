@@ -1,32 +1,43 @@
 use std::{env, str::FromStr};
 use web3::transports::WebSocket;
-use web3::types::{Address, BlockNumber, U256, U64};
+use web3::types::{Address, BlockNumber, H256, U256, U64};
 use web3::Web3;
 
 pub mod transfer;
 
-const COUNTERS_INDEX: u8 = 1;
+pub const TOTAL_SUPPLY_INDEX: u8 = 0;
+pub const COUNTERS_INDEX: u8 = 1;
 const LAST_PROCESSED_BLOCK_INDEX: u8 = 3;
+
+pub async fn get_storage(
+    web3s: &Web3<WebSocket>,
+    eth_address: Address,
+    block_num: U64,
+    index: u8,
+) -> anyhow::Result<H256> {
+    web3s
+        .eth()
+        .storage(
+            eth_address,
+            U256::from(index),
+            Some(BlockNumber::Number(block_num)),
+        )
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get ELock storage: {e}"))
+}
 
 pub async fn get_tx_counter(
     web3s: &Web3<WebSocket>,
     eth_address: Address,
     block_num: U64,
 ) -> anyhow::Result<U256> {
-    let counters = web3s
-        .eth()
-        .storage(
-            eth_address,
-            U256::from(COUNTERS_INDEX),
-            Some(BlockNumber::Number(block_num)),
-        )
-        .await?;
+    let counters = get_storage(web3s, eth_address, block_num, COUNTERS_INDEX).await?;
     let counters_str = web3::helpers::to_string(&counters)
         .replace('"', "")
         .trim_start_matches("0x")
         .to_string();
     tracing::info!("ELock counters: {counters_str}");
-    let res = U256::from_str_radix(&counters_str[33..64], 16)?;
+    let res = U256::from_str_radix(&counters_str[32..64], 16)?;
     Ok(res)
 }
 

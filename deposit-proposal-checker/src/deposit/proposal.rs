@@ -1,7 +1,7 @@
 use common::checker::get_checker_address;
 use common::gosh::helper::EverClient;
 use common::helper::abi::{CHECKER_ABI, PROPOSAL_ABI};
-use common::helper::deserialize_u128;
+use common::helper::deserialize_uint;
 use common::{
     elock::transfer::Transfer,
     gosh::{call_function, call_getter},
@@ -22,9 +22,9 @@ pub struct ProposalDetails {
     #[serde(rename = "newhash")]
     pub new_hash: String,
     pub transactions: Vec<Transfer>,
-    #[serde(deserialize_with = "deserialize_u128")]
+    #[serde(deserialize_with = "deserialize_uint")]
     pub index: u128,
-    #[serde(deserialize_with = "deserialize_u128")]
+    #[serde(deserialize_with = "deserialize_uint")]
     pub need: u128,
 }
 
