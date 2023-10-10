@@ -33,7 +33,7 @@ contract Proposal {
     uint256 _hash; 
     uint256 _newhash;
     address static _checker; 
-    TransactionBatch[] _transactions;
+    TransactionPatch[] _transactions;
     uint128 static _index;
     uint128 _need;
     mapping(uint16 => TvmSlice) _vdict;
@@ -41,7 +41,7 @@ contract Proposal {
     constructor(
         uint256 hash,
         uint256 newhash,
-        TransactionBatch[] transactions
+        TransactionPatch[] transactions
     ) accept {
         _hash = hash;
         _newhash = newhash;
@@ -88,7 +88,7 @@ contract Proposal {
     }
 
     //Getter 
-    function getDetails() external view returns(uint256 hash, uint256 newhash, TransactionBatch[] transactions, uint128 index, uint128 need){
+    function getDetails() external view returns(uint256 hash, uint256 newhash, TransactionPatch[] transactions, uint128 index, uint128 need){
         return (_hash, _newhash, _transactions, _index, _need);
     }
 

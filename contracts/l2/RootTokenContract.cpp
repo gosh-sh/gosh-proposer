@@ -56,6 +56,7 @@ public:
     address_opt root_owner,
     uint128 total_supply,
     address checker,
+    address eth_root,
     address_opt oldroot,
     address_opt newroot
   ) {
@@ -70,6 +71,7 @@ public:
     checker_ = checker;
     oldroot_ = oldroot;
     newroot_ = newroot;
+    ethroot_ = eth_root;
   }
 
   void setOldRoot(address_opt oldroot) {

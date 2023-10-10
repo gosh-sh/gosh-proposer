@@ -40,6 +40,7 @@ __interface IRootTokenContract {
     address_opt root_owner,  ///< Owner contract address for internal ownership.
     uint128     total_supply, ///< Total supply. Originally allocated tokens.
     address     checker,
+    address eth_root,
     address_opt oldroot_,
     address_opt newroot_
   ) = 10;
@@ -220,6 +221,7 @@ struct DRootTokenContract {
   uint128     total_granted_; ///< Total granted tokens (to the wallets).
   optcell     wallet_code_;   ///< Token wallet code.
   address     checker_;
+  address     ethroot_;
   uint128     burncount_;
   address_opt oldroot_;
   address_opt newroot_;

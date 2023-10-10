@@ -17,6 +17,7 @@
     { "name":"root_owner", "type":"optional(address)" },
     { "name":"total_supply", "type":"uint128" },
     { "name":"checker", "type":"address" },
+    { "name":"eth_root", "type":"address" },
     { "name":"oldroot_", "type":"optional(address)" },
     { "name":"newroot_", "type":"optional(address)" }
     ],
@@ -342,6 +343,7 @@
     { "name":"total_granted_", "type":"uint128" },
     { "name":"wallet_code_", "type":"optional(cell)" },
     { "name":"checker_", "type":"address" },
+    { "name":"ethroot_", "type":"address" },
     { "name":"burncount_", "type":"uint128" },
     { "name":"oldroot_", "type":"optional(address)" },
     { "name":"newroot_", "type":"optional(address)" }

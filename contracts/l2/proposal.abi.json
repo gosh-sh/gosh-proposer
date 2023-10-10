@@ -8,7 +8,7 @@
 			"inputs": [
 				{"name":"hash","type":"uint256"},
 				{"name":"newhash","type":"uint256"},
-				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"}
+				{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"}
 			],
 			"outputs": [
 			]
@@ -35,7 +35,7 @@
 			"outputs": [
 				{"name":"hash","type":"uint256"},
 				{"name":"newhash","type":"uint256"},
-				{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"transactions","type":"tuple[]"},
+				{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"},
 				{"name":"index","type":"uint128"},
 				{"name":"need","type":"uint128"}
 			]
@@ -80,7 +80,7 @@
 		{"name":"_hash","type":"uint256"},
 		{"name":"_newhash","type":"uint256"},
 		{"name":"_checker","type":"address"},
-		{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"_transactions","type":"tuple[]"},
+		{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"_transactions","type":"tuple[]"},
 		{"name":"_index","type":"uint128"},
 		{"name":"_need","type":"uint128"},
 		{"name":"_vdict","type":"optional(cell)"}

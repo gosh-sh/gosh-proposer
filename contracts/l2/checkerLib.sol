@@ -15,6 +15,11 @@ struct BlockData {
     uint256 hash;
 }
 
+struct TransactionPatch {
+    address root;
+    TransactionBatch data;
+}
+
 struct TransactionBatch {
     uint256 pubkey;
     uint128 value;
@@ -35,6 +40,12 @@ uint16 constant BATCH_SIZE = 3;
 
 uint16 constant ERR_WRONG_SENDER = 100;
 uint16 constant ERR_WRONG_HASH = 101;
+uint16 constant ERR_NOT_READY = 102;
+
+contract IRootToken {
+    constructor(string name, string symbol, uint8 decimals, uint256 root_pubkey, optional(address) root_owner, uint128 total_supply, address checker, address eth_root, optional(address) oldroot_, optional(address) newroot_) functionID(0xa) {
+    }
+}
 
 interface ARootToken {
     function  grantbatch(uint32 _answer_id, TransactionBatch[] transactions, uint128 a, uint128 b) external functionID(0x3f6);
@@ -45,8 +56,18 @@ library ProposalLib {
         TvmCell s1 = composeProposalStateInit(code, hash, index, checker);
         return address.makeAddrStd(0, tvm.hash(s1));
     }
+/*
+    function composeRootStateInit(TvmCell code, uint256 hash, uint128 index, address checker) public returns(TvmCell) {
+        TvmCell s1 = tvm.buildStateInit({
+            code: Proposalcode,
+            contr: Proposal,
+            varInit: {_index: index, _checker: checker}
+        });
+        return s1;
+    }
+*/
 
-     function composeProposalStateInit(TvmCell code, uint256 hash, uint128 index, address checker) public returns(TvmCell) {
+    function composeProposalStateInit(TvmCell code, uint256 hash, uint128 index, address checker) public returns(TvmCell) {
         TvmCell Proposalcode = buildProposalCode(code, hash);
         TvmCell s1 = tvm.buildStateInit({
             code: Proposalcode,

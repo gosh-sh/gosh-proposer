@@ -33,7 +33,7 @@ contract Proposal_Test {
     uint256 _hash;
     uint256 _newhash;
     address static  _checker;
-    TransactionBatch[] _transactions;
+    TransactionPatch[] _transactions;
     uint128 static _index;
 
     mapping(uint16 => uint256) _vdict;
@@ -41,7 +41,7 @@ contract Proposal_Test {
     constructor(
         uint256 hash,
         uint256 newhash,
-        TransactionBatch[] transactions
+        TransactionPatch[] transactions
     ) accept {
         _hash = hash;
         _newhash = newhash;
@@ -89,7 +89,7 @@ contract Proposal_Test {
     }
 
     //Getter 
-    function getDetails() external view returns(uint256 hash, uint256 newhash, TransactionBatch[] transactions, uint128 index, uint128 need){
+    function getDetails() external view returns(uint256 hash, uint256 newhash, TransactionPatch[] transactions, uint128 index, uint128 need){
         return (_hash, _newhash, _transactions, _index, 0);
     }
 
@@ -112,7 +112,8 @@ contract Proposal_Test {
     }
 
     
-    function getValidatorId(uint256 pubkey) external view returns (optional(uint16)) {
+    function getValidatorId(uint256 pubkey) external pure returns (optional(uint16)) {
+        pubkey;
 /*        uint16 key;
         optional(uint16) result;
         optional(uint16, TvmSlice) res = _vdict.next(key);
