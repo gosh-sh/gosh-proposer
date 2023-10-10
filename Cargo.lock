@@ -380,6 +380,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "dotenv",
+ "hex 0.4.3",
  "rlp",
  "serde",
  "serde_json",

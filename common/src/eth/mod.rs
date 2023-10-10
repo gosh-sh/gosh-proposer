@@ -1,6 +1,7 @@
 mod block;
 mod call;
 pub mod encoder;
+pub mod events;
 pub mod helper;
 
 pub use block::{read_block, FullBlock};

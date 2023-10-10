@@ -3,6 +3,7 @@ import json
 INPUT_FILE = 'contracts/l1/out/Elock.sol/Elock.json'
 OUTPUT_ABI = 'resources/elock.abi.json'
 OUTPUT_IDS = 'resources/identifiers.json'
+OUTPUT_EVENTS = 'resources/events.json'
 
 with open(INPUT_FILE) as f:
     data = f.read()
@@ -19,3 +20,25 @@ for key in mapping['methodIdentifiers']:
 
 with open(OUTPUT_IDS, 'w') as abi_file:
     abi_file.write(json.dumps(ids_map, indent=2))
+
+events = []
+for value in mapping['abi']:
+    if value["type"] == "event":
+        params = []
+        for input in value["inputs"]:
+            params.append({"name": input["name"], "type": input["type"]})
+        event = {"name": value["name"], "params": params}
+        events.append(event)
+
+event_map = {}
+for node in mapping["ast"]["nodes"]:
+    if node["nodeType"] == "ContractDefinition":
+        for contract_node in node["nodes"]:
+            if contract_node["nodeType"] == "EventDefinition":
+                for event in events:
+                    if event["name"] == contract_node["name"]:
+                        event_map[f'0x{contract_node["eventSelector"]}'] = event
+                    #     event["selector"] = contract_node["eventSelector"]
+
+with open(OUTPUT_EVENTS, 'w') as abi_file:
+    abi_file.write(json.dumps(event_map, indent=2))
