@@ -180,7 +180,7 @@ PUSHCONT {
 		STUR 143
 		ROLLREV 4
 		NEWC
-		STSLICECONST x6b4391a8
+		STSLICECONST x18a032a0
 		STU 256
 		STU 256
 		STU 128
@@ -312,7 +312,7 @@ PUSHCONT {
 	STUR 98
 	REVERSE 6, 0
 	NEWC
-	STSLICECONST x85f18f80
+	STSLICECONST xd02996f7
 	STU 256
 	STU 256
 	SWAP
@@ -756,13 +756,13 @@ CALLREF {
 .inline __ProposalLib_with_obj_calculateProposalAddress_c7cf25ce_macro
 
 .macro ProposalLib_with_obj_calculateProposalAddress_c7cf25ce_macro
-.loc checkerLib.sol, 56
+.loc checkerLib.sol, 81
 PUSH S3
 ROLLREV 3
 CALLREF {
 	.inline __ProposalLib_no_obj_composeProposalStateInit_02b70155_macro
 }
-.loc checkerLib.sol, 57
+.loc checkerLib.sol, 82
 HASHCU
 PUSHINT 0
 NEWC
@@ -778,11 +778,11 @@ CTOS
 .inline __ProposalLib_no_obj_calculateProposalAddress_c7cf25ce_macro
 
 .macro ProposalLib_no_obj_calculateProposalAddress_c7cf25ce_macro
-.loc checkerLib.sol, 56
+.loc checkerLib.sol, 81
 CALLREF {
 	.inline __ProposalLib_no_obj_composeProposalStateInit_02b70155_macro
 }
-.loc checkerLib.sol, 57
+.loc checkerLib.sol, 82
 HASHCU
 PUSHINT 0
 NEWC
@@ -793,18 +793,201 @@ ENDC
 CTOS
 .loc checkerLib.sol, 0
 
+.globl	ProposalLib_with_obj_calculateRootAddress_b69ef2aa
+.type	ProposalLib_with_obj_calculateRootAddress_b69ef2aa, @function
+.inline __ProposalLib_with_obj_calculateRootAddress_b69ef2aa_macro
+
+.macro ProposalLib_with_obj_calculateRootAddress_b69ef2aa_macro
+.loc checkerLib.sol, 86
+BLKPUSH 2, 2
+FIRST
+PUSH S3
+SECOND
+PUSH S4
+THIRD
+ROLL 5
+INDEX 3
+ROLL 5
+CALLREF {
+	.inline __ProposalLib_no_obj_composeRootStateInit_7cb44d7e_macro
+}
+.loc checkerLib.sol, 87
+HASHCU
+PUSHINT 0
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_no_obj_calculateRootAddress_b69ef2aa
+.type	ProposalLib_no_obj_calculateRootAddress_b69ef2aa, @function
+.inline __ProposalLib_no_obj_calculateRootAddress_b69ef2aa_macro
+
+.macro ProposalLib_no_obj_calculateRootAddress_b69ef2aa_macro
+.loc checkerLib.sol, 86
+ROT
+PUSH S2
+FIRST
+PUSH S3
+SECOND
+PUSH S4
+THIRD
+ROLL 5
+INDEX 3
+ROLL 5
+CALLREF {
+	.inline __ProposalLib_no_obj_composeRootStateInit_7cb44d7e_macro
+}
+.loc checkerLib.sol, 87
+HASHCU
+PUSHINT 0
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_with_obj_composeRootStateInit_7cb44d7e
+.type	ProposalLib_with_obj_composeRootStateInit_7cb44d7e, @function
+.inline __ProposalLib_with_obj_composeRootStateInit_7cb44d7e_macro
+
+.macro ProposalLib_with_obj_composeRootStateInit_7cb44d7e_macro
+.loc checkerLib.sol, 91
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+NEWDICT
+PUSHINT 64
+DICTUSETB
+ROLL 5
+PUSHINT 3
+ROT
+PUSHINT 64
+DICTUSETREF
+ROLL 4
+PUSHINT 4
+ROT
+PUSHINT 64
+DICTUSETREF
+ROLL 3
+NEWC
+STU 8
+PUSHINT 5
+ROT
+PUSHINT 64
+DICTUSETB
+ROT
+NEWC
+STU 256
+PUSHINT 12
+ROT
+PUSHINT 64
+DICTUSETB
+SWAP
+NEWC
+STU 256
+PUSHINT 6
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STSLICECONST 0
+PUSHINT 7
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STDICT
+ENDC
+OVER
+NEWC
+STSLICECONST x2_
+STDICT
+STDICT
+STZERO
+ENDC
+.loc checkerLib.sol, 0
+
+.globl	ProposalLib_no_obj_composeRootStateInit_7cb44d7e
+.type	ProposalLib_no_obj_composeRootStateInit_7cb44d7e, @function
+.inline __ProposalLib_no_obj_composeRootStateInit_7cb44d7e_macro
+
+.macro ProposalLib_no_obj_composeRootStateInit_7cb44d7e_macro
+.loc checkerLib.sol, 91
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+NEWDICT
+PUSHINT 64
+DICTUSETB
+ROLL 5
+PUSHINT 3
+ROT
+PUSHINT 64
+DICTUSETREF
+ROLL 4
+PUSHINT 4
+ROT
+PUSHINT 64
+DICTUSETREF
+ROLL 3
+NEWC
+STU 8
+PUSHINT 5
+ROT
+PUSHINT 64
+DICTUSETB
+ROT
+NEWC
+STU 256
+PUSHINT 12
+ROT
+PUSHINT 64
+DICTUSETB
+SWAP
+NEWC
+STU 256
+PUSHINT 6
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STSLICECONST 0
+PUSHINT 7
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STDICT
+ENDC
+SWAP
+NEWC
+STSLICECONST x2_
+STDICT
+STDICT
+STZERO
+ENDC
+.loc checkerLib.sol, 0
+
 .globl	ProposalLib_with_obj_composeProposalStateInit_02b70155
 .type	ProposalLib_with_obj_composeProposalStateInit_02b70155, @function
 .inline __ProposalLib_with_obj_composeProposalStateInit_02b70155_macro
 
 .macro ProposalLib_with_obj_composeProposalStateInit_02b70155_macro
-.loc checkerLib.sol, 71
+.loc checkerLib.sol, 101
 PUSH S3
 ROLL 3
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_8132ad5e_macro
 }
-.loc checkerLib.sol, 72
+.loc checkerLib.sol, 102
 PUSHINT 0
 NEWC
 STU 256
@@ -841,12 +1024,12 @@ ENDC
 .inline __ProposalLib_no_obj_composeProposalStateInit_02b70155_macro
 
 .macro ProposalLib_no_obj_composeProposalStateInit_02b70155_macro
-.loc checkerLib.sol, 71
+.loc checkerLib.sol, 101
 SWAP2
 CALLREF {
 	.inline __ProposalLib_no_obj_buildProposalCode_8132ad5e_macro
 }
-.loc checkerLib.sol, 72
+.loc checkerLib.sol, 102
 PUSHINT 0
 NEWC
 STU 256
@@ -883,10 +1066,10 @@ ENDC
 .inline __ProposalLib_with_obj_buildProposalCode_8132ad5e_macro
 
 .macro ProposalLib_with_obj_buildProposalCode_8132ad5e_macro
-.loc checkerLib.sol, 85
+.loc checkerLib.sol, 115
 NEWC
 STU 256
-.loc checkerLib.sol, 86
+.loc checkerLib.sol, 116
 OVER
 CTOS
 SWAP
@@ -1003,10 +1186,10 @@ CALLREF {
 .inline __ProposalLib_no_obj_buildProposalCode_8132ad5e_macro
 
 .macro ProposalLib_no_obj_buildProposalCode_8132ad5e_macro
-.loc checkerLib.sol, 85
+.loc checkerLib.sol, 115
 NEWC
 STU 256
-.loc checkerLib.sol, 86
+.loc checkerLib.sol, 116
 SWAP
 CTOS
 SWAP
@@ -1120,21 +1303,9 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 629528867
+PUSHINT 1071142485
 LEQ
 IFJMPREF {
-	DUP
-	PUSHINT 99716992
-	EQUAL
-	IFJMPREF {
-		.inline __getDetails
-	}
-	DUP
-	PUSHINT 157564672
-	EQUAL
-	IFJMPREF {
-		.inline __constructor
-	}
 	DUP
 	PUSHINT 583726491
 	EQUAL
@@ -1147,22 +1318,34 @@ IFJMPREF {
 	IFJMPREF {
 		.inline __destroy
 	}
-}
-DUP
-PUSHINT 1903197803
-LEQ
-IFJMPREF {
+	DUP
+	PUSHINT 744347578
+	EQUAL
+	IFJMPREF {
+		.inline __constructor
+	}
 	DUP
 	PUSHINT 1071142485
 	EQUAL
 	IFJMPREF {
 		.inline __getVersion
 	}
+}
+DUP
+PUSHINT 1903197803
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 1321526914
 	EQUAL
 	IFJMPREF {
 		.inline __getValidatorId
+	}
+	DUP
+	PUSHINT 1344902903
+	EQUAL
+	IFJMPREF {
+		.inline __getDetails
 	}
 	DUP
 	PUSHINT 1409149045

@@ -51,6 +51,10 @@ contract Checker {
         _prevhash = prevhash;
     }
 
+    function askEvers(RootData  root) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey())) accept functionID(1016) {
+        msg.sender.transfer(1000 ton);
+    }
+
     function setHashRoot(uint256 hash) public onlyOwner accept {
         _prevhash = hash;
         TransactionPatch[] transactions;
@@ -74,10 +78,10 @@ contract Checker {
         b = b_from_ax_div10000_plus_b;
     }
 
-    function deployRootContract() public view accept {
+    function deployRootContract(string name, string symbol, uint8 decimals, uint256 ethroot) public view accept {
         require(_isReady == true, ERR_WRONG_SENDER);    
-//        TvmCell s1 =  ProposalLib.composeRootStateInit(_proposalCode, _prevhash, _proposalCount, this);
-//        new IRootToken{stateInit: s1, value: 50 ton, wid: 0, flag: 1}(_prevhash, data[index - 1].hash, transactions);
+        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey());
+        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null);
     }
 
     function checkData(BlockData[] data, TransactionPatch[] transactions) public view accept {
@@ -143,7 +147,7 @@ contract Checker {
             if (index + i >= transactions.length) { return; }
             TransactionBatch[] trans;
             trans.push(transactions[i].data);
-            ARootToken(transactions[i].root).grantbatch{value:0.3 ton, flag: 1}(0, trans, a, b);
+            ARootToken(ProposalLib.calculateRootAddress(_rootCode, transactions[i].root, tvm.pubkey())).grantbatch{value:0.3 ton, flag: 1}(0, trans, a, b);
         }
         this.sendBatch{value: 0.1 ton, flag: 1}(_transactions, index + BATCH_SIZE + 1);
     }

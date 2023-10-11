@@ -22,6 +22,21 @@ struct TransactionBatch {
   uint256 hash;
 };
 
+struct RootData {
+  string name;
+  string symbol;
+  uint8 decimals;
+  uint256 ethroot;
+};
+
+__interface ICheckerContract {
+  [[internal, answer_id]]
+  void askEvers(
+    RootData root
+  ) = 1016;
+};
+using ICheckerContractPtr = handle<ICheckerContract>;
+
 // ===== Root Token Contract ===== //
 /** \interface IRootTokenContract
  *  \brief Tip3 token root contract interface.
@@ -40,7 +55,7 @@ __interface IRootTokenContract {
     address_opt root_owner,  ///< Owner contract address for internal ownership.
     uint128     total_supply, ///< Total supply. Originally allocated tokens.
     address     checker,
-    address eth_root,
+    uint256 eth_root,
     address_opt oldroot_,
     address_opt newroot_
   ) = 10;
@@ -221,10 +236,12 @@ struct DRootTokenContract {
   uint128     total_granted_; ///< Total granted tokens (to the wallets).
   optcell     wallet_code_;   ///< Token wallet code.
   address     checker_;
-  address     ethroot_;
+  uint256     ethroot_;
   uint128     burncount_;
   address_opt oldroot_;
   address_opt newroot_;
+  bool        flag_;
+  uint32      money_timestamp_;
 };
 
 /// \interface ERootTokenContract

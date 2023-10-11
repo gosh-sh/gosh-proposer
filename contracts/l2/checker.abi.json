@@ -12,6 +12,15 @@
 			]
 		},
 		{
+			"name": "askEvers",
+			"id": "0x3F8",
+			"inputs": [
+				{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"}
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setHashRoot",
 			"inputs": [
 				{"name":"hash","type":"uint256"}
@@ -55,6 +64,10 @@
 		{
 			"name": "deployRootContract",
 			"inputs": [
+				{"name":"name","type":"string"},
+				{"name":"symbol","type":"string"},
+				{"name":"decimals","type":"uint8"},
+				{"name":"ethroot","type":"uint256"}
 			],
 			"outputs": [
 			]
@@ -63,7 +76,7 @@
 			"name": "checkData",
 			"inputs": [
 				{"components":[{"name":"data","type":"bytes"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple[]"},
-				{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"}
+				{"components":[{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"}
 			],
 			"outputs": [
 			]
@@ -72,7 +85,7 @@
 			"name": "checkDataIndex",
 			"inputs": [
 				{"components":[{"name":"data","type":"bytes"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple[]"},
-				{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"},
+				{"components":[{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"},
 				{"name":"index","type":"uint128"}
 			],
 			"outputs": [
@@ -84,7 +97,7 @@
 				{"name":"prevhash","type":"uint256"},
 				{"name":"newhash","type":"uint256"},
 				{"name":"index","type":"uint128"},
-				{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"}
+				{"components":[{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"}
 			],
 			"outputs": [
 			]
@@ -92,7 +105,7 @@
 		{
 			"name": "sendBatch",
 			"inputs": [
-				{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"},
+				{"components":[{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"transactions","type":"tuple[]"},
 				{"name":"index","type":"uint128"}
 			],
 			"outputs": [
@@ -148,7 +161,7 @@
 			"inputs": [
 			],
 			"outputs": [
-				{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"value0","type":"tuple[]"}
+				{"components":[{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"value0","type":"tuple[]"}
 			]
 		},
 		{
@@ -175,7 +188,7 @@
 		{"name":"b","type":"uint128"},
 		{"name":"_proposalCode","type":"cell"},
 		{"name":"_rootCode","type":"cell"},
-		{"components":[{"name":"root","type":"address"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"_transactions","type":"tuple[]"},
+		{"components":[{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"},{"components":[{"name":"pubkey","type":"uint256"},{"name":"value","type":"uint128"},{"name":"hash","type":"uint256"}],"name":"data","type":"tuple"}],"name":"_transactions","type":"tuple[]"},
 		{"name":"_isReady","type":"bool"}
 	]
 }
