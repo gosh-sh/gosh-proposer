@@ -38,3 +38,11 @@ test:
 .PHONY: build
 build:
 	cargo build --release
+
+.PHONY: install
+install: build
+	cp target/release/gosh_proposer ~/.cargo/bin/
+	cp target/release/deposit-proposal-checker ~/.cargo/bin/
+	cp target/release/withdraw_proposal_checker ~/.cargo/bin/
+	cp target/release/l2-telemetry ~/.cargo/bin/
+
