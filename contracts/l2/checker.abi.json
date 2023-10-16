@@ -140,6 +140,15 @@
 			]
 		},
 		{
+			"name": "getRootAddr",
+			"inputs": [
+				{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"data","type":"tuple"}
+			],
+			"outputs": [
+				{"name":"value0","type":"address"}
+			]
+		},
+		{
 			"name": "getProposalAddr",
 			"inputs": [
 				{"name":"index","type":"uint128"}

@@ -1604,7 +1604,7 @@ PUSHREF {
 }
 .loc checker.sol, 0
 
-.macro getProposalAddr
+.macro getRootAddr
 DROP
 GETGLOB 6
 THROWIFNOT 76
@@ -1614,6 +1614,81 @@ IFREF {
 	.inline __c4_to_c7
 }
 .loc checker.sol, 198
+OVER
+PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+	LDREF
+	ENDS
+	CTOS
+}
+PUSHCONT {
+	LDREF
+	LDREF
+	LDU 8
+}
+IFELSE
+LDU 256
+ROLLREV 4
+TUPLE 4
+SWAP
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __getRootAddr_ced61b3a_internal_macro
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST x9040ae33
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getRootAddr_ced61b3a_internal_macro
+.loc checker.sol, 199
+GETGLOB 15
+SWAP
+GETGLOB 2
+CALLREF {
+	.inline __ProposalLib_no_obj_calculateRootAddress_b69ef2aa_macro
+}
+.loc checker.sol, 0
+
+.macro getProposalAddr
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc checker.sol, 202
 OVER
 PUSHCONT {
 	LDREF
@@ -1659,7 +1734,7 @@ IFREF {
 THROW 0
 
 .macro getProposalAddr_d14daba4_internal_macro
-.loc checker.sol, 199
+.loc checker.sol, 203
 GETGLOB 14
 GETGLOB 10
 ROT
@@ -1678,7 +1753,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 202
+.loc checker.sol, 206
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1716,11 +1791,11 @@ IFREF {
 THROW 0
 
 .macro getAllProposalAddr_4579dbb3_internal_macro
-.loc checker.sol, 203
+.loc checker.sol, 207
 PUSHINT 0
 NEWDICT
 PAIR
-.loc checker.sol, 204
+.loc checker.sol, 208
 PUSHINT 0
 PUSHCONT {
 	DUP
@@ -1728,7 +1803,7 @@ PUSHCONT {
 	LESS
 }
 PUSHCONT {
-	.loc checker.sol, 205
+	.loc checker.sol, 209
 	OVER
 	GETGLOB 14
 	GETGLOB 10
@@ -1746,7 +1821,7 @@ PUSHCONT {
 	DICTUSET
 	PAIR
 	POP S2
-	.loc checker.sol, 204
+	.loc checker.sol, 208
 	INC
 	UFITS 128
 	.loc checker.sol, 0
@@ -1764,7 +1839,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 210
+.loc checker.sol, 214
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1802,7 +1877,7 @@ IFREF {
 THROW 0
 
 .macro getTransactions_83920e90_internal_macro
-.loc checker.sol, 211
+.loc checker.sol, 215
 GETGLOB 16
 .loc checker.sol, 0
 
@@ -1815,7 +1890,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 214
+.loc checker.sol, 218
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -1854,7 +1929,7 @@ IFREF {
 THROW 0
 
 .macro getStatus_4e69d560_internal_macro
-.loc checker.sol, 215
+.loc checker.sol, 219
 GETGLOB 10
 GETGLOB 11
 .loc checker.sol, 0
@@ -2651,11 +2726,11 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1581858390
+PUSHINT 1458284995
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 776690050
+	PUSHINT 483403528
 	LEQ
 	IFJMPREF {
 		DUP
@@ -2663,6 +2738,12 @@ IFJMPREF {
 		EQUAL
 		IFJMPREF {
 			.inline __askEvers
+		}
+		DUP
+		PUSHINT 272674355
+		EQUAL
+		IFJMPREF {
+			.inline __getRootAddr
 		}
 		DUP
 		PUSHINT 413151904
@@ -2676,17 +2757,17 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __setHashRoot
 		}
+	}
+	DUP
+	PUSHINT 845593633
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 776690050
 		EQUAL
 		IFJMPREF {
 			.inline __setReadyRoot
 		}
-	}
-	DUP
-	PUSHINT 847285003
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 817710068
 		EQUAL
@@ -2705,17 +2786,17 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __deployRootContract
 		}
+	}
+	DUP
+	PUSHINT 1079346966
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 847285003
 		EQUAL
 		IFJMPREF {
 			.inline __getTransactions
 		}
-	}
-	DUP
-	PUSHINT 1188408382
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 1016193477
 		EQUAL
@@ -2734,17 +2815,17 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __destroyTrash
 		}
+	}
+	DUP
+	PUSHINT 1458284995
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 1188408382
 		EQUAL
 		IFJMPREF {
 			.inline __checkDataIndex
 		}
-	}
-	DUP
-	PUSHINT 1581858390
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 1219851760
 		EQUAL
@@ -2763,18 +2844,18 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __setCommission
 		}
-		DUP
-		PUSHINT 1581858390
-		EQUAL
-		IFJMPREF {
-			.inline __getStatus
-		}
 	}
 }
 DUP
 PUSHINT 2095978802
 LEQ
 IFJMPREF {
+	DUP
+	PUSHINT 1581858390
+	EQUAL
+	IFJMPREF {
+		.inline __getStatus
+	}
 	DUP
 	PUSHINT 1590035614
 	EQUAL

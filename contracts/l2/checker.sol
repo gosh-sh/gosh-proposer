@@ -195,6 +195,10 @@ contract Checker {
         return ("checker", _version);
     }
 
+    function getRootAddr(RootData data) external view returns(address) {
+        return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey());
+    }
+
     function getProposalAddr(uint128 index) external view returns(address) {
         return ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this);
     }
