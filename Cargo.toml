@@ -2,8 +2,9 @@
 members = [
     #
     "common",
-    "gosh-proposer",
     "deposit-proposal-checker",
+    "gosh-proposer",
+    "l2-telemetry",
     "withdraw_proposal_checker",
 ]
 resolver = "2"
@@ -18,12 +19,18 @@ tracing = "0.1.37"
 
 [workspace.dependencies.web3]
 default-features = false
-features = ["http-rustls-tls", "ws-tokio", "signing", "ipc-tokio", "ws-tls-tokio"]
+features = [
+    "http-rustls-tls",
+    "ipc-tokio",
+    "signing",
+    "ws-tls-tokio",
+    "ws-tokio",
+]
 version = "0.19.0"
 
 [workspace.dependencies.ton_client]
 default-features = false
-features = ['std', 'rustls-tls-webpki-roots']
+features = ['rustls-tls-webpki-roots', 'std']
 git = 'https://github.com/gosh-sh/ever-sdk.git'
 package = 'ton_client'
 tag = "1.43.1-rustls"

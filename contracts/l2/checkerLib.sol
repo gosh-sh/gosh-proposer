@@ -15,6 +15,18 @@ struct BlockData {
     uint256 hash;
 }
 
+struct TransactionPatch {
+    RootData root;
+    TransactionBatch data;
+}
+
+struct RootData {
+    string name;
+    string symbol;
+    uint8 decimals;
+    uint256 ethroot;
+}
+
 struct TransactionBatch {
     uint256 pubkey;
     uint128 value;
@@ -35,6 +47,30 @@ uint16 constant BATCH_SIZE = 3;
 
 uint16 constant ERR_WRONG_SENDER = 100;
 uint16 constant ERR_WRONG_HASH = 101;
+uint16 constant ERR_NOT_READY = 102;
+
+contract IRootToken {
+    bool static __uninitialized;
+    uint64 static __replay;
+    string static name_;
+    string static symbol_;
+    uint8 static decimals_;
+    uint256 static root_pubkey_;
+    optional(address) static root_owner_;
+    uint128 static total_supply_;
+    uint128 static total_granted_;
+    optional(TvmCell) static wallet_code_;
+    address static checker_;
+    uint256 static ethroot_;
+    uint128 static burncount_;
+    optional(address) static oldroot_;
+    optional(address) static newroot_;
+    bool static flag_;
+    uint32 static money_timestamp_;
+
+    constructor(string name, string symbol, uint8 decimals, uint256 root_pubkey, optional(address) root_owner, uint128 total_supply, address checker, uint256 eth_root, optional(address) oldroot, optional(address) newroot) functionID(0xa) {
+    }
+}
 
 interface ARootToken {
     function  grantbatch(uint32 _answer_id, TransactionBatch[] transactions, uint128 a, uint128 b) external functionID(0x3f6);
@@ -46,7 +82,22 @@ library ProposalLib {
         return address.makeAddrStd(0, tvm.hash(s1));
     }
 
-     function composeProposalStateInit(TvmCell code, uint256 hash, uint128 index, address checker) public returns(TvmCell) {
+    function calculateRootAddress(TvmCell code, RootData root, uint256 pubkey) public returns(address) {
+        TvmCell s1 = composeRootStateInit(code, root.name, root.symbol, root.decimals, root.ethroot, pubkey);
+        return address.makeAddrStd(0, tvm.hash(s1));
+    }
+
+    function composeRootStateInit(TvmCell code, string name, string symbol, uint8 decimals, uint256 ethroot, uint256 pubkey) public returns(TvmCell) {
+        TvmCell s1 = tvm.buildStateInit({
+            code: code,
+            contr: IRootToken,
+            varInit: {name_ : name, symbol_ : symbol, decimals_ : decimals, ethroot_ : ethroot, root_pubkey_: pubkey, root_owner_: null}
+        });
+        return s1;
+    }
+
+
+    function composeProposalStateInit(TvmCell code, uint256 hash, uint128 index, address checker) public returns(TvmCell) {
         TvmCell Proposalcode = buildProposalCode(code, hash);
         TvmCell s1 = tvm.buildStateInit({
             code: Proposalcode,

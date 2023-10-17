@@ -1,10 +1,9 @@
 use crate::eth::helper::{get_signatures_table, wei_to_eth};
 use std::collections::BTreeMap;
 use std::env;
-use std::str::FromStr;
 use std::sync::Arc;
 
-use crate::eth::block::FullBlock;
+use crate::eth::FullBlock;
 use serde::{Deserialize, Serialize};
 use tokio::task::JoinSet;
 use web3::ethabi::Address;
@@ -12,12 +11,12 @@ use web3::transports::WebSocket;
 use web3::types::{Transaction, TransactionId, H256, U64};
 use web3::{helpers as w3h, Web3};
 
-use crate::helper::deserialize_u128;
+use crate::helper::deserialize_uint;
 
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Transfer {
     pub pubkey: String,
-    #[serde(deserialize_with = "deserialize_u128")]
+    #[serde(deserialize_with = "deserialize_uint")]
     pub value: u128,
     pub hash: String,
 }
@@ -89,7 +88,7 @@ pub fn decode_transfer(
 pub async fn filter_and_decode_block_transactions(
     web3s: Arc<Web3<WebSocket>>,
     block: &FullBlock<H256>,
-    eth_contract_address: &str,
+    eth_contract_address: Address,
 ) -> anyhow::Result<Vec<Transfer>> {
     // Parse block transactions
     tracing::info!("start search of transfers");
@@ -99,8 +98,7 @@ pub async fn filter_and_decode_block_transactions(
         // tracing::info!("tx: {}", w3h::to_string(transaction_hash));
         let transaction_hash = *transaction_hash;
         let web3s_clone = web3s.clone();
-        let eth_contract_address_clone = Address::from_str(eth_contract_address)
-            .map_err(|e| anyhow::format_err!("Failed to convert eth address: {e}"))?;
+        let eth_contract_address_clone = eth_contract_address;
         parallel.spawn(async move {
             let tx = match web3s_clone
                 .eth()

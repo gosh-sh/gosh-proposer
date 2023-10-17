@@ -1,5 +1,8 @@
 use serde::{Deserialize, Deserializer, Serialize};
-use web3::types::{Bytes, H160, H2048, H256, H64, U256, U64};
+use web3::helpers as w3h;
+use web3::transports::WebSocket;
+use web3::types::{BlockId, Bytes, H160, H2048, H256, H64, U256, U64};
+use web3::{Transport, Web3};
 
 #[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
 pub struct FullBlock<TX> {
@@ -77,4 +80,60 @@ where
 {
     let option = Option::deserialize(deserializer)?;
     Ok(option.unwrap_or_default())
+}
+
+// Read Ethereum block with specified block id
+pub async fn read_block(
+    web3s: &Web3<WebSocket>,
+    block_id: BlockId,
+) -> anyhow::Result<FullBlock<H256>> {
+    tracing::info!("Reading block: {block_id:?}");
+    let include_txs = w3h::serialize(&false);
+    let block = match block_id {
+        BlockId::Hash(hash) => {
+            let hash = w3h::serialize(&hash);
+            web3s
+                .transport()
+                .execute("eth_getBlockByHash", vec![hash, include_txs])
+        }
+        BlockId::Number(num) => {
+            let num = w3h::serialize(&num);
+            web3s
+                .transport()
+                .execute("eth_getBlockByNumber", vec![num, include_txs])
+        }
+    }
+    .await
+    .map_err(|e| anyhow::format_err!("Failed to query ETH block {block_id:?}: {e}"))?;
+
+    serde_json::from_value(block)
+        .map_err(|e| anyhow::format_err!("Failed to serialize ETH block: {e}"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::encoder::serialize_block;
+    use super::read_block;
+    use std::env;
+    use web3::transports::WebSocket;
+    use web3::types::{BlockId, BlockNumber, U64};
+    use web3::Web3;
+
+    #[tokio::test]
+    pub async fn test_hash() -> anyhow::Result<()> {
+        dotenv::dotenv().ok();
+        let block_id = BlockId::Number(BlockNumber::Number(
+            U64::from_str_radix("400000", 10).unwrap(),
+        ));
+        let websocket = WebSocket::new(
+            &env::var("ETH_NETWORK")
+                .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
+        )
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
+        let web3s = Web3::new(websocket);
+        let block = read_block(&web3s, block_id).await?;
+        serialize_block(&block)?;
+        Ok(())
+    }
 }

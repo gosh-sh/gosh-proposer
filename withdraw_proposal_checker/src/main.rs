@@ -1,11 +1,11 @@
-use crate::checker::{check_proposals_and_accept, create_new_proposal, get_last_blocks};
-use crate::gosh::burn::find_all_burns;
+use crate::withdraw::burn::find_all_burns;
+use crate::withdraw::validator::{check_proposals_and_accept, create_new_proposal};
+use common::eth::events::get_events;
+use common::helper::get_last_blocks;
 use common::helper::tracing::init_default_tracing;
 use std::env;
 
-mod checker;
-mod eth;
-mod gosh;
+mod withdraw;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -25,6 +25,9 @@ async fn main() -> anyhow::Result<()> {
             } else if args[1] == "find_burns" {
                 tracing::info!("Find burns");
                 find_all_burns().await
+            } else if args[1] == "events" {
+                tracing::info!("Find ELock events");
+                get_events().await
             } else {
                 anyhow::bail!("Unknown subcommand");
             }

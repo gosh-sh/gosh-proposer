@@ -17,7 +17,6 @@ contract Checker {
 
     uint256 _prevhash;
 
-    address _root;
     uint128 _proposalCount = 0;
 
     //value = a*x/10000 + b
@@ -25,6 +24,11 @@ contract Checker {
     uint128 b = 0; //1e-18 GETH
 
     TvmCell _proposalCode;
+    TvmCell _rootCode;
+
+    TransactionPatch[] _transactions;
+
+    bool _isReady = false;
 
     modifier onlyOwner {
         require (msg.pubkey() == tvm.pubkey(), ERR_WRONG_SENDER) ;
@@ -47,27 +51,48 @@ contract Checker {
         _prevhash = prevhash;
     }
 
-    function setRootContract (address root) public onlyOwner accept {
-        _root = root;
+    function askEvers(RootData  root) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey())) accept functionID(1016) {
+        msg.sender.transfer(1000 ton);
+    }
+
+    function setHashRoot(uint256 hash) public onlyOwner accept {
+        _prevhash = hash;
+        TransactionPatch[] transactions;
+        _transactions = transactions;
+    }
+
+    function setReadyRoot(bool ready) public onlyOwner accept {
+        _isReady = ready;
     }
 
     function setProposalCode(TvmCell code) public onlyOwner accept {
         _proposalCode = code;
     }
 
-    function setCommission(uint128 a_from_ax_div1000_plus_b, uint128 b_from_ax_div1000_plus_b) public onlyOwner accept {
-        a = a_from_ax_div1000_plus_b;
-        b = b_from_ax_div1000_plus_b;
+    function setRootCode(TvmCell code) public onlyOwner accept {
+        _rootCode = code;
     }
 
-    function checkData(BlockData[] data, TransactionBatch[] transactions) public pure accept {
+    function setCommission(uint128 a_from_ax_div10000_plus_b, uint128 b_from_ax_div10000_plus_b) public onlyOwner accept {
+        a = a_from_ax_div10000_plus_b;
+        b = b_from_ax_div10000_plus_b;
+    }
+
+    function deployRootContract(string name, string symbol, uint8 decimals, uint256 ethroot) public view accept {
+        require(_isReady == true, ERR_WRONG_SENDER);    
+        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey());
+        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null);
+    }
+
+    function checkData(BlockData[] data, TransactionPatch[] transactions) public view accept {
+        if (_isReady == false) { return; }
         if (data.length == 0) {
             return;
         }
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, 0);
     }
 
-    function checkDataIndex(BlockData[] data, TransactionBatch[] transactions, uint128 index) public senderIs(this) accept {
+    function checkDataIndex(BlockData[] data, TransactionPatch[] transactions, uint128 index) public senderIs(this) accept {
         for (uint i = 0; i <= BATCH_SIZE; i++) {
             if (index >=  data.length) { 
                 TvmSlice dataslicenew = TvmSlice(data[0].data);
@@ -108,12 +133,23 @@ contract Checker {
         this.checkDataIndex{value: 0.1 ton, flag: 1}(data, transactions, index);
     }
 
-    function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionBatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
+    function setNewHash(uint256 prevhash, uint256 newhash, uint128 index, TransactionPatch[] transactions) public senderIs(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this)) accept{
         require(_prevhash == prevhash, ERR_WRONG_HASH);
-        ARootToken(_root).grantbatch{value:0.3 ton, flag: 1}(0, transactions, a, b);
+        this.sendBatch{value: 0.1 ton, flag: 1}(_transactions, 0);
+        _transactions = transactions;
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, _proposalCount, 0);
         _prevhash = newhash;
         _proposalCount = 0;
+    }
+
+    function sendBatch(TransactionPatch[] transactions, uint128 index) public view senderIs(this) accept {
+        for (uint i = 0; i <= BATCH_SIZE; i++) {
+            if (index + i >= transactions.length) { return; }
+            TransactionBatch[] trans;
+            trans.push(transactions[i].data);
+            ARootToken(ProposalLib.calculateRootAddress(_rootCode, transactions[i].root, tvm.pubkey())).grantbatch{value:0.3 ton, flag: 1}(0, trans, a, b);
+        }
+        this.sendBatch{value: 0.1 ton, flag: 1}(_transactions, index + BATCH_SIZE + 1);
     }
 
     function destroyTrash(uint256 prevhash, uint128 indexmax, uint128 index) public view senderIs(this) accept {
@@ -126,14 +162,21 @@ contract Checker {
         this.destroyTrash{value: 0.1 ton, flag: 1}(_prevhash, indexmax, index + BATCH_SIZE);
     }
 
-    function updateCode(TvmCell newcode, TvmCell cell) public view onlyOwner accept {
-        cell;
+    function updateCode(TvmCell newcode, TvmCell cell) public onlyOwner accept {
         tvm.setcode(newcode);
         tvm.setCurrentCode(newcode);
-        onCodeUpgrade();
+        cell = abi.encode(_prevhash, _proposalCount, a, b, _proposalCode);
+        onCodeUpgrade(cell);
     }
 
-    function onCodeUpgrade() private pure {
+    function onCodeUpgrade(TvmCell cell) private  {
+        (_prevhash, _proposalCount, a, b, _proposalCode) = abi.decode(cell, (uint256, uint128, uint128, uint128, TvmCell));
+        _isReady = false;
+        TransactionPatch[] transactions;
+        _transactions = transactions;
+    }
+
+    function onCodeUpgrade() private pure  {
     }
 
     //Fallback/Receive
@@ -152,6 +195,10 @@ contract Checker {
         return ("checker", _version);
     }
 
+    function getRootAddr(RootData data) external view returns(address) {
+        return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey());
+    }
+
     function getProposalAddr(uint128 index) external view returns(address) {
         return ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, index, this);
     }
@@ -162,6 +209,10 @@ contract Checker {
             result.push(ProposalLib.calculateProposalAddress(_proposalCode, _prevhash, i, this));
         }
         return result;
+    }
+
+    function getTransactions() external view returns(TransactionPatch[]) {
+        return _transactions;
     }
 
     function getStatus() external view returns(uint256 prevhash, uint128 index) {

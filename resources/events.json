@@ -1,0 +1,62 @@
+{
+  "0xc93e352b0db2382529aa994f33e15a46c2761d27903172db06fcabd426ebc488": {
+    "name": "WithdrawRejected",
+    "params": [
+      {
+        "name": "proposalKey",
+        "type": "uint256"
+      },
+      {
+        "name": "voter",
+        "type": "address"
+      },
+      {
+        "name": "reason",
+        "type": "uint8"
+      }
+    ]
+  },
+  "0x906f71466379a94b86a805004f5cc535b083a42e1a1582e29048cc78633d7955": {
+    "name": "WithdrawExecuted",
+    "params": [
+      {
+        "name": "proposalKey",
+        "type": "uint256"
+      }
+    ]
+  },
+  "0xdf273cb619d95419a9cd0ec88123a0538c85064229baa6363788f743fff90deb": {
+    "name": "Withdrawal",
+    "params": [
+      {
+        "name": "recepient",
+        "type": "address"
+      },
+      {
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "name": "commission",
+        "type": "uint256"
+      }
+    ]
+  },
+  "0x05f6d87b848ee8e9475ef347b158fba4d53de0f177a5fddda1cfdbf2eec36d1e": {
+    "name": "GasConsumption",
+    "params": [
+      {
+        "name": "initialGas",
+        "type": "uint256"
+      },
+      {
+        "name": "finalGas",
+        "type": "uint256"
+      },
+      {
+        "name": "func",
+        "type": "string"
+      }
+    ]
+  }
+}

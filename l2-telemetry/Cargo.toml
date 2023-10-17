@@ -1,5 +1,5 @@
 [package]
-name = "withdraw_proposal_checker"
+name = "l2-telemetry"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,10 +9,8 @@ edition = "2021"
 anyhow.workspace = true
 common = { path = "../common" }
 dotenv.workspace = true
-ethereum-types = "0.14.1"
 serde.workspace = true
 serde_json.workspace = true
-sha3 = "0.10.8"
 tokio.workspace = true
 ton_client.workspace = true
 tracing.workspace = true

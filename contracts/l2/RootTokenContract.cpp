@@ -56,6 +56,7 @@ public:
     address_opt root_owner,
     uint128 total_supply,
     address checker,
+    uint256 eth_root,
     address_opt oldroot,
     address_opt newroot
   ) {
@@ -70,17 +71,34 @@ public:
     checker_ = checker;
     oldroot_ = oldroot;
     newroot_ = newroot;
+    ethroot_ = eth_root;
+    flag_ = false;
+    money_timestamp_ = 0;
+  }
+
+  void getMoney() {
+    if (tvm_balance() > 5e11) { return; }
+    if (tvm_now() - money_timestamp_ < 300) {
+      if (flag_ == true) { return; }
+    }
+    flag_ = true;
+    money_timestamp_ = tvm_now();
+    ICheckerContractPtr dest_handle(checker_);
+    RootData root = {name_, symbol_, decimals_, ethroot_};
+    dest_handle(5e8, 1).askEvers(root);
   }
 
   void setOldRoot(address_opt oldroot) {
     check_owner(true);
     tvm_accept();
+    getMoney();
     oldroot_ = oldroot;
   }
 
   void setNewRoot(address_opt newroot) {
     check_owner(true);
     tvm_accept();
+    getMoney();
     newroot_ = newroot;
   }
 
@@ -97,6 +115,7 @@ public:
     require(tvm_hash(wallet_code) == wallet_hash, error_code::wrong_wallet_code_hash);
     require(wallet_code.cdepth() == wallet_code_depth, error_code::wrong_wallet_code_hash);
     wallet_code_ = wallet_code;
+    getMoney();
 
     uint128 evers = uint128(10000000000);
     auto [wallet_init, dest] = calc_wallet_init(root_pubkey_, root_owner_);
@@ -118,7 +137,7 @@ public:
     require(pubkey != 0 || owner, error_code::define_pubkey_or_internal_owner);
     check_owner();
     tvm_accept();
-
+    getMoney();
     address answer_addr;
     if constexpr (Internal) {
       tvm_rawreserve(tvm_balance() - int_value().get(), rawreserve_flag::up_to);
@@ -148,7 +167,7 @@ public:
   ) {
     require(hasWalletCode(), error_code::wallet_code_not_initialized);
     require(pubkey != 0 || owner, error_code::define_pubkey_or_internal_owner);
-
+    getMoney();
     // This protects from spending root balance to deploy message
     tvm_rawreserve(tvm_balance() - int_value().get(), rawreserve_flag::up_to);
 
@@ -166,6 +185,7 @@ public:
   ) {
     require(hasWalletCode(), error_code::wallet_code_not_initialized);
     require(pubkey != 0, error_code::define_pubkey_or_internal_owner);
+    getMoney();
     address_opt owner;
     uint128 evers = uint128(10000000000);
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
@@ -178,6 +198,7 @@ public:
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
     tvm_accept();
+    getMoney();
     require(total_granted_ >= tokens, error_code::not_enough_balance);
     require(total_supply_ >= tokens, error_code::not_enough_balance);
     total_supply_ -= tokens;
@@ -189,6 +210,7 @@ public:
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
     tvm_accept();
+    getMoney();
     require(total_granted_ >= tokens, error_code::not_enough_balance);
     require(total_supply_ >= tokens, error_code::not_enough_balance);
     total_supply_ -= tokens;
@@ -200,17 +222,13 @@ public:
   void deployUpgradeWallet(uint256 pubkey, address_opt owner, uint128 tokens) {
     require(oldroot_.has_value(), error_code::message_sender_is_not_my_owner);
     require(*oldroot_ == int_sender(), error_code::message_sender_is_not_my_owner);
+    tvm_accept();
+    getMoney();
     uint128 evers = uint128(10000000000);
     auto [wallet_init, dest_addr] = calc_wallet_init(pubkey, owner);
     ITONTokenWalletPtr dest_handle(dest_addr);
     opt<cell> notify;
-    address answer_addr;
-    if constexpr (Internal) {
-      tvm_rawreserve(tvm_balance() - int_value().get() * 4, rawreserve_flag::up_to);
-      answer_addr = int_sender();
-    } else {
-      answer_addr = address{tvm_myaddr()};
-    }
+    address answer_addr = address{tvm_myaddr()};
     dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
     dest_handle(Evers(evers.get()), 1).acceptMint(tokens, answer_addr, 0u128, notify);
   }
@@ -221,6 +239,7 @@ public:
     uint128 b
   ) {
     require(checker_ == int_sender(), error_code::message_sender_is_not_my_owner);
+    getMoney();
     IRootTokenContractPtr dest_handle(tvm_myaddr());
     dest_handle(Evers(1e9), 1).grantBatchIndex(transactions, uint128(0), a, b);
   }
@@ -231,10 +250,8 @@ public:
     uint128 a,
     uint128 b
   ) {
-    uint128 value = transactions.get_at(unsigned(index)).tokens * a / 1000 + b;
-    total_supply_ += value;
-    require(total_granted_ + value <= total_supply_, error_code::not_enough_balance);
     require(tvm_myaddr() == int_sender(), error_code::message_sender_is_not_my_owner);
+    getMoney();
     uint128 value = transactions.get_at(unsigned(index)).tokens;
     uint128 value_c = value * a / 10000 + b;
     tvm_accept(); 
@@ -252,15 +269,9 @@ public:
       dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
       dest_handle(Evers(evers.get()), 1).acceptMint(value, answer_addr, 0u128, notify);
 
-    tvm_accept();
-    uint128 evers = uint128(1000000000);
-    unsigned msg_flags = 0;
-    address answer_addr;
-    if constexpr (Internal) {
-      tvm_rawreserve(tvm_balance() - int_value().get() * 4, rawreserve_flag::up_to);
-      answer_addr = int_sender();
-    } else {
-      answer_addr = address{tvm_myaddr()};
+      auto [wallet_init_root, dest_root] = calc_wallet_init(root_pubkey_, root_owner_);
+      ITONTokenWalletPtr dest_handle_root_wallet(dest_root);
+      dest_handle_root_wallet(Evers(evers.get()), 1).acceptMint(value_c, answer_addr, 0u128, notify);
     }
     else {
       total_supply_ += value;
@@ -289,6 +300,7 @@ public:
     require(total_granted_ + tokens <= total_supply_, error_code::not_enough_balance);
     check_owner();
     tvm_accept();
+    getMoney();
 
     address answer_addr;
     unsigned msg_flags = 0;
@@ -311,6 +323,7 @@ public:
     return false;
     check_owner();
     tvm_accept();
+    getMoney();
 
     if constexpr (Internal) {
       tvm_rawreserve(tvm_balance() - int_value().get(), rawreserve_flag::up_to);
@@ -417,6 +430,12 @@ public:
 
   // default processing of unknown messages
   __always_inline static int _fallback(cell /*msg*/, slice /*msg_body*/) {
+    return 0;
+  }
+
+  // default processing of empty messages or func_id=0
+  __always_inline int _receive([[maybe_unused]] cell msg, [[maybe_unused]] slice msg_body) {
+    if (int_sender() == checker_) { flag_ = false; }
     return 0;
   }
 

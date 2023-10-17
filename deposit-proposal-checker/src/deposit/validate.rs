@@ -1,13 +1,13 @@
-use std::env;
 use std::str::FromStr;
 
-use crate::gosh::proposal::Proposal;
-use common::eth::block::FullBlock;
+use crate::deposit::proposal::Proposal;
+use common::elock::transfer::decode_transfer;
+use common::elock::{get_elock_address, get_tx_counter};
 use common::eth::helper::get_signatures_table;
-use common::eth::transfer::decode_transfer;
-use common::eth::{get_tx_counter, read_block as eth_read_block};
+use common::eth::read_block as eth_read_block;
+use common::eth::FullBlock;
 use web3::transports::WebSocket;
-use web3::types::{Address, BlockId, TransactionId, H256};
+use web3::types::{BlockId, TransactionId, H256};
 use web3::Web3;
 
 pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> anyhow::Result<()> {
@@ -21,11 +21,7 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
             .map_err(|e| anyhow::format_err!("Failed to convert proposal from block: {e}"))?,
     );
     let verifying_transfers = proposal.details.transactions;
-    let eth_contract_address = env::var("ETH_CONTRACT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?
-        .to_lowercase();
-    let eth_address = Address::from_str(&eth_contract_address)
-        .map_err(|e| anyhow::format_err!("Failed to convert eth address: {e}"))?;
+    let elock_address = get_elock_address()?;
 
     let from_block_num = {
         let FullBlock { number, .. } = eth_read_block(web3s, from_block).await.map_err(|e| {
@@ -36,7 +32,7 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
             None => anyhow::bail!("Failed to fetch block with proposal hash"),
         }
     };
-    let start_tx_counter = get_tx_counter(web3s, eth_address, from_block_num)
+    let start_tx_counter = get_tx_counter(web3s, elock_address, from_block_num)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
 
@@ -49,7 +45,7 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
             None => anyhow::bail!("Failed to fetch block with proposal new_hash"),
         }
     };
-    let end_tx_counter = get_tx_counter(web3s, eth_address, till_block_num)
+    let end_tx_counter = get_tx_counter(web3s, elock_address, till_block_num)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
 
