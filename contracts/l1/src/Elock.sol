@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 import {IERC20} from "./IERC20.sol";
 
 contract Elock {
-    event Deposited(address indexed token, address from, uint256 pubkey);
+    event Deposited(address indexed token, address from, uint256 pubkey, uint256 value);
     event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
     event WithdrawExecuted(uint256 indexed proposalKey);
     event Withdrawal(address indexed recepient, uint256 value, uint256 commission);
@@ -96,19 +96,21 @@ contract Elock {
             totalSupply += msg.value;
         }
         trxDepositCount += 1;
+        emit Deposited(address(0), msg.sender, pubkey, msg.value);
     }
 
-    function depositERC20(address tokenRoot, uint256 amount, uint256 pubkey) public payable {
+    function depositERC20(address tokenRoot, uint256 value, uint256 pubkey) public payable {
         require(isDepositsFreezed == false);
         require(tokenRoot != address(0));
 
         uint256 allowedAmount = IERC20(tokenRoot).allowance(msg.sender, address(this));
-        require(allowedAmount >= amount, "Not approved");
+        require(allowedAmount >= value, "Not approved");
 
-        bool isOk = IERC20(tokenRoot).transferFrom(msg.sender, address(this), amount);
+        bool isOk = IERC20(tokenRoot).transferFrom(msg.sender, address(this), value);
         require(isOk, "Transfer failed");
 
-        emit Deposited(tokenRoot, msg.sender, pubkey);
+        trxDepositCount += 1;
+        emit Deposited(tokenRoot, msg.sender, pubkey, value);
     }
 
     function proposeWithdrawal(
