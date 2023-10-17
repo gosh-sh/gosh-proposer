@@ -19,7 +19,8 @@
     { "name":"checker", "type":"address" },
     { "name":"eth_root", "type":"uint256" },
     { "name":"oldroot_", "type":"optional(address)" },
-    { "name":"newroot_", "type":"optional(address)" }
+    { "name":"newroot_", "type":"optional(address)" },
+    { "name":"receiver", "type":"address" }
     ],
     "outputs": [
     ],
@@ -347,6 +348,7 @@
     { "name":"burncount_", "type":"uint128" },
     { "name":"oldroot_", "type":"optional(address)" },
     { "name":"newroot_", "type":"optional(address)" },
+    { "name":"receiver_", "type":"address" },
     { "name":"flag_", "type":"bool" },
     { "name":"money_timestamp_", "type":"uint32" }
   ],
