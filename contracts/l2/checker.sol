@@ -219,7 +219,7 @@ contract Checker {
         return _transactions;
     }
 
-    function getStatus() external view returns(uint256 prevhash, uint128 index) {
-        return (_prevhash, _proposalCount);
+    function getStatus() external view returns(uint256 prevhash, uint128 index, address receiver) {
+        return (_prevhash, _proposalCount, _receiver);
     }
 }

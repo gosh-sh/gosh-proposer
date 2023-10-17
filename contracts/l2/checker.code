@@ -1903,9 +1903,9 @@ ENDS
 CALLREF {
 	.inline __getStatus_4e69d560_internal_macro
 }
-PUSH S2
+PUSH S3
 PUSHCONT {
-	PUSH S4
+	PUSH S5
 	CTOS
 	LDU 2
 	LDMSGADDR
@@ -1916,18 +1916,19 @@ PUSHCONT {
 	STSLICE
 	PUSHINT 1
 	STUR 98
-	XCHG S2
+	REVERSE 4, 0
 	NEWC
-	STSLICECONST xde493e56
+	STSLICECONST x83e96c13
 	STU 256
 	STU 128
+	STSLICE
 	STBREFR
 	ENDC
 	PUSHINT 0
 	SENDRAWMSG
 }
 PUSHCONT {
-	DROP2
+	BLKDROP 3
 }
 IFELSE
 IFREF {
@@ -1939,6 +1940,7 @@ THROW 0
 .loc checker.sol, 223
 GETGLOB 10
 GETGLOB 11
+GETGLOB 16
 .loc checker.sol, 0
 
 .macro c4_to_c7
@@ -2757,11 +2759,11 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1458284995
+PUSHINT 1387268623
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 413151904
+	PUSHINT 272674355
 	LEQ
 	IFJMPREF {
 		DUP
@@ -2777,22 +2779,28 @@ IFJMPREF {
 			.inline __constructor
 		}
 		DUP
+		PUSHINT 65629203
+		EQUAL
+		IFJMPREF {
+			.inline __getStatus
+		}
+		DUP
 		PUSHINT 272674355
 		EQUAL
 		IFJMPREF {
 			.inline __getRootAddr
 		}
+	}
+	DUP
+	PUSHINT 817710068
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 413151904
 		EQUAL
 		IFJMPREF {
 			.inline __setNewHash
 		}
-	}
-	DUP
-	PUSHINT 838069379
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 483403528
 		EQUAL
@@ -2811,17 +2819,17 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __checkData
 		}
+	}
+	DUP
+	PUSHINT 1071142485
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 838069379
 		EQUAL
 		IFJMPREF {
 			.inline __getProposalAddr
 		}
-	}
-	DUP
-	PUSHINT 1079346966
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 845593633
 		EQUAL
@@ -2840,17 +2848,17 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __getVersion
 		}
+	}
+	DUP
+	PUSHINT 1387268623
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 1079346966
 		EQUAL
 		IFJMPREF {
 			.inline __destroyTrash
 		}
-	}
-	DUP
-	PUSHINT 1458284995
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 1188408382
 		EQUAL
@@ -2869,12 +2877,6 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __getAllProposalAddr
 		}
-		DUP
-		PUSHINT 1458284995
-		EQUAL
-		IFJMPREF {
-			.inline __setCommission
-		}
 	}
 }
 DUP
@@ -2882,10 +2884,10 @@ PUSHINT 2095978802
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 1581858390
+	PUSHINT 1458284995
 	EQUAL
 	IFJMPREF {
-		.inline __getStatus
+		.inline __setCommission
 	}
 	DUP
 	PUSHINT 1590035614
