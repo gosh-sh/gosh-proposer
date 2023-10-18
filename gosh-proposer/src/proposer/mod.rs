@@ -3,7 +3,6 @@ use common::eth::{create_web3_socket, read_block};
 use common::gosh::helper::create_client;
 use std::env;
 use std::str::FromStr;
-use std::sync::Arc;
 
 use common::checker::{get_block_from_checker, get_checker_address};
 use web3::types::{BlockId, BlockNumber};
@@ -85,8 +84,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     );
 
     // get transfers for queried blocks and propose them
-    let web3s = Arc::new(web3s);
-    propose_blocks(web3s, &client, blocks, &checker_address, first_block_number).await?;
+    propose_blocks(&web3s, &client, blocks, &checker_address).await?;
 
     Ok(())
 }

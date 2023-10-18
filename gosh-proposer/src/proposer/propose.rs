@@ -1,23 +1,21 @@
+use common::elock::deposit::get_deposits;
+use common::elock::transfer::TransferPatch;
+use common::elock::{get_elock_address, get_tx_counter};
 use common::eth::encoder::serialize_block;
 use common::eth::FullBlock;
-
-use common::elock::transfer::filter_and_decode_block_transactions;
-use common::elock::{get_elock_address, get_tx_counter};
 use common::gosh::call_function;
 use common::gosh::helper::EverClient;
 use common::helper::abi::CHECKER_ABI;
 use serde_json::json;
-use std::sync::Arc;
 use web3::transports::WebSocket;
-use web3::types::{H256, U64};
+use web3::types::H256;
 use web3::Web3;
 
 pub async fn propose_blocks(
-    web3s: Arc<Web3<WebSocket>>,
+    web3s: &Web3<WebSocket>,
     client: &EverClient,
     blocks: Vec<FullBlock<H256>>,
     checker_address: &str,
-    first_block_number: U64,
 ) -> anyhow::Result<()> {
     tracing::info!("start propose block");
 
@@ -25,34 +23,29 @@ pub async fn propose_blocks(
     let elock_address = get_elock_address()?;
 
     // Get starting tx counter
-    let mut prev_tx_counter = get_tx_counter(&web3s, elock_address, first_block_number)
+    let start_block_number = blocks.last().unwrap().number.unwrap();
+    let starting_tx_counter = get_tx_counter(web3s, elock_address, start_block_number)
         .await
-        .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
+        .map_err(|e| anyhow::format_err!("Failed to get ELock tx counter: {e}"))?;
+    tracing::info!("Start tx counter on {start_block_number}: {starting_tx_counter}");
+    // Get final tx counter
+    let final_block_number = blocks.first().unwrap().number.unwrap();
+    let final_tx_counter = get_tx_counter(web3s, elock_address, final_block_number)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to get ELock tx counter: {e}"))?;
+    tracing::info!("Final tx counter on {final_block_number}: {final_tx_counter}");
 
-    let mut all_transfers = vec![];
+    let all_transfers: Vec<TransferPatch> = if final_tx_counter != starting_tx_counter {
+        get_deposits(web3s, elock_address, start_block_number, final_block_number).await?
+    } else {
+        vec![]
+    };
+
     let mut json_blocks = vec![];
 
     // Iterate through blocks and check whether we need to look for transfers
     for block in blocks.iter().rev() {
-        let block_number = block.number.ok_or(anyhow::format_err!(
-            "Failed to get block number for {block:?}"
-        ))?;
-        // Get tx counter on the current block
-        let cur_tx_counter = get_tx_counter(&web3s, elock_address, block_number)
-            .await
-            .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
-        tracing::info!("Block number={block_number} prev tx counter={prev_tx_counter}, current counter={cur_tx_counter}");
-
-        // Load transfers if tx counter has changed
-        let mut transfers = if cur_tx_counter != prev_tx_counter {
-            prev_tx_counter = cur_tx_counter;
-            filter_and_decode_block_transactions(web3s.clone(), block, elock_address).await?
-        } else {
-            vec![]
-        };
-        all_transfers.append(&mut transfers);
-
-        // Format transfers before sending them to the checker contract
+        // Format blocks before sending them to the checker contract
         let hash = format!("{:?}", block.hash.unwrap());
         let data = serialize_block(block)
             .map_err(|e| anyhow::format_err!("Failed to serialize ETH block: {e}"))?;

@@ -1,4 +1,30 @@
 {
+  "0xf5681f9d0db1b911ac18ee83d515a1cf1051853a9eae418316a2fdf7dea427c5": {
+    "name": "Deposited",
+    "params": [
+      {
+        "name": "token",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "from",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "pubkey",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "value",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
   "0xc93e352b0db2382529aa994f33e15a46c2761d27903172db06fcabd426ebc488": {
     "name": "WithdrawRejected",
     "params": [
@@ -47,27 +73,6 @@
       {
         "name": "commission",
         "type": "uint256",
-        "indexed": false
-      }
-    ],
-    "anonymous": false
-  },
-  "0x05f6d87b848ee8e9475ef347b158fba4d53de0f177a5fddda1cfdbf2eec36d1e": {
-    "name": "GasConsumption",
-    "params": [
-      {
-        "name": "initialGas",
-        "type": "uint256",
-        "indexed": false
-      },
-      {
-        "name": "finalGas",
-        "type": "uint256",
-        "indexed": false
-      },
-      {
-        "name": "func",
-        "type": "string",
         "indexed": false
       }
     ],

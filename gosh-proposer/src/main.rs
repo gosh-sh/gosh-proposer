@@ -3,7 +3,7 @@ mod proposer;
 use crate::proposer::propose_eth_blocks;
 use common::helper::tracing::init_default_tracing;
 
-#[tokio::main(flavor = "multi_thread", worker_threads = 20)]
+#[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Load env variables from '.env' file
     dotenv::dotenv().ok();

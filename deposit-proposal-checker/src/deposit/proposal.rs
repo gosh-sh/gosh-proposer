@@ -42,8 +42,10 @@ struct GetValidatorIdResult {
 }
 
 pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Result<Vec<Proposal>> {
+    // Load checker address
     let checker_address = get_checker_address()?;
 
+    // Call checker to get all proposals
     let proposal_addresses: AllProposals = call_getter(
         context,
         &checker_address,
@@ -63,6 +65,8 @@ pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Res
             tracing::info!("There are {val} proposals in the checker contract.");
         }
     };
+
+    // Check whether proposal is valid and get its details
     let mut res = vec![];
     for proposal_address in proposal_addresses.addresses {
         let id = match get_validator_id(context, &proposal_address, &pubkey).await {

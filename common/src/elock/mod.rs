@@ -3,6 +3,7 @@ use web3::transports::WebSocket;
 use web3::types::{Address, BlockNumber, H256, U256, U64};
 use web3::Web3;
 
+pub mod deposit;
 pub mod transfer;
 
 pub const TOTAL_SUPPLY_INDEX: u8 = 0;

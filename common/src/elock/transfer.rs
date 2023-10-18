@@ -12,6 +12,13 @@ use web3::types::{Transaction, TransactionId, H256, U64};
 use web3::{helpers as w3h, Web3};
 
 use crate::helper::deserialize_uint;
+use crate::token_root::RootData;
+
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct TransferPatch {
+    pub root: RootData,
+    pub data: Transfer,
+}
 
 #[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct Transfer {
@@ -19,22 +26,6 @@ pub struct Transfer {
     #[serde(deserialize_with = "deserialize_uint")]
     pub value: u128,
     pub hash: String,
-}
-
-#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
-pub struct RootData {
-    pub name: String,
-    pub symbol: String,
-    #[serde(deserialize_with = "deserialize_uint")]
-    pub decimals: u8,
-    #[serde(rename = "ethroot")]
-    pub eth_root: String,
-}
-
-#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
-pub struct TransferPatch {
-    pub root: RootData,
-    pub data: Transfer,
 }
 
 pub fn decode_transfer(
@@ -94,16 +85,16 @@ pub fn decode_transfer(
     // Wrap eth deposit to GOSH token
     let res = TransferPatch {
         data: Transfer {
-                hash: tx_hash,
-                pubkey: format!("0x{owner_pubkey}"),
-                value,
-            },
+            hash: tx_hash,
+            pubkey: format!("0x{owner_pubkey}"),
+            value,
+        },
         root: RootData {
             name: "geth".to_string(),
             symbol: "gth".to_string(),
             decimals: 18,
-            eth_root: "0x0000000000000000000000000000000000000000".to_string(),
-        }
+            eth_root: Address::zero(),
+        },
     };
 
     tracing::info!("Valid transfer: {:?}", res);
