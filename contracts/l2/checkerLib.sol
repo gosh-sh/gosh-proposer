@@ -66,10 +66,11 @@ contract IRootToken {
     optional(address) static oldroot_;
     optional(address) static newroot_;
     address static receiver_;
+    optional(address) static trusted_;
     bool static flag_;
     uint32 static money_timestamp_;
 
-    constructor(string name, string symbol, uint8 decimals, uint256 root_pubkey, optional(address) root_owner, uint128 total_supply, address checker, uint256 eth_root, optional(address) oldroot, optional(address) newroot) functionID(0xa) {
+    constructor(string name, string symbol, uint8 decimals, uint256 root_pubkey, optional(address) root_owner, uint128 total_supply, address checker, uint256 eth_root, optional(address) oldroot, optional(address) newroot, address receiver, optional(address) trusted) functionID(0xa) {
     }
 }
 
@@ -92,7 +93,7 @@ library ProposalLib {
         TvmCell s1 = tvm.buildStateInit({
             code: code,
             contr: IRootToken,
-            varInit: {name_ : name, symbol_ : symbol, decimals_ : decimals, ethroot_ : ethroot, root_pubkey_: pubkey, root_owner_: null, receiver_: receiver}
+            varInit: {name_ : name, symbol_ : symbol, decimals_ : decimals, ethroot_ : ethroot, root_pubkey_: pubkey, root_owner_: null, receiver_: receiver, trusted_: null}
         });
         return s1;
     }
