@@ -3,7 +3,7 @@ use common::gosh::helper::EverClient;
 use common::helper::abi::{CHECKER_ABI, PROPOSAL_ABI};
 use common::helper::deserialize_uint;
 use common::{
-    elock::transfer::Transfer,
+    elock::transfer::TransferPatch,
     gosh::{call_function, call_getter},
 };
 use serde::Deserialize;
@@ -21,7 +21,7 @@ pub struct ProposalDetails {
     pub hash: String,
     #[serde(rename = "newhash")]
     pub new_hash: String,
-    pub transactions: Vec<Transfer>,
+    pub transactions: Vec<TransferPatch>,
     #[serde(deserialize_with = "deserialize_uint")]
     pub index: u128,
     #[serde(deserialize_with = "deserialize_uint")]

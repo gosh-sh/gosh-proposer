@@ -32,14 +32,18 @@ pub async fn propose_blocks(
     let mut all_transfers = vec![];
     let mut json_blocks = vec![];
 
+    // Iterate through blocks and check whether we need to look for transfers
     for block in blocks.iter().rev() {
         let block_number = block.number.ok_or(anyhow::format_err!(
             "Failed to get block number for {block:?}"
         ))?;
+        // Get tx counter on the current block
         let cur_tx_counter = get_tx_counter(&web3s, elock_address, block_number)
             .await
             .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
         tracing::info!("Block number={block_number} prev tx counter={prev_tx_counter}, current counter={cur_tx_counter}");
+
+        // Load transfers if tx counter has changed
         let mut transfers = if cur_tx_counter != prev_tx_counter {
             prev_tx_counter = cur_tx_counter;
             filter_and_decode_block_transactions(web3s.clone(), block, elock_address).await?
@@ -47,6 +51,8 @@ pub async fn propose_blocks(
             vec![]
         };
         all_transfers.append(&mut transfers);
+
+        // Format transfers before sending them to the checker contract
         let hash = format!("{:?}", block.hash.unwrap());
         let data = serialize_block(block)
             .map_err(|e| anyhow::format_err!("Failed to serialize ETH block: {e}"))?;
@@ -56,6 +62,7 @@ pub async fn propose_blocks(
         json_blocks.push(json!({"data": data_str, "hash": hash}));
     }
 
+    // Send data to the checker contract
     tracing::info!("Send transaction to checker: {all_transfers:?}");
     let args = json!({
         "data": json_blocks,

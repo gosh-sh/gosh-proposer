@@ -65,12 +65,12 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
     for transfer in verifying_transfers {
         let tx = match web3s
             .eth()
-            .transaction(TransactionId::Hash(H256::from_str(&transfer.hash)?))
+            .transaction(TransactionId::Hash(H256::from_str(&transfer.data.hash)?))
             .await
         {
             Ok(Some(tx)) => tx,
             _ => {
-                anyhow::bail!("Failed to fetch transaction: {}", transfer.hash);
+                anyhow::bail!("Failed to fetch transaction: {}", transfer.data.hash);
             }
         };
         let actual_transfer = decode_transfer(tx, &code_sig_lookup)

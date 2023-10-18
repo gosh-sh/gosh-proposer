@@ -4,59 +4,73 @@
     "params": [
       {
         "name": "proposalKey",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": true
       },
       {
         "name": "voter",
-        "type": "address"
+        "type": "address",
+        "indexed": true
       },
       {
         "name": "reason",
-        "type": "uint8"
+        "type": "uint8",
+        "indexed": false
       }
-    ]
+    ],
+    "anonymous": false
   },
   "0x906f71466379a94b86a805004f5cc535b083a42e1a1582e29048cc78633d7955": {
     "name": "WithdrawExecuted",
     "params": [
       {
         "name": "proposalKey",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": true
       }
-    ]
+    ],
+    "anonymous": false
   },
   "0xdf273cb619d95419a9cd0ec88123a0538c85064229baa6363788f743fff90deb": {
     "name": "Withdrawal",
     "params": [
       {
         "name": "recepient",
-        "type": "address"
+        "type": "address",
+        "indexed": true
       },
       {
         "name": "value",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": false
       },
       {
         "name": "commission",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": false
       }
-    ]
+    ],
+    "anonymous": false
   },
   "0x05f6d87b848ee8e9475ef347b158fba4d53de0f177a5fddda1cfdbf2eec36d1e": {
     "name": "GasConsumption",
     "params": [
       {
         "name": "initialGas",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": false
       },
       {
         "name": "finalGas",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": false
       },
       {
         "name": "func",
-        "type": "string"
+        "type": "string",
+        "indexed": false
       }
-    ]
+    ],
+    "anonymous": false
   }
 }

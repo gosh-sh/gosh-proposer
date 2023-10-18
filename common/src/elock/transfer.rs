@@ -21,10 +21,26 @@ pub struct Transfer {
     pub hash: String,
 }
 
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct RootData {
+    pub name: String,
+    pub symbol: String,
+    #[serde(deserialize_with = "deserialize_uint")]
+    pub decimals: u8,
+    #[serde(rename = "ethroot")]
+    pub eth_root: String,
+}
+
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize)]
+pub struct TransferPatch {
+    pub root: RootData,
+    pub data: Transfer,
+}
+
 pub fn decode_transfer(
     tx: Transaction,
     code_sig_lookup: &BTreeMap<String, Vec<String>>,
-) -> anyhow::Result<Transfer> {
+) -> anyhow::Result<TransferPatch> {
     // Decode function call
     tracing::trace!("Decode transaction: {}", w3h::to_string(&tx.hash));
     let input_str: String = w3h::to_string(&tx.input);
@@ -74,10 +90,20 @@ pub fn decode_transfer(
     let tx_hash = w3h::to_string(&tx.hash).replace('"', "");
     let value = u128::from_str_radix(&tx_value, 16);
     let value = value?;
-    let res = Transfer {
-        hash: tx_hash,
-        pubkey: format!("0x{owner_pubkey}"),
-        value,
+
+    // Wrap eth deposit to GOSH token
+    let res = TransferPatch {
+        data: Transfer {
+                hash: tx_hash,
+                pubkey: format!("0x{owner_pubkey}"),
+                value,
+            },
+        root: RootData {
+            name: "geth".to_string(),
+            symbol: "gth".to_string(),
+            decimals: 18,
+            eth_root: "0x0000000000000000000000000000000000000000".to_string(),
+        }
     };
 
     tracing::info!("Valid transfer: {:?}", res);
@@ -89,12 +115,12 @@ pub async fn filter_and_decode_block_transactions(
     web3s: Arc<Web3<WebSocket>>,
     block: &FullBlock<H256>,
     eth_contract_address: Address,
-) -> anyhow::Result<Vec<Transfer>> {
+) -> anyhow::Result<Vec<TransferPatch>> {
     // Parse block transactions
     tracing::info!("start search of transfers");
-    let mut parallel: JoinSet<anyhow::Result<Transfer>> = JoinSet::new();
+    let mut parallel: JoinSet<anyhow::Result<TransferPatch>> = JoinSet::new();
     for transaction_hash in &block.transactions {
-        // Load transaction
+        // Load transaction in parallel
         // tracing::info!("tx: {}", w3h::to_string(transaction_hash));
         let transaction_hash = *transaction_hash;
         let web3s_clone = web3s.clone();
@@ -127,6 +153,7 @@ pub async fn filter_and_decode_block_transactions(
         });
     }
 
+    // Collect all parallel results
     let mut transfers = vec![];
     while let Some(res) = parallel.join_next().await {
         let val = res.map_err(|e| {

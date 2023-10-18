@@ -26,8 +26,8 @@ for value in mapping['abi']:
     if value["type"] == "event":
         params = []
         for input in value["inputs"]:
-            params.append({"name": input["name"], "type": input["type"]})
-        event = {"name": value["name"], "params": params}
+            params.append({"name": input["name"], "type": input["type"], "indexed": input["indexed"]})
+        event = {"name": value["name"], "params": params, "anonymous": value["anonymous"]}
         events.append(event)
 
 event_map = {}
@@ -38,7 +38,6 @@ for node in mapping["ast"]["nodes"]:
                 for event in events:
                     if event["name"] == contract_node["name"]:
                         event_map[f'0x{contract_node["eventSelector"]}'] = event
-                    #     event["selector"] = contract_node["eventSelector"]
 
 with open(OUTPUT_EVENTS, 'w') as abi_file:
     abi_file.write(json.dumps(event_map, indent=2))
