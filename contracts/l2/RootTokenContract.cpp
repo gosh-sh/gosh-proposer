@@ -59,7 +59,8 @@ public:
     uint256 eth_root,
     address_opt oldroot,
     address_opt newroot,
-    address receiver
+    address receiver,
+    address_opt trusted
   ) {
     require((root_pubkey != 0) or root_owner, error_code::define_pubkey_or_internal_owner);
     name_ = name;
@@ -74,6 +75,7 @@ public:
     newroot_ = newroot;
     ethroot_ = eth_root;
     receiver_ = receiver;
+    trusted_ = trusted;
     flag_ = false;
     money_timestamp_ = 0;
   }
@@ -224,6 +226,21 @@ public:
     dest_handle(Evers(1e9), 1).deployUpgradeWallet(pubkey, owner, tokens);
   }
 
+  void burnTokensToDao(string name, uint256 pubkey, address_opt owner, uint128 tokens) {
+    auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
+    require(trusted_.has_value(), error_code::message_sender_is_not_my_owner);
+    require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
+    tvm_accept();
+    getMoney();
+    require(total_granted_ >= tokens, error_code::not_enough_balance);
+    require(total_supply_ >= tokens, error_code::not_enough_balance);
+    total_supply_ -= tokens;
+    total_granted_ -= tokens;
+    ICheckerContractPtr dest_handle(*trusted_);
+    RootData root = {name_, symbol_, decimals_, ethroot_};
+    dest_handle(Evers(1e9), 1).returnTokenToDao(root, name, tokens);
+  }
+
   void deployUpgradeWallet(uint256 pubkey, address_opt owner, uint128 tokens) {
     require(oldroot_.has_value(), error_code::message_sender_is_not_my_owner);
     require(*oldroot_ == int_sender(), error_code::message_sender_is_not_my_owner);
@@ -293,6 +310,26 @@ public:
     IRootTokenContractPtr dest_handle_next(tvm_myaddr());
     index += 1;
     dest_handle_next(Evers(1e9), 1).grantBatchIndex(transactions, uint128(index), a, b);
+  }
+
+  void grantTrusted(
+    uint256 pubkey,
+    uint128 value
+  ) {
+    require(trusted_.has_value(), error_code::message_sender_is_not_my_owner);
+    require(*trusted_ == int_sender(), error_code::message_sender_is_not_my_owner);
+    getMoney();
+    tvm_accept(); 
+    total_supply_ += value;
+    uint128 evers = uint128(10000000000);
+    address answer_addr = address{tvm_myaddr()};
+    total_granted_ += value;
+    address_opt owner;
+    auto [wallet_init, dest_addr] = calc_wallet_init(pubkey, owner);
+    ITONTokenWalletPtr dest_handle(dest_addr);
+    opt<cell> notify;
+    dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
+    dest_handle(Evers(evers.get()), 1).acceptMint(value, answer_addr, 0u128, notify);
   } 
 
   void grant(

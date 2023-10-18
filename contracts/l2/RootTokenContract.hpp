@@ -42,6 +42,13 @@ __interface ICheckerContract {
     address_opt owner, 
     uint128 tokens, 
     uint256 to) = 1017;
+
+  [[internal]]
+  void returnTokenToDao(
+    RootData  root, 
+    string name,
+    uint128 tokens
+    ) = 1018;
 };
 using ICheckerContractPtr = handle<ICheckerContract>;
 
@@ -66,7 +73,8 @@ __interface IRootTokenContract {
     uint256 eth_root,
     address_opt oldroot_,
     address_opt newroot_,
-    address     receiver
+    address     receiver,
+    address_opt trusted
   ) = 10;
 
   /// Set wallet code.
@@ -126,6 +134,12 @@ __interface IRootTokenContract {
   ) = 1015; 
 
   [[internal, answer_id]]
+  void grantTrusted(
+    uint256 pubkey,
+    uint128 value
+  ) = 1024; 
+
+  [[internal, answer_id]]
   void askEvers(
     uint256 pubkey, 
     address_opt owner
@@ -145,6 +159,14 @@ __interface IRootTokenContract {
     address_opt owner,
     uint128 tokens
   ) = 1019;
+
+  [[internal, answer_id]]
+  void burnTokensToDao(
+    string name,
+    uint256 pubkey, 
+    address_opt owner,
+    uint128 tokens
+  ) = 1025;
 
   [[internal, answer_id]]
   void deployUpgradeWallet(
@@ -250,6 +272,7 @@ struct DRootTokenContract {
   address_opt oldroot_;
   address_opt newroot_;
   address     receiver_;
+  address_opt trusted_;
   bool        flag_;
   uint32      money_timestamp_;
 };

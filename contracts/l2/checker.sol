@@ -85,7 +85,7 @@ contract Checker {
     function deployRootContract(string name, string symbol, uint8 decimals, uint256 ethroot) public view accept {
         require(_isReady == true, ERR_WRONG_SENDER);    
         TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey(), this);
-        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null);
+        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null, _receiver, null);
     }
 
     function checkData(BlockData[] data, TransactionPatch[] transactions) public view accept {

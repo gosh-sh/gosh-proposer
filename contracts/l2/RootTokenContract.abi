@@ -20,7 +20,8 @@
     { "name":"eth_root", "type":"uint256" },
     { "name":"oldroot_", "type":"optional(address)" },
     { "name":"newroot_", "type":"optional(address)" },
-    { "name":"receiver", "type":"address" }
+    { "name":"receiver", "type":"address" },
+    { "name":"trusted", "type":"optional(address)" }
     ],
     "outputs": [
     ],
@@ -112,6 +113,17 @@
     "id": "0x3f7"
   },
   {
+    "name": "grantTrusted",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"value", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x400"
+  },
+  {
     "name": "askEvers",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
@@ -146,6 +158,19 @@
     "outputs": [
     ],
     "id": "0x3fb"
+  },
+  {
+    "name": "burnTokensToDao",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"name", "type":"string" },
+    { "name":"pubkey", "type":"uint256" },
+    { "name":"owner", "type":"optional(address)" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x401"
   },
   {
     "name": "deployUpgradeWallet",
@@ -349,6 +374,7 @@
     { "name":"oldroot_", "type":"optional(address)" },
     { "name":"newroot_", "type":"optional(address)" },
     { "name":"receiver_", "type":"address" },
+    { "name":"trusted_", "type":"optional(address)" },
     { "name":"flag_", "type":"bool" },
     { "name":"money_timestamp_", "type":"uint32" }
   ],
