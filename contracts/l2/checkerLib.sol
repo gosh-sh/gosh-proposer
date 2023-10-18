@@ -65,6 +65,7 @@ contract IRootToken {
     uint128 static burncount_;
     optional(address) static oldroot_;
     optional(address) static newroot_;
+    address static receiver_;
     bool static flag_;
     uint32 static money_timestamp_;
 
@@ -82,16 +83,16 @@ library ProposalLib {
         return address.makeAddrStd(0, tvm.hash(s1));
     }
 
-    function calculateRootAddress(TvmCell code, RootData root, uint256 pubkey) public returns(address) {
-        TvmCell s1 = composeRootStateInit(code, root.name, root.symbol, root.decimals, root.ethroot, pubkey);
+    function calculateRootAddress(TvmCell code, RootData root, uint256 pubkey, address receiver) public returns(address) {
+        TvmCell s1 = composeRootStateInit(code, root.name, root.symbol, root.decimals, root.ethroot, pubkey, receiver);
         return address.makeAddrStd(0, tvm.hash(s1));
     }
 
-    function composeRootStateInit(TvmCell code, string name, string symbol, uint8 decimals, uint256 ethroot, uint256 pubkey) public returns(TvmCell) {
+    function composeRootStateInit(TvmCell code, string name, string symbol, uint8 decimals, uint256 ethroot, uint256 pubkey, address receiver) public returns(TvmCell) {
         TvmCell s1 = tvm.buildStateInit({
             code: code,
             contr: IRootToken,
-            varInit: {name_ : name, symbol_ : symbol, decimals_ : decimals, ethroot_ : ethroot, root_pubkey_: pubkey, root_owner_: null}
+            varInit: {name_ : name, symbol_ : symbol, decimals_ : decimals, ethroot_ : ethroot, root_pubkey_: pubkey, root_owner_: null, receiver_: receiver}
         });
         return s1;
     }

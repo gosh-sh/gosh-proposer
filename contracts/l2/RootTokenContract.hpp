@@ -30,10 +30,18 @@ struct RootData {
 };
 
 __interface ICheckerContract {
-  [[internal, answer_id]]
+  [[internal]]
   void askEvers(
     RootData root
   ) = 1016;
+
+  [[internal]]
+  void burnTokens(
+    RootData  root, 
+    uint256 pubkey, 
+    address_opt owner, 
+    uint128 tokens, 
+    uint256 to) = 1017;
 };
 using ICheckerContractPtr = handle<ICheckerContract>;
 
@@ -57,7 +65,8 @@ __interface IRootTokenContract {
     address     checker,
     uint256 eth_root,
     address_opt oldroot_,
-    address_opt newroot_
+    address_opt newroot_,
+    address     receiver
   ) = 10;
 
   /// Set wallet code.
@@ -240,6 +249,7 @@ struct DRootTokenContract {
   uint128     burncount_;
   address_opt oldroot_;
   address_opt newroot_;
+  address     receiver_;
   bool        flag_;
   uint32      money_timestamp_;
 };

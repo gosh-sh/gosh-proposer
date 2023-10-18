@@ -26,6 +26,8 @@ contract Checker {
     TvmCell _proposalCode;
     TvmCell _rootCode;
 
+    address _receiver;
+
     TransactionPatch[] _transactions;
 
     bool _isReady = false;
@@ -46,12 +48,14 @@ contract Checker {
     }
     
     constructor(
-        uint256 prevhash
+        uint256 prevhash,
+        address receiver
     ) accept {
+        _receiver = receiver;
         _prevhash = prevhash;
     }
 
-    function askEvers(RootData  root) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey())) accept functionID(1016) {
+    function askEvers(RootData  root) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey(), _receiver)) accept functionID(1016) {
         msg.sender.transfer(1000 ton);
     }
 
@@ -80,7 +84,7 @@ contract Checker {
 
     function deployRootContract(string name, string symbol, uint8 decimals, uint256 ethroot) public view accept {
         require(_isReady == true, ERR_WRONG_SENDER);    
-        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey());
+        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey(), this);
         new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null);
     }
 
@@ -147,7 +151,7 @@ contract Checker {
             if (index + i >= transactions.length) { return; }
             TransactionBatch[] trans;
             trans.push(transactions[i].data);
-            ARootToken(ProposalLib.calculateRootAddress(_rootCode, transactions[i].root, tvm.pubkey())).grantbatch{value:0.3 ton, flag: 1}(0, trans, a, b);
+            ARootToken(ProposalLib.calculateRootAddress(_rootCode, transactions[i].root, tvm.pubkey(), this)).grantbatch{value:0.3 ton, flag: 1}(0, trans, a, b);
         }
         this.sendBatch{value: 0.1 ton, flag: 1}(_transactions, index + BATCH_SIZE + 1);
     }
@@ -196,7 +200,7 @@ contract Checker {
     }
 
     function getRootAddr(RootData data) external view returns(address) {
-        return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey());
+        return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey(), this);
     }
 
     function getProposalAddr(uint128 index) external view returns(address) {
@@ -215,7 +219,7 @@ contract Checker {
         return _transactions;
     }
 
-    function getStatus() external view returns(uint256 prevhash, uint128 index) {
-        return (_prevhash, _proposalCount);
+    function getStatus() external view returns(uint256 prevhash, uint128 index, address receiver) {
+        return (_prevhash, _proposalCount, _receiver);
     }
 }

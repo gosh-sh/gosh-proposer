@@ -58,7 +58,8 @@ public:
     address checker,
     uint256 eth_root,
     address_opt oldroot,
-    address_opt newroot
+    address_opt newroot,
+    address receiver
   ) {
     require((root_pubkey != 0) or root_owner, error_code::define_pubkey_or_internal_owner);
     name_ = name;
@@ -72,6 +73,7 @@ public:
     oldroot_ = oldroot;
     newroot_ = newroot;
     ethroot_ = eth_root;
+    receiver_ = receiver;
     flag_ = false;
     money_timestamp_ = 0;
   }
@@ -201,6 +203,9 @@ public:
     getMoney();
     require(total_granted_ >= tokens, error_code::not_enough_balance);
     require(total_supply_ >= tokens, error_code::not_enough_balance);
+    ICheckerContractPtr dest_handle(receiver_);
+    RootData root = {name_, symbol_, decimals_, ethroot_};
+    dest_handle(5e8, 1).burnTokens(root, pubkey, owner, tokens, to);
     total_supply_ -= tokens;
     total_granted_ -= tokens;
     burncount_ += 1;

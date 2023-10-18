@@ -13,3 +13,5 @@ set -x
 ./compiler/solc --tvm-version gosh proposal.sol
 ./compiler/tvm_linker compile --lib ./compiler/stdlib_sol.tvm proposal.code -o proposal.tvc
 
+./compiler/solc --tvm-version gosh receiver.sol
+./compiler/tvm_linker compile --lib ./compiler/stdlib_sol.tvm receiver.code -o receiver.tvc
