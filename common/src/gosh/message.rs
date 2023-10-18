@@ -71,7 +71,8 @@ pub async fn query_messages(
     start_seq_no: u128,
     end_seq_no: u128,
 ) -> anyhow::Result<Vec<Message>> {
-    tracing::info!("query transactions to root, address={root_address}");
+    tracing::info!("query transactions to receiver, address={root_address}");
+    // Prepare query request
     let query = r#"query($addr: String!, $start: Int, $end: Int, $after: String){
       blockchain {
         account(address: $addr) {
@@ -100,10 +101,12 @@ pub async fn query_messages(
     }"#
     .to_string();
 
+    // Init query variables
     let mut after = "".to_string();
     let dst_address = root_address.to_string();
     let mut result_messages = vec![];
 
+    // Start a loop to query all messages in chunks
     loop {
         let result = ton_client::net::query(
             Arc::clone(context),
@@ -120,11 +123,16 @@ pub async fn query_messages(
         .await
         .map(|r| r.result)
         .map_err(|e| anyhow::format_err!("Failed to query data: {e}"))?;
+
+        // Decode query results
         let nodes = &result["data"]["blockchain"]["account"]["transactions"];
         let nodes: Messages = serde_json::from_value(nodes.clone())
             .map_err(|e| anyhow::format_err!("Failed to deserialize query result: {e}"))?;
 
+        // Update start of the queried chunk
         after = nodes.page_info.end_cursor;
+
+        // Decode messages
         for node in nodes.edges {
             let msg = node.node.message;
             if msg.body.is_some() && msg.msg_type == 0 && !node.node.aborted {
@@ -146,6 +154,7 @@ pub async fn query_messages(
             }
         }
 
+        // Break the loop if there is no next page
         if !nodes.page_info.has_next_page {
             break;
         }

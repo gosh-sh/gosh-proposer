@@ -35,33 +35,33 @@ pub async fn create_proposal(
     context: &EverClient,
     web3s: &Web3<WebSocket>,
     elock_address: Address,
-    root_address: &str,
     elock_contract: &Contract<WebSocket>,
     key: &SecretKey,
 ) -> anyhow::Result<()> {
+    // Read last saved block hash from ELock
     let first_block = get_last_gosh_block_id(elock_address, web3s)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get last GOSH block from ELock: {e}"))?;
+    // Get seq_no for the block
     let first_seq_no = get_master_block_seq_no(context, &first_block)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get seq no for block from ETH: {e}"))?;
 
+    // Get last block from the network
     let current_master_block = get_latest_master_block(context)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get latest GOSH block: {e}"))?;
-    let burns = find_burns(
-        context,
-        root_address,
-        first_seq_no,
-        current_master_block.seq_no,
-    )
-    .await?;
+
+    // Find all burns for the specified period between blocks
+    let burns = find_burns(context, first_seq_no, current_master_block.seq_no).await?;
     tracing::info!("burns: {burns:?}");
 
     if burns.is_empty() {
         tracing::info!("There were no burns, do not create proposal");
         return Ok(());
     }
+
+    // Convert arguments for ETH contract call
     let burns =
         convert_burns(burns).map_err(|e| anyhow::format_err!("Failed to convert burns: {e}"))?;
 
@@ -74,9 +74,9 @@ pub async fn create_proposal(
             .map_err(|e| anyhow::format_err!("Failed to convert latest block to U256: {e}"))?,
     );
 
+    // Create proposal in ELock
     tracing::info!("Start call of proposeWithdrawal");
     tracing::info!("{first_block} {last_block} {burns:?}");
-
     eth::call_function(
         elock_contract,
         key,
@@ -89,6 +89,7 @@ pub async fn create_proposal(
 pub async fn get_proposals(
     elock_contract: &Contract<WebSocket>,
 ) -> anyhow::Result<Vec<ProposalData>> {
+    // Call ELock getter
     let proposals: Vec<U256> = elock_contract
         .query("getProposalList", (), None, Options::default(), None)
         .await
@@ -96,6 +97,7 @@ pub async fn get_proposals(
 
     tracing::info!("getProposalList: {proposals:?}");
 
+    // Load proposals data
     let mut res = vec![];
     for proposal in proposals {
         let proposals_data: (U256, U256, Vec<Token>) = elock_contract
@@ -109,6 +111,8 @@ pub async fn get_proposals(
             .await
             .map_err(|e| anyhow::format_err!("Failed to call ELock getter getProposal: {e}"))?;
         tracing::info!("{proposals_data:?}");
+
+        // Decode getter result
         let transfers = proposals_data
             .2
             .into_iter()
@@ -125,6 +129,7 @@ pub async fn get_proposals(
                     dest: format!("{:?}", dest),
                     value: value.as_u128(),
                     tx_id,
+                    eth_root: "".to_string(), // TODO: change to real value
                 }
             })
             .collect();
@@ -147,11 +152,7 @@ pub async fn get_proposals(
     Ok(res)
 }
 
-pub async fn check_proposal(
-    context: &EverClient,
-    root_address: &str,
-    proposal: &ProposalData,
-) -> anyhow::Result<()> {
+pub async fn check_proposal(context: &EverClient, proposal: &ProposalData) -> anyhow::Result<()> {
     tracing::info!("check proposal: {}", proposal.proposal_key);
     let start_seq_no = get_master_block_seq_no(context, &proposal.from)
         .await
@@ -165,7 +166,7 @@ pub async fn check_proposal(
         anyhow::bail!("Proposal start block seq_no is greater than end's");
     }
 
-    let burns = find_burns(context, root_address, start_seq_no, end_seq_no).await?;
+    let burns = find_burns(context, start_seq_no, end_seq_no).await?;
     tracing::info!("Found burns: {burns:?}");
     if proposal.transfers != burns {
         anyhow::bail!("list of burns in proposal is not equal to the actual one");
@@ -180,9 +181,11 @@ fn convert_burns(burns: Vec<Burn>) -> anyhow::Result<Vec<Token>> {
         let to = Token::Address(Address::from_str(&burn.dest)?);
         let value = Token::Uint(U256::from(burn.value));
         let tx_is = Token::Uint(U256::from_str(&burn.tx_id)?);
+        let eth_root = Token::Address(Address::from_str(&burn.eth_root)?);
         tuple.push(to);
         tuple.push(value);
         tuple.push(tx_is);
+        tuple.push(eth_root);
         res.push(Token::Tuple(tuple));
     }
     Ok(res)

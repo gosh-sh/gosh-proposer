@@ -8,6 +8,7 @@ macro_rules! abi {
 pub static CHECKER_ABI: &str = abi!("../../../contracts/l2/checker.abi.json");
 pub static PROPOSAL_ABI: &str = abi!("../../../contracts/l2/proposal.abi.json");
 pub static ROOT_ABI: &str = abi!("../../../contracts/l2/RootTokenContract.abi");
+pub static RECEIVER_ABI: &str = abi!("../../../contracts/l2/receiver.abi.json");
 pub static TOKEN_WALLET_ABI: &str = abi!("../../../contracts/l2/TONTokenWallet.abi");
 pub static ELOCK_ABI: &str = abi!("../../../resources/elock.abi.json");
 pub static ERC20_ABI: &str = abi!("../../../resources/erc20.abi.json");
