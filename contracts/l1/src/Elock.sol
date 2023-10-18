@@ -1,10 +1,12 @@
 pragma solidity ^0.8.13;
 
+import {IERC20} from "./IERC20.sol";
+
 contract Elock {
+    event Deposited(address indexed token, address from, uint256 pubkey, uint256 value);
     event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
     event WithdrawExecuted(uint256 indexed proposalKey);
     event Withdrawal(address indexed recepient, uint256 value, uint256 commission);
-    event GasConsumption(uint initialGas, uint finalGas, string func);
 
     uint256 constant COMMISSION_WITHDRAWAL_THRESHOLD = 0.25 ether;
     uint256 immutable glockStartBlock;
@@ -16,7 +18,7 @@ contract Elock {
     uint256 elockStartBlock; // 0x2
     uint256 public lastProcessedL2Block; // 0x3
 
-    address[] validators; // 0x4
+    mapping (address => bool) validators; // 0x4
     address[] proposedValidators; // 0x5
     uint256 validatorsProposalRound; // 0x6
 
@@ -38,6 +40,8 @@ contract Elock {
     bool isDepositsFreezed; // 0x12
     uint256 collectedCommission; // 0x13
 
+    address[] validatorsIndex;
+
     struct Transfer {
         address payable to;
         uint256 value;
@@ -55,24 +59,17 @@ contract Elock {
     error Unauthorized();
 
     modifier onlyGoshValidators {
-        if (!_isPermitedValidator(msg.sender)) {
+        if (!validators[msg.sender]) {
             revert Unauthorized();
         }
         _;
     }
 
-    modifier collectGasConsumption(string memory f) {
-        uint initialGas = gasleft();
-        _;
-        uint finalGas = gasleft();
-        emit GasConsumption(initialGas, finalGas, f);
-    }
-
     constructor(
         uint256 _initialL2Block,
         address payable _commissionWallet,
-        address[] memory _goshValidators)
-    {
+        address[] memory _goshValidators
+    ) {
         require(_initialL2Block > 0);
         require(_goshValidators.length > 0);
 
@@ -80,7 +77,10 @@ contract Elock {
         glockStartBlock = _initialL2Block;
         lastProcessedL2Block = _initialL2Block;
         commissionWallet = _commissionWallet;
-        validators = _goshValidators;
+        for (uint256 i = 0; i < _goshValidators.length; i++) {
+            validators[_goshValidators[i]] = true;
+        }
+        validatorsIndex = _goshValidators;
         votesRequired = _calcRequiredVotes(_goshValidators.length);
     }
 
@@ -89,13 +89,28 @@ contract Elock {
     /// pubkey - GOSH pubkey (32 bytes)
     function deposit(uint256 pubkey) public payable {
         require(isDepositsFreezed == false);
-        require(msg.value > 1 gwei);
+        require(msg.value > 0.01 ether);
         pubkey;
 
         unchecked {
             totalSupply += msg.value;
         }
         trxDepositCount += 1;
+        emit Deposited(address(0), msg.sender, pubkey, msg.value);
+    }
+
+    function depositERC20(address tokenRoot, uint256 value, uint256 pubkey) public payable {
+        require(isDepositsFreezed == false);
+        require(tokenRoot != address(0));
+
+        uint256 allowedAmount = IERC20(tokenRoot).allowance(msg.sender, address(this));
+        require(allowedAmount >= value, "Not approved");
+
+        bool isOk = IERC20(tokenRoot).transferFrom(msg.sender, address(this), value);
+        require(isOk, "Transfer failed");
+
+        trxDepositCount += 1;
+        emit Deposited(tokenRoot, msg.sender, pubkey, value);
     }
 
     function proposeWithdrawal(
@@ -103,7 +118,7 @@ contract Elock {
         uint256 tillBlock,
         Transfer[] calldata transfers
     )
-        public payable onlyGoshValidators() collectGasConsumption("proposeWithdrawal")
+        public payable onlyGoshValidators()
     {
         require(fromBlock == lastProcessedL2Block);
 
@@ -123,7 +138,7 @@ contract Elock {
     }
 
     function voteForWithdrawal(uint256 proposalKey)
-        public payable onlyGoshValidators() collectGasConsumption("proposeWithdrawal")
+        public payable onlyGoshValidators()
     {
         require(withdrawals[proposalKey].fromBlock != 0, "Unknown proposal key");
 
@@ -166,14 +181,14 @@ contract Elock {
             }
         } else {
             collectedVotesAgainstChangeValidators += 1;
-            if (collectedVotesAgainstChangeValidators > validators.length - votesRequired) {
+            if (collectedVotesAgainstChangeValidators > validatorsIndex.length - votesRequired) {
                 delete proposedValidators;
             }
         }
     }
 
     function freezeDeposits() public payable onlyGoshValidators() {
-        require(isDepositsFreezed == false, "Deposit already unfreezed");
+        require(isDepositsFreezed == false, "Deposit already freezed");
         require(collectedVotesForChangeValidators == 0, "Validators changing is in progress");
         require(votingForFreeze[msg.sender] != FreezeVote.Freeze);
 
@@ -220,7 +235,7 @@ contract Elock {
     }
 
     function getValidators() public view returns (address[] memory currentValidatorSet) {
-        return validators;
+        return validatorsIndex;
     }
 
     function getProposedValidators() public view returns (address[] memory proposedValidatorSet) {
@@ -231,17 +246,10 @@ contract Elock {
         return votesPerProposal[proposalKey];
     }
 
-    function getMyVoteForWithdrawal(uint256 proposalKey) public view returns (bool isVoted) {
-        return votingForWithdrawal[proposalKey][msg.sender];
-    }
-
-    function _isPermitedValidator(address caller) private view returns (bool) {
-        for (uint256 index = 0; index < validators.length; index++) {
-            if (caller == validators[index]) {
-                return true;
-            }
-        }
-        return false;
+    function getMyVoteForWithdrawal(uint256 proposalKey, address myAddress)
+        public view returns (bool isVoted)
+    {
+        return votingForWithdrawal[proposalKey][myAddress];
     }
 
     function _calcRequiredVotes(uint256 validatorsCount) private pure returns (uint256) {
@@ -249,7 +257,14 @@ contract Elock {
     }
 
     function _updateValidators() private {
-        validators = proposedValidators;
+        // TODO don't reset validators that come by proposal
+        for (uint256 i = 0; i < validatorsIndex.length; i++) {
+            delete validators[validatorsIndex[i]];
+        }
+        for (uint256 i = 0; i < proposedValidators.length; i++) {
+            validators[proposedValidators[i]] = true;
+        }
+        validatorsIndex = proposedValidators;
         votesRequired = _calcRequiredVotes(proposedValidators.length);
         delete proposedValidators;
     }
@@ -258,8 +273,8 @@ contract Elock {
         Transfer[] memory transfers = withdrawals[proposalKey].transfers;
         uint256 requiredFunds;
         uint256 validatorCosts = votingDisposalFee * tx.gasprice;
-        uint256 transactionFeeInGas =
-            21_000 * tx.gasprice + validatorCosts / transfers.length;
+        uint256 transactionFeeInGas = 21_000 * tx.gasprice + validatorCosts / transfers.length;
+
         for (uint256 index = 0; index < transfers.length; index++) {
             requiredFunds += transfers[index].value;
         }
@@ -275,13 +290,14 @@ contract Elock {
                 emit Withdrawal(transfer.to, withdrawalValue, transactionFeeInGas);
             }
 
-            trxWithdrawCount += 1;
-            totalSupply -= transfer.value;
-            collectedCommission += validatorCosts;
-            if (collectedCommission > COMMISSION_WITHDRAWAL_THRESHOLD) {
-                commissionWallet.transfer(COMMISSION_WITHDRAWAL_THRESHOLD);
-                collectedCommission -= COMMISSION_WITHDRAWAL_THRESHOLD;
-            }
+            trxWithdrawCount += 1; // TODO use temp var
+            totalSupply -= transfer.value; // TODO use temp var
+        }
+
+        collectedCommission += validatorCosts;
+        if (collectedCommission > COMMISSION_WITHDRAWAL_THRESHOLD) {
+            commissionWallet.transfer(collectedCommission - 21_000 * tx.gasprice);
+            collectedCommission = 0;
         }
         return true;
     }
@@ -296,8 +312,8 @@ contract Elock {
             delete withdrawals[key];
 
             // clear voting for selected proposal
-            for (uint256 j = 0; j < validators.length; j++) {
-                address validator = validators[j];
+            for (uint256 j = 0; j < validatorsIndex.length; j++) {
+                address validator = validatorsIndex[j];
                 delete votingForWithdrawal[key][validator];
             }
             delete votesPerProposal[key];
@@ -308,5 +324,9 @@ contract Elock {
 
     function gasPrice() public view returns (uint256) {
         return tx.gasprice;
+    }
+
+    function votedForFreezeList() public view returns (address[] memory) {
+        return votedForFreeze;
     }
 }
