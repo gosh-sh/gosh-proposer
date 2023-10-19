@@ -30,7 +30,7 @@
 			]
 		},
 		{
-			"name": "setReadyRoot",
+			"name": "setReady",
 			"inputs": [
 				{"name":"ready","type":"bool"}
 			],

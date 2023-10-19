@@ -65,7 +65,7 @@ contract Checker {
         _transactions = transactions;
     }
 
-    function setReadyRoot(bool ready) public onlyOwner accept {
+    function setReady(bool ready) public onlyOwner accept {
         _isReady = ready;
     }
 
