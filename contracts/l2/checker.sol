@@ -55,7 +55,7 @@ contract Checker {
         _prevhash = prevhash;
     }
 
-    function askEvers(RootData  root) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey(), this)) accept functionID(1016) {
+    function askEvers(RootData  root) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey(), _receiver)) accept functionID(1016) {
         msg.sender.transfer(1000 ton);
     }
 
