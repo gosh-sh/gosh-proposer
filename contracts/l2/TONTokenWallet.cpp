@@ -113,7 +113,7 @@ public:
     dest_handle(5e8, 1).burnTokensToNewRoot(wallet_pubkey_, owner_address_, tokens);
   }
 
-  void burnTokensToDao(string name, uint128 tokens) {
+  void burnTokensToDao(address systemcontract, address pubaddr, uint128 tokens) {
     check_owner({
       .allowed_for_original_owner_in_lend_state = false,
       .allowed_lend_pubkey                      = false,
@@ -124,7 +124,7 @@ public:
     require(balance_ >= tokens, error_code::not_enough_balance);
     balance_ -= tokens;
     IRootTokenContractPtr dest_handle(root_address_);
-    dest_handle(5e8, 1).burnTokensToDao(name, wallet_pubkey_, owner_address_, tokens);
+    dest_handle(5e8, 1).burnTokensToDao(systemcontract, pubaddr, wallet_pubkey_, owner_address_, tokens);
   }
 
   void lock(

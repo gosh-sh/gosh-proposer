@@ -32,7 +32,8 @@
     "name": "burnTokensToDao",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },
-    { "name":"name", "type":"string" },
+    { "name":"systemcontract", "type":"address" },
+    { "name":"pubaddr", "type":"address" },
     { "name":"tokens", "type":"uint128" }
     ],
     "outputs": [
