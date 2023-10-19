@@ -79,7 +79,7 @@ THROW 0
 GETGLOB 15
 SWAP
 GETGLOB 2
-GETGLOB 16
+MYADDR
 CALLREF {
 	.inline __ProposalLib_no_obj_calculateRootAddress_b877fe90_macro
 }

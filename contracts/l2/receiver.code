@@ -10,13 +10,64 @@ IFREF {
 GETGLOB 6
 THROWIF 51
 ENDS
-.loc receiver.sol, 26
+.loc receiver.sol, 27
 ACCEPT
 .loc receiver.sol, 0
 CALLREF {
 	.inline __c7_to_c4
 }
 THROW 0
+
+.macro setChecker
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc receiver.sol, 40
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDMSGADDR
+ENDS
+.loc receiver.sol, 0
+CALLREF {
+	.inline __setChecker_cf880f4c_internal_macro
+}
+CALLREF {
+	.inline __c7_to_c4
+}
+THROW 0
+
+.globl	setChecker_cf880f4c_internal
+.type	setChecker_cf880f4c_internal, @function
+.inline __setChecker_cf880f4c_internal_macro
+
+.macro setChecker_cf880f4c_internal_macro
+.loc receiver.sol, 22
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+GETGLOB 2
+EQUAL
+THROWIFNOT 100
+.loc receiver.sol, 27
+ACCEPT
+.loc receiver.sol, 41
+SETGLOB 11
+.loc receiver.sol, 0
 
 .macro setRootCode
 DROP
@@ -27,7 +78,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc receiver.sol, 39
+.loc receiver.sol, 44
 LDREF
 ENDS
 .loc receiver.sol, 0
@@ -44,7 +95,7 @@ THROW 0
 .inline __setRootCode_1773faee_internal_macro
 
 .macro setRootCode_1773faee_internal_macro
-.loc receiver.sol, 21
+.loc receiver.sol, 22
 GETGLOB 5
 DUP
 ISNULL
@@ -56,9 +107,9 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 100
-.loc receiver.sol, 26
+.loc receiver.sol, 27
 ACCEPT
-.loc receiver.sol, 40
+.loc receiver.sol, 45
 SETGLOB 10
 .loc receiver.sol, 0
 
@@ -71,7 +122,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc receiver.sol, 43
+.loc receiver.sol, 48
 OVER
 PUSHCONT {
 	LDREF
@@ -110,7 +161,7 @@ CALLREF {
 	.inline __burnTokens_53ebe340_internal_macro
 }
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 THROW 0
 
@@ -119,20 +170,20 @@ THROW 0
 .inline __burnTokens_53ebe340_internal_macro
 
 .macro burnTokens_53ebe340_internal_macro
-.loc receiver.sol, 43
+.loc receiver.sol, 48
 BLKDROP 4
 GETGLOB 10
 SWAP
 GETGLOB 2
-MYADDR
+GETGLOB 11
 CALLREF {
 	.inline __ProposalLib_no_obj_calculateRootAddress_b877fe90_macro
 }
-.loc receiver.sol, 31
+.loc receiver.sol, 32
 GETGLOB 9
 SDEQ
 THROWIFNOT 100
-.loc receiver.sol, 26
+.loc receiver.sol, 27
 ACCEPT
 .loc receiver.sol, 0
 
@@ -145,7 +196,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc receiver.sol, 48
+.loc receiver.sol, 53
 LDREF
 LDREF
 ENDS
@@ -154,7 +205,7 @@ CALLREF {
 	.inline __updateCode_10aae4d5_internal_macro
 }
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 THROW 0
 
@@ -163,7 +214,7 @@ THROW 0
 .inline __updateCode_10aae4d5_internal_macro
 
 .macro updateCode_10aae4d5_internal_macro
-.loc receiver.sol, 21
+.loc receiver.sol, 22
 GETGLOB 5
 DUP
 ISNULL
@@ -175,12 +226,12 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 100
-.loc receiver.sol, 26
+.loc receiver.sol, 27
 ACCEPT
-.loc receiver.sol, 49
+.loc receiver.sol, 54
 OVER
 SETCODE
-.loc receiver.sol, 50
+.loc receiver.sol, 55
 SWAP
 CTOS
 DUP
@@ -195,7 +246,7 @@ PLDREF
 CTOS
 BLESS
 POP C3
-.loc receiver.sol, 52
+.loc receiver.sol, 57
 PUSHINT $onCodeUpgrade_0e89a1b9_internal$
 PUSH C3
 EXECUTE
@@ -203,7 +254,7 @@ EXECUTE
 
 .internal-alias onCodeUpgrade_0e89a1b9_internal, 2083461128
 .internal onCodeUpgrade_0e89a1b9_internal
-.loc receiver.sol, 56
+.loc receiver.sol, 61
 DROP
 .loc receiver.sol, 0
 CALLREF {
@@ -227,7 +278,7 @@ THROWIFNOT 76
 .loc receiver.sol, 0
 DUP
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 
 .macro on_bounce_macro
@@ -237,7 +288,7 @@ THROWIFNOT 76
 .loc receiver.sol, 0
 DUP
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 
 .macro fallback_macro
@@ -246,14 +297,14 @@ THROWIFNOT 76
 .loc receiver.sol, 0
 DUP
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 
 .macro getVersion
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc receiver.sol, 74
+.loc receiver.sol, 79
 ENDS
 .loc receiver.sol, 0
 CALLREF {
@@ -285,12 +336,12 @@ PUSHCONT {
 }
 IFELSE
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 THROW 0
 
 .macro getVersion_0d8e6e2c_internal_macro
-.loc receiver.sol, 75
+.loc receiver.sol, 80
 PUSHREF {
 	.blob x7265636569766572
 }
@@ -307,7 +358,9 @@ LDU 64 ; pubkey timestamp c4
 LDU 1 ; ctor flag
 NIP
 LDREF
+LDMSGADDR
 ENDS
+SETGLOB 11
 SETGLOB 10
 SETGLOB 3
 SETGLOB 2
@@ -324,6 +377,10 @@ PUSHCONT {
 	PLDDICT ; D
 	PUSHREF {
 	}
+	PUSHREFSLICE {
+		.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+	}
+	SETGLOB 11
 	SETGLOB 10
 	PUSHINT 64
 	DICTUGET
@@ -338,6 +395,7 @@ IFREFELSE {
 }
 
 .macro c7_to_c4
+GETGLOB 11
 GETGLOB 10
 GETGLOB 3
 GETGLOB 2
@@ -346,6 +404,7 @@ STU 256
 STU 64
 STONE
 STREF
+STSLICE
 ENDC
 POPROOT
 
@@ -421,7 +480,9 @@ CTOS
 SBITS
 NEQINT 1
 SETGLOB 6
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHREFSLICE {
+	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+}
 SETGLOB 9
 OVER
 CALLREF {
@@ -1053,7 +1114,7 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1756716863
+PUSHINT 1590035614
 LEQ
 IFJMPREF {
 	DUP
@@ -1069,22 +1130,33 @@ IFJMPREF {
 		.inline __getVersion
 	}
 	DUP
+	PUSHINT 1267495045
+	EQUAL
+	IFJMPREF {
+		.inline __setChecker
+	}
+	DUP
 	PUSHINT 1590035614
 	EQUAL
 	IFJMPREF {
 		.inline __setRootCode
 	}
+}
+DUP
+PUSHINT 2095978802
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 1756716863
 	EQUAL
 	IFJMPREF {
 		.inline __constructor
 	}
-}
-DUP
-PUSHINT 2095978802
-EQUAL
-IFJMPREF {
-	.inline __updateCode
+	DUP
+	PUSHINT 2095978802
+	EQUAL
+	IFJMPREF {
+		.inline __updateCode
+	}
 }
 
