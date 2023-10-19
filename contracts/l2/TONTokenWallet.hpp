@@ -150,7 +150,8 @@ __interface ITONTokenWallet {
   TIP3_EXTERNAL
   [[internal, answer_id]]
   void burnTokensToDao(
-    string name,
+    address systemcontract,
+    address pubaddr,
     uint128 tokens
   ) = 1005;
 

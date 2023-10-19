@@ -45,8 +45,9 @@ __interface ICheckerContract {
 
   [[internal]]
   void returnTokenToDao(
+    address systemcontract,
     RootData  root, 
-    string name,
+    address pubaddr,
     uint128 tokens
     ) = 1018;
 };
@@ -162,7 +163,8 @@ __interface IRootTokenContract {
 
   [[internal, answer_id]]
   void burnTokensToDao(
-    string name,
+    address systemcontract,
+    address pubaddr,
     uint256 pubkey, 
     address_opt owner,
     uint128 tokens

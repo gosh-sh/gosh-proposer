@@ -63,6 +63,7 @@ public:
     address_opt trusted
   ) {
     require((root_pubkey != 0) or root_owner, error_code::define_pubkey_or_internal_owner);
+    tvm_accept();
     name_ = name;
     symbol_ = symbol;
     decimals_ = decimals;
@@ -78,6 +79,7 @@ public:
     trusted_ = trusted;
     flag_ = false;
     money_timestamp_ = 0;
+    getMoney();
   }
 
   void getMoney() {
@@ -226,7 +228,7 @@ public:
     dest_handle(Evers(1e9), 1).deployUpgradeWallet(pubkey, owner, tokens);
   }
 
-  void burnTokensToDao(string name, uint256 pubkey, address_opt owner, uint128 tokens) {
+  void burnTokensToDao(address systemcontract, address pubaddr, uint256 pubkey, address_opt owner, uint128 tokens) {
     auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
     require(trusted_.has_value(), error_code::message_sender_is_not_my_owner);
     require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
@@ -238,7 +240,7 @@ public:
     total_granted_ -= tokens;
     ICheckerContractPtr dest_handle(*trusted_);
     RootData root = {name_, symbol_, decimals_, ethroot_};
-    dest_handle(Evers(1e9), 1).returnTokenToDao(root, name, tokens);
+    dest_handle(Evers(1e9), 1).returnTokenToDao(systemcontract, root, pubaddr, tokens);
   }
 
   void deployUpgradeWallet(uint256 pubkey, address_opt owner, uint128 tokens) {

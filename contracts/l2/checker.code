@@ -158,7 +158,7 @@ PAIR
 SETGLOB 17
 .loc checker.sol, 0
 
-.macro setReadyRoot
+.macro setReady
 DROP
 GETGLOB 6
 THROWIFNOT 76
@@ -172,18 +172,18 @@ LDI 1
 ENDS
 .loc checker.sol, 0
 CALLREF {
-	.inline __setReadyRoot_1fd3fd3e_internal_macro
+	.inline __setReady_db3b35f6_internal_macro
 }
 CALLREF {
 	.inline __c7_to_c4
 }
 THROW 0
 
-.globl	setReadyRoot_1fd3fd3e_internal
-.type	setReadyRoot_1fd3fd3e_internal, @function
-.inline __setReadyRoot_1fd3fd3e_internal_macro
+.globl	setReady_db3b35f6_internal
+.type	setReady_db3b35f6_internal, @function
+.inline __setReady_db3b35f6_internal_macro
 
-.macro setReadyRoot_1fd3fd3e_internal_macro
+.macro setReady_db3b35f6_internal_macro
 .loc checker.sol, 36
 GETGLOB 5
 DUP
@@ -2792,7 +2792,7 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1387268623
+PUSHINT 1458284995
 LEQ
 IFJMPREF {
 	DUP
@@ -2825,7 +2825,7 @@ IFJMPREF {
 		}
 	}
 	DUP
-	PUSHINT 817710068
+	PUSHINT 838069379
 	LEQ
 	IFJMPREF {
 		DUP
@@ -2841,28 +2841,22 @@ IFJMPREF {
 			.inline __setHashRoot
 		}
 		DUP
-		PUSHINT 776690050
-		EQUAL
-		IFJMPREF {
-			.inline __setReadyRoot
-		}
-		DUP
 		PUSHINT 817710068
 		EQUAL
 		IFJMPREF {
 			.inline __checkData
 		}
-	}
-	DUP
-	PUSHINT 1071142485
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 838069379
 		EQUAL
 		IFJMPREF {
 			.inline __getProposalAddr
 		}
+	}
+	DUP
+	PUSHINT 1079346966
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 845593633
 		EQUAL
@@ -2881,17 +2875,17 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __getVersion
 		}
-	}
-	DUP
-	PUSHINT 1387268623
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 1079346966
 		EQUAL
 		IFJMPREF {
 			.inline __destroyTrash
 		}
+	}
+	DUP
+	PUSHINT 1458284995
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 1188408382
 		EQUAL
@@ -2910,18 +2904,18 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __getAllProposalAddr
 		}
+		DUP
+		PUSHINT 1458284995
+		EQUAL
+		IFJMPREF {
+			.inline __setCommission
+		}
 	}
 }
 DUP
 PUSHINT 2095978802
 LEQ
 IFJMPREF {
-	DUP
-	PUSHINT 1458284995
-	EQUAL
-	IFJMPREF {
-		.inline __setCommission
-	}
 	DUP
 	PUSHINT 1590035614
 	EQUAL
@@ -2933,6 +2927,12 @@ IFJMPREF {
 	EQUAL
 	IFJMPREF {
 		.inline __sendBatch
+	}
+	DUP
+	PUSHINT 2061617210
+	EQUAL
+	IFJMPREF {
+		.inline __setReady
 	}
 	DUP
 	PUSHINT 2095978802
