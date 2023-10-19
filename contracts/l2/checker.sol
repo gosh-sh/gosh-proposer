@@ -84,7 +84,7 @@ contract Checker {
 
     function deployRootContract(string name, string symbol, uint8 decimals, uint256 ethroot) public view accept {
         require(_isReady == true, ERR_WRONG_SENDER);    
-        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey(), this);
+        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey(), _receiver);
         new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null, _receiver, null);
     }
 
@@ -200,7 +200,7 @@ contract Checker {
     }
 
     function getRootAddr(RootData data) external view returns(address) {
-        return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey(), this);
+        return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey(), _receiver);
     }
 
     function getProposalAddr(uint128 index) external view returns(address) {

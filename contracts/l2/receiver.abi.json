@@ -11,14 +11,6 @@
 			]
 		},
 		{
-			"name": "setChecker",
-			"inputs": [
-				{"name":"checker","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "setRootCode",
 			"inputs": [
 				{"name":"code","type":"cell"}
@@ -66,7 +58,6 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
-		{"name":"_rootCode","type":"cell"},
-		{"name":"_checker","type":"address"}
+		{"name":"_rootCode","type":"cell"}
 	]
 }

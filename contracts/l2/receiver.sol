@@ -16,7 +16,6 @@ contract Receiver {
     string constant _version = "1.0.0";
 
     TvmCell _rootCode;
-    address _checker;
 
     modifier onlyOwner {
         require (msg.pubkey() == tvm.pubkey(), ERR_WRONG_SENDER) ;
@@ -37,15 +36,11 @@ contract Receiver {
     ) accept {
     }
 
-    function setChecker(address checker) public onlyOwner accept {
-        _checker = checker;
-    }
-
     function setRootCode(TvmCell code) public onlyOwner accept {
         _rootCode = code;
     }
 
-    function burnTokens(RootData  root, uint256 pubkey, optional(address) owner, uint128 tokens, uint256 to) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey(), _checker)) accept functionID(1017) {
+    function burnTokens(RootData  root, uint256 pubkey, optional(address) owner, uint128 tokens, uint256 to) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey(), this)) accept functionID(1017) {
         pubkey; owner; tokens; to;
         return;
     }
