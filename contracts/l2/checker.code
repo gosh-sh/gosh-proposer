@@ -397,7 +397,7 @@ THROWIFNOT 100
 GETGLOB 15
 BLKPUSH 4, 4
 GETGLOB 2
-MYADDR
+GETGLOB 16
 CALLREF {
 	.inline __ProposalLib_no_obj_composeRootStateInit_98ae555b_macro
 }
@@ -1249,7 +1249,7 @@ PUSHCONT {
 		}
 		FIRST
 		GETGLOB 2
-		MYADDR
+		GETGLOB 16
 		CALLREF {
 			.inline __ProposalLib_no_obj_calculateRootAddress_b877fe90_macro
 		}
@@ -1701,7 +1701,7 @@ THROW 0
 GETGLOB 15
 SWAP
 GETGLOB 2
-MYADDR
+GETGLOB 16
 CALLREF {
 	.inline __ProposalLib_no_obj_calculateRootAddress_b877fe90_macro
 }
