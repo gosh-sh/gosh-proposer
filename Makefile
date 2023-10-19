@@ -33,7 +33,7 @@ debug_run:
 
 .PHONY: test
 test:
-	cargo test -p gosh_proposer --release
+	cd tests && python test_all.py 2>&1 | tee test.log
 
 .PHONY: build
 build:

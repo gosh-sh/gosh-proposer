@@ -67,11 +67,11 @@ struct AcceptArguments {
 
 pub async fn query_messages(
     context: &EverClient,
-    root_address: &str,
+    address: &str,
     start_seq_no: u128,
     end_seq_no: u128,
 ) -> anyhow::Result<Vec<Message>> {
-    tracing::info!("query transactions to receiver, address={root_address}");
+    tracing::info!("query transactions to receiver, address={address}");
     // Prepare query request
     let query = r#"query($addr: String!, $start: Int, $end: Int, $after: String){
       blockchain {
@@ -103,7 +103,7 @@ pub async fn query_messages(
 
     // Init query variables
     let mut after = "".to_string();
-    let dst_address = root_address.to_string();
+    let dst_address = address.to_string();
     let mut result_messages = vec![];
 
     // Start a loop to query all messages in chunks

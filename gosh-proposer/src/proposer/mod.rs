@@ -43,7 +43,8 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
 
     // exit if the latest ETH block is already set
     if last_block_number <= first_block_number {
-        anyhow::bail!("Saved block in GOSH is newer than queried finalized block. {last_block_number} <= {first_block_number}");
+        tracing::info!("Saved block in GOSH is newer than queried finalized block. {last_block_number} <= {first_block_number}");
+        std::process::exit(0);
     }
 
     let mut block_diff = (last_block_number - first_block_number).as_u64();

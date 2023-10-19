@@ -23,7 +23,7 @@ pub async fn propose_blocks(
     let elock_address = get_elock_address()?;
 
     // Get starting tx counter
-    let start_block_number = blocks.last().unwrap().number.unwrap();
+    let start_block_number = blocks.last().unwrap().number.unwrap() - 1;
     let starting_tx_counter = get_tx_counter(web3s, elock_address, start_block_number)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get ELock tx counter: {e}"))?;
