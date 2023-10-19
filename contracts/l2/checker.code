@@ -1249,7 +1249,7 @@ PUSHCONT {
 		}
 		FIRST
 		GETGLOB 2
-		MYADDR
+		GETGLOB 16
 		CALLREF {
 			.inline __ProposalLib_no_obj_calculateRootAddress_b877fe90_macro
 		}

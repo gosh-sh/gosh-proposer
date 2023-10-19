@@ -151,7 +151,7 @@ contract Checker {
             if (index + i >= transactions.length) { return; }
             TransactionBatch[] trans;
             trans.push(transactions[i].data);
-            ARootToken(ProposalLib.calculateRootAddress(_rootCode, transactions[i].root, tvm.pubkey(), this)).grantbatch{value:0.3 ton, flag: 1}(0, trans, a, b);
+            ARootToken(ProposalLib.calculateRootAddress(_rootCode, transactions[i].root, tvm.pubkey(), _receiver)).grantbatch{value:0.3 ton, flag: 1}(0, trans, a, b);
         }
         this.sendBatch{value: 0.1 ton, flag: 1}(_transactions, index + BATCH_SIZE + 1);
     }
