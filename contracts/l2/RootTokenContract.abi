@@ -21,7 +21,8 @@
     { "name":"oldroot_", "type":"optional(address)" },
     { "name":"newroot_", "type":"optional(address)" },
     { "name":"receiver", "type":"address" },
-    { "name":"trusted", "type":"optional(address)" }
+    { "name":"trusted", "type":"optional(address)" },
+    { "name":"wallet_code", "type":"cell" }
     ],
     "outputs": [
     ],
