@@ -75,7 +75,8 @@ __interface IRootTokenContract {
     address_opt oldroot_,
     address_opt newroot_,
     address     receiver,
-    address_opt trusted
+    address_opt trusted,
+    cell wallet_code
   ) = 10;
 
   /// Set wallet code.
