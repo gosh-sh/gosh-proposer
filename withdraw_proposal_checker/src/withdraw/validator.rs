@@ -5,7 +5,7 @@ use common::elock::get_elock_address;
 use common::eth::create_web3_socket;
 use common::gosh::helper::create_client;
 use common::helper::abi::ELOCK_ABI;
-use common::token_root::get_root_address;
+
 use ethereum_types::BigEndianHash;
 use sha3::{Digest, Keccak256};
 use std::env;
@@ -31,32 +31,26 @@ fn get_secret() -> anyhow::Result<SecretKey> {
 }
 
 pub async fn create_new_proposal() -> anyhow::Result<()> {
+    // Create client for GOSH
     let context = create_client()?;
 
-    let root_address = get_root_address()?;
-
+    // Create client for ETH
     let web3s = create_web3_socket().await?;
 
+    // Load ELock contract
     let elock_address = get_elock_address()?;
     let elock_abi = web3::ethabi::Contract::load(ELOCK_ABI.as_bytes())
         .map_err(|e| anyhow::format_err!("Failed to load elock abi: {e}"))?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
 
+    // Load validator ETH key
     let key = get_secret()?;
 
-    create_proposal(
-        &context,
-        &web3s,
-        elock_address,
-        &root_address,
-        &elock_contract,
-        &key,
-    )
-    .await?;
+    create_proposal(&context, &web3s, elock_address, &elock_contract, &key).await?;
     Ok(())
 }
 
-pub async fn has_voted(
+async fn has_voted(
     web3s: &Web3<WebSocket>,
     elock_address: Address,
     proposal_key: &H256,
@@ -85,20 +79,13 @@ pub async fn has_voted(
 }
 
 pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
+    // Create client for GOSH
     let context = create_client()?;
 
-    let root_address = env::var("ROOT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ROOT_ADDRESS: {e}"))?;
-    tracing::info!("Root address: {root_address}");
+    // Create client for ETH
+    let web3s = create_web3_socket().await?;
 
-    let websocket = WebSocket::new(
-        &env::var("ETH_NETWORK")
-            .map_err(|e| anyhow::format_err!("Failed to get env ETH_NETWORK: {e}"))?,
-    )
-    .await
-    .map_err(|e| anyhow::format_err!("Failed to create websocket: {e}"))?;
-    let web3s = Web3::new(websocket);
-
+    // Load ELock contract
     let elock_address_str = env::var("ETH_CONTRACT_ADDRESS")
         .map_err(|e| anyhow::format_err!("Failed to get env ETH_CONTRACT_ADDRESS: {e}"))?;
     tracing::info!("elock address: {elock_address_str}");
@@ -108,23 +95,24 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to convert ETH address: {e}"))?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
 
+    // Load validator's ETH key
     let key = get_secret()?;
 
+    // Load Validators wallet address
     let validator_address_str = env::var("ETH_VALIDATOR_CONTRACT_ADDRESS").map_err(|e| {
         anyhow::format_err!("Failed to get env ETH_VALIDATOR_CONTRACT_ADDRESS: {e}")
     })?;
+
+    // Format address
     let validator_address = Address::from_str(&validator_address_str)
         .map_err(|e| anyhow::format_err!("Failed to convert ETH address: {e}"))?;
     let validator_address_bytes = validator_address.to_fixed_bytes();
     let mut validator_address_padded = [0_u8; 32];
-    // for i in 0..20 {
-    //     validator_address_padded[i + 12] = validator_address_bytes[i];
-    // }
     validator_address_padded[12..].copy_from_slice(&validator_address_bytes[..]);
-
     let validator_address = H256::from(validator_address_padded);
     tracing::info!("validator_address: {validator_address:?}");
 
+    // Get list of proposals from ELock
     let current_proposals = get_proposals(&elock_contract).await?;
     for proposal in current_proposals {
         match has_voted(
@@ -146,7 +134,7 @@ pub async fn check_proposals_and_accept() -> anyhow::Result<()> {
                 continue;
             }
         };
-        match check_proposal(&context, &root_address, &proposal).await {
+        match check_proposal(&context, &proposal).await {
             Ok(()) => {
                 vote_for_withdrawal(proposal.proposal_key, &elock_contract, &key).await?;
             }

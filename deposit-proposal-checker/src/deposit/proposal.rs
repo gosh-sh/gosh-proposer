@@ -3,7 +3,7 @@ use common::gosh::helper::EverClient;
 use common::helper::abi::{CHECKER_ABI, PROPOSAL_ABI};
 use common::helper::deserialize_uint;
 use common::{
-    elock::transfer::Transfer,
+    elock::transfer::TransferPatch,
     gosh::{call_function, call_getter},
 };
 use serde::Deserialize;
@@ -21,7 +21,7 @@ pub struct ProposalDetails {
     pub hash: String,
     #[serde(rename = "newhash")]
     pub new_hash: String,
-    pub transactions: Vec<Transfer>,
+    pub transactions: Vec<TransferPatch>,
     #[serde(deserialize_with = "deserialize_uint")]
     pub index: u128,
     #[serde(deserialize_with = "deserialize_uint")]
@@ -42,8 +42,10 @@ struct GetValidatorIdResult {
 }
 
 pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Result<Vec<Proposal>> {
+    // Load checker address
     let checker_address = get_checker_address()?;
 
+    // Call checker to get all proposals
     let proposal_addresses: AllProposals = call_getter(
         context,
         &checker_address,
@@ -63,6 +65,8 @@ pub async fn find_proposals(context: &EverClient, pubkey: String) -> anyhow::Res
             tracing::info!("There are {val} proposals in the checker contract.");
         }
     };
+
+    // Check whether proposal is valid and get its details
     let mut res = vec![];
     for proposal_address in proposal_addresses.addresses {
         let id = match get_validator_id(context, &proposal_address, &pubkey).await {

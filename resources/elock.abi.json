@@ -29,25 +29,31 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "initialGas",
+        "name": "pubkey",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "finalGas",
+        "name": "value",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "func",
-        "type": "string"
       }
     ],
-    "name": "GasConsumption",
+    "name": "Deposited",
     "type": "event"
   },
   {
@@ -127,6 +133,29 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tokenRoot",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pubkey",
+        "type": "uint256"
+      }
+    ],
+    "name": "depositERC20",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "freezeDeposits",
     "outputs": [],
@@ -152,6 +181,11 @@
         "internalType": "uint256",
         "name": "proposalKey",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "myAddress",
+        "type": "address"
       }
     ],
     "name": "getMyVoteForWithdrawal",
@@ -405,6 +439,19 @@
     "name": "voteForWithdrawal",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "votedForFreezeList",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

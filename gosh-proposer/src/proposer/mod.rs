@@ -3,7 +3,6 @@ use common::eth::{create_web3_socket, read_block};
 use common::gosh::helper::create_client;
 use std::env;
 use std::str::FromStr;
-use std::sync::Arc;
 
 use common::checker::{get_block_from_checker, get_checker_address};
 use web3::types::{BlockId, BlockNumber};
@@ -22,7 +21,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     // Get checker address
     let checker_address = get_checker_address()?;
 
-    // Oldest saved block hash from GOSH checker
+    // Get oldest saved block hash from GOSH checker
     let first_block_hash = get_block_from_checker(&client, &checker_address).await?;
     let first_block_number = read_block(&web3s, BlockId::Hash(first_block_hash))
         .await?
@@ -34,7 +33,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
 
     tracing::info!("Saved block number: {}", first_block_number.as_u64());
 
-    // Start proposing from the latest block
+    // Get the latest GOSH block
     let mut block_id = BlockId::Number(BlockNumber::Finalized);
     let last_block_number = read_block(&web3s, block_id)
         .await?
@@ -44,7 +43,8 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
 
     // exit if the latest ETH block is already set
     if last_block_number <= first_block_number {
-        anyhow::bail!("Saved block in GOSH is newer than queried finalized block. {last_block_number} <= {first_block_number}");
+        tracing::info!("Saved block in GOSH is newer than queried finalized block. {last_block_number} <= {first_block_number}");
+        std::process::exit(0);
     }
 
     let mut block_diff = (last_block_number - first_block_number).as_u64();
@@ -53,7 +53,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
         web3::helpers::to_string(&block_diff)
     );
 
-    // Get maximum block amount for one messages
+    // Get maximum block amount for one message
     let max_blocks = env::var("MAX_BLOCK_IN_ONE_CHUNK")
         .ok()
         .and_then(|s| u64::from_str(&s).ok())
@@ -77,7 +77,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
         blocks.push(next_block);
     }
 
-    // Check that we reached the last saved block break the loop
+    // Check that we reached the last saved block
     assert_eq!(
         blocks.last().unwrap().parent_hash,
         first_block_hash,
@@ -85,8 +85,7 @@ pub async fn propose_eth_blocks() -> anyhow::Result<()> {
     );
 
     // get transfers for queried blocks and propose them
-    let web3s = Arc::new(web3s);
-    propose_blocks(web3s, &client, blocks, &checker_address, first_block_number).await?;
+    propose_blocks(&web3s, &client, blocks, &checker_address).await?;
 
     Ok(())
 }

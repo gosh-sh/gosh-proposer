@@ -134,13 +134,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
     let gosh_block_diff = current_master_block.seq_no - first_seq_no;
 
-    let burns = find_burns(
-        &gosh_context,
-        &root_address,
-        first_seq_no,
-        current_master_block.seq_no,
-    )
-    .await?;
+    let burns = find_burns(&gosh_context, first_seq_no, current_master_block.seq_no).await?;
 
     let queued_burns_cnt = burns.len();
     let mut queued_burns_total_value = 0;

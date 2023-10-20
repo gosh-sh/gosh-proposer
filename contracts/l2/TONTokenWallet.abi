@@ -29,6 +29,18 @@
     "id": "0x3ec"
   },
   {
+    "name": "burnTokensToDao",
+    "inputs": [
+    { "name":"_answer_id", "type":"uint32" },
+    { "name":"systemcontract", "type":"address" },
+    { "name":"pubaddr", "type":"address" },
+    { "name":"tokens", "type":"uint128" }
+    ],
+    "outputs": [
+    ],
+    "id": "0x3ed"
+  },
+  {
     "name": "lock",
     "inputs": [
     { "name":"_answer_id", "type":"uint32" },

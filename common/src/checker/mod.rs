@@ -9,10 +9,12 @@ use web3::types::H256;
 
 #[derive(Deserialize)]
 struct Status {
-    prevhash: String,
+    #[serde(rename = "prevhash")]
+    prev_hash: String,
     #[serde(deserialize_with = "deserialize_uint")]
     #[serde(rename = "index")]
     _index: u128,
+    receiver: String,
 }
 
 pub async fn get_block_from_checker(
@@ -20,10 +22,11 @@ pub async fn get_block_from_checker(
     checker_address: &str,
 ) -> anyhow::Result<H256> {
     tracing::info!("get last ETH block from checker {checker_address}");
-    let status: Status =
-        call_getter(client, checker_address, CHECKER_ABI, "getStatus", None).await?;
+    let status: Status = call_getter(client, checker_address, CHECKER_ABI, "getStatus", None)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to read status of checker: {e}"))?;
 
-    H256::from_str(&status.prevhash)
+    H256::from_str(&status.prev_hash)
         .map_err(|e| anyhow::format_err!("Failed to convert prev hash: {e}"))
 }
 
@@ -32,4 +35,13 @@ pub fn get_checker_address() -> anyhow::Result<String> {
         .map_err(|e| anyhow::format_err!("Failed to get env CHECKER_ADDRESS: {e}"))?;
     tracing::info!("Checker address: {address}");
     Ok(address)
+}
+
+pub async fn get_receiver_address(client: &EverClient) -> anyhow::Result<String> {
+    let checker_address = get_checker_address()?;
+    tracing::info!("get receiver address from checker {checker_address}");
+    let status: Status = call_getter(client, &checker_address, CHECKER_ABI, "getStatus", None)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to read status of checker: {e}"))?;
+    Ok(status.receiver)
 }

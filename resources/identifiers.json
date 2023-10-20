@@ -2,14 +2,17 @@
   "b6b55f25": [
     "deposit(uint256)"
   ],
+  "21425ee0": [
+    "depositERC20(address,uint256,uint256)"
+  ],
   "bcb999ca": [
     "freezeDeposits()"
   ],
   "fe173b97": [
     "gasPrice()"
   ],
-  "afc20615": [
-    "getMyVoteForWithdrawal(uint256)"
+  "775087f2": [
+    "getMyVoteForWithdrawal(uint256,address)"
   ],
   "c7f758a8": [
     "getProposal(uint256)"
@@ -52,5 +55,8 @@
   ],
   "bb1b2ba2": [
     "voteForWithdrawal(uint256)"
+  ],
+  "a2e22f0e": [
+    "votedForFreezeList()"
   ]
 }
