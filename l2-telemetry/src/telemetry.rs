@@ -116,7 +116,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     tracing::info!("Get telemetry");
     let gosh_context = create_client()?;
     let web3s = create_web3_socket().await?;
-    let root_address = get_root_address()?;
+    // let root_address = get_root_address()?;
     let checker_address = get_checker_address()?;
     let elock_address = get_elock_address()?;
     let elock_abi = web3::ethabi::Contract::load(ELOCK_ABI.as_bytes())?;
@@ -240,15 +240,16 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         validators_balances.insert(validator, balance.as_u128());
     }
 
-    let glock_total_supply: GetTotalSupplyResult = call_getter(
-        &gosh_context,
-        &root_address,
-        ROOT_ABI,
-        "getTotalSupply",
-        None,
-    )
-    .await?;
-    let glock_total_supply = glock_total_supply.value;
+    // let glock_total_supply: GetTotalSupplyResult = call_getter(
+    //     &gosh_context,
+    //     &root_address,
+    //     ROOT_ABI,
+    //     "getTotalSupply",
+    //     None,
+    // )
+    // .await?;
+    // let glock_total_supply = glock_total_supply.value;
+    let glock_total_supply = 0;
 
     let elock_collected_commissions = get_storage(
         &web3s,
@@ -264,9 +265,9 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     let elock_collected_commissions =
         U256::from_str_radix(&elock_collected_commissions_str, 16)?.as_u128();
 
-    let wallet_address = get_root_owner_address(&gosh_context, &root_address).await?;
+    // let wallet_address = get_root_owner_address(&gosh_context, &root_address).await?;
 
-    let glock_current_commissions = get_wallet_balance(&gosh_context, &wallet_address).await?;
+    let glock_current_commissions = 0; //get_wallet_balance(&gosh_context, &wallet_address).await?;
 
     let current_eth_gas_price = web3s.eth().gas_price().await?.as_u128();
 
@@ -280,8 +281,8 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         0
     };
 
-    let glock_total_commissions =
-        get_token_wallet_total_mint(&gosh_context, &wallet_address).await?;
+    let glock_total_commissions = 0;
+        // get_token_wallet_total_mint(&gosh_context, &wallet_address).await?;
 
     let telemetry = Telemetry {
         glock_eth_block: first_block_number.as_u64(),

@@ -3,7 +3,7 @@ mod gosh;
 
 use crate::helper::deserialize_uint;
 pub use gosh::{
-    get_root_address, get_root_owner_address, get_root_owner_balance, get_wallet_balance,
+    get_root_address, get_root_owner_address, get_root_owner_balance, get_wallet_balance,is_root_active,deploy_root
 };
 use serde::{Deserialize, Deserializer, Serialize, de::Error};
 use web3::types::Address;

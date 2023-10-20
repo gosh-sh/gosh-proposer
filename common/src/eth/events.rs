@@ -194,6 +194,12 @@ fn decode_argument(
     };
     match param.param_type.as_str() {
         "address" => Ok(trimmed_data[24..64].to_string()),
+        "uint8" => {
+            let u_param = U256::from_str(&trimmed_data)?;
+            let str_param = web3::helpers::to_string(&u_param).replace('"', "");
+
+            Ok(format!("{str_param}"))
+        }
         "uint256" => {
             let u_param = H256::from_str(&trimmed_data)?;
             let str_param = web3::helpers::to_string(&u_param).replace('"', "");

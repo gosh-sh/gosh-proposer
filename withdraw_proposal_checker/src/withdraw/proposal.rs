@@ -118,9 +118,10 @@ pub async fn get_proposals(
             .into_iter()
             .map(|val| {
                 let vals = val.into_tuple().unwrap();
-                let dest = vals[0].clone().into_address().unwrap();
-                let value = vals[1].clone().into_uint().unwrap();
-                let hash = H256::from_uint(&vals[2].clone().into_uint().unwrap());
+                let eth_root = vals[0].clone().into_address().unwrap();
+                let dest = vals[1].clone().into_address().unwrap();
+                let value = vals[2].clone().into_uint().unwrap();
+                let hash = H256::from_uint(&vals[3].clone().into_uint().unwrap());
                 let tx_id = web3::helpers::to_string(&hash)
                     .replace('"', "")
                     .trim_start_matches("0x")
@@ -129,7 +130,7 @@ pub async fn get_proposals(
                     dest: format!("{:?}", dest),
                     value: value.as_u128(),
                     tx_id,
-                    eth_root: "".to_string(), // TODO: change to real value
+                    eth_root: web3::helpers::to_string(&eth_root).replace('"', ""),
                 }
             })
             .collect();
@@ -182,10 +183,10 @@ fn convert_burns(burns: Vec<Burn>) -> anyhow::Result<Vec<Token>> {
         let value = Token::Uint(U256::from(burn.value));
         let tx_is = Token::Uint(U256::from_str(&burn.tx_id)?);
         let eth_root = Token::Address(Address::from_str(&burn.eth_root)?);
+        tuple.push(eth_root);
         tuple.push(to);
         tuple.push(value);
         tuple.push(tx_is);
-        tuple.push(eth_root);
         res.push(Token::Tuple(tuple));
     }
     Ok(res)

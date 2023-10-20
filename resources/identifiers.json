@@ -35,8 +35,8 @@
   "d00f128b": [
     "proposeChangeValidators(address[])"
   ],
-  "24862ea9": [
-    "proposeWithdrawal(uint256,uint256,(address,uint256,uint256)[])"
+  "438f3b24": [
+    "proposeWithdrawal(uint256,uint256,(address,address,uint256,uint256)[])"
   ],
   "18160ddd": [
     "totalSupply()"

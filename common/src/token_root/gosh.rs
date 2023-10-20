@@ -1,4 +1,4 @@
-use crate::gosh::call_getter;
+use crate::gosh::{call_getter, call_function};
 use crate::gosh::helper::EverClient;
 use crate::helper::{
     abi::{ROOT_ABI, TOKEN_WALLET_ABI},
@@ -6,7 +6,20 @@ use crate::helper::{
 };
 use serde::Deserialize;
 use serde_json::json;
-use std::env;
+use crate::helper::abi::CHECKER_ABI;
+use crate::token_root::RootData;
+
+#[derive(Deserialize)]
+struct GetRootAddrResult {
+    #[serde(rename = "value0")]
+    address: String,
+}
+
+#[derive(Deserialize)]
+struct GetNameResult {
+    #[serde(rename = "value0")]
+    name: String,
+}
 
 #[derive(Deserialize)]
 struct GetRootPubkeyResult {
@@ -96,13 +109,6 @@ struct WalletDetails {
     _workchain_id: i8,
 }
 
-pub fn get_root_address() -> anyhow::Result<String> {
-    let root_address = env::var("ROOT_ADDRESS")
-        .map_err(|e| anyhow::format_err!("Failed to get env ROOT_ADDRESS: {e}"))?;
-    tracing::info!("Root address: {root_address}");
-    Ok(root_address)
-}
-
 pub async fn get_root_owner_address(
     gosh_context: &EverClient,
     root_address: &str,
@@ -146,4 +152,76 @@ pub async fn get_root_owner_balance(
 ) -> anyhow::Result<u128> {
     let wallet_address = get_root_owner_address(gosh_context, root_address).await?;
     get_wallet_balance(gosh_context, &wallet_address).await
+}
+
+pub async fn get_root_address(
+    gosh_context: &EverClient,
+    checker_address: &str,
+    root_data: &RootData,
+) -> anyhow::Result<String> {
+    tracing::info!("Get root address: checker_address={checker_address} root_data={root_data:?}");
+    let root: GetRootAddrResult = call_getter(
+        gosh_context,
+        checker_address,
+        CHECKER_ABI,
+        "getRootAddr",
+        Some(json!({"data": root_data})),
+    )
+        .await?;
+    Ok(root.address)
+}
+
+pub async fn is_root_active(
+    gosh_context: &EverClient,
+    checker_address: &str,
+    root_data: &RootData,
+) -> anyhow::Result<bool> {
+    tracing::info!("Is root active: checker_address={checker_address} root_data={root_data:?}");
+    let root_address = get_root_address(
+        gosh_context,
+        checker_address,
+        root_data
+    ).await?;
+    let res: anyhow::Result<GetNameResult> = call_getter(
+        gosh_context,
+        &root_address,
+        ROOT_ABI,
+        "getName",
+        None,
+    ).await;
+    match res {
+        Err(e) => {
+            tracing::info!("Failed to call root getter: {e}");
+            Ok(false)
+        }
+        Ok(res) => {
+            assert_eq!(res.name, root_data.name,
+                       "Root contract name getter does not match expected");
+            Ok(true)
+        }
+    }
+}
+
+pub async fn deploy_root(
+    gosh_context: &EverClient,
+    checker_address: &str,
+    root_data: &RootData,
+) -> anyhow::Result<()> {
+    let eth_root = web3::helpers::to_string(&root_data.eth_root)
+        .replace('"', "")
+        .trim_start_matches("0x").to_string();
+    let eth_root = format!("0x000000000000000000000000{}", eth_root);
+    call_function(
+        gosh_context,
+        checker_address,
+        CHECKER_ABI,
+        None,
+        "deployRootContract",
+        Some(json!({
+            "name": root_data.name,
+            "symbol": root_data.symbol,
+            "decimals": root_data.decimals,
+            "ethroot": eth_root
+        })),
+    ).await
 }
