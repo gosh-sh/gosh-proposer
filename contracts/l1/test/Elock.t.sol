@@ -18,9 +18,12 @@ contract ElockTest is Test {
     uint256 startGlockBlock;
     uint256 gasPrice;
 
-    event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
+    address constant ETH = address(0);
+
+    event Deposited(address indexed token, address from, uint256 pubkey, uint256 value);
+    event Withdrawal(address indexed token, address indexed to, uint256 value, uint256 commission);
     event WithdrawExecuted(uint256 indexed proposalKey);
-    event Withdrawal(address indexed recepient, uint256 value, uint256 commission);
+    event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
 
     function setUp() public {
         startGlockBlock = 0x1ace7b2f05e684509d1e93c045eff589aa2c1f27477f9bbdce66b2f0ff8746a1;
@@ -41,9 +44,11 @@ contract ElockTest is Test {
         assertEq(validators[1], validator2.addr);
     }
 
-    function test_totalSupply() public {
+    function test_depositedEth() public {
         assertEq(elock.totalSupply(), 0);
 
+        vm.expectEmit(true, true, true, true);
+        emit Deposited(address(0), owner, 100, 1 ether);
         elock.deposit{value: 1 ether}(100);
         assertEq(elock.totalSupply(), 1 ether);
 
@@ -77,6 +82,7 @@ contract ElockTest is Test {
         uint256 fromBlock = elock.lastProcessedL2Block();
         uint256 tillBlock = 2;
         Elock.Transfer memory transfer1 = Elock.Transfer({
+            token: address(0),
             to: payable(address(this)),
             value: 0.5 ether,
             trxHash: 0xbeef
@@ -112,7 +118,12 @@ contract ElockTest is Test {
 
         // propose withdrawal
         Elock.Transfer[] memory transfers = new Elock.Transfer[](1);
-        transfers[0] = Elock.Transfer(payable(user2.addr), user_deposit, user_goshPubkey);
+        transfers[0] = Elock.Transfer(
+            address(0),
+            payable(user2.addr),
+            user_deposit,
+            user_goshPubkey
+        );
         vm.prank(validator1.addr);
         elock.proposeWithdrawal(blockA, blockB1, transfers);
         uint256[] memory proposalKeys = elock.getProposalList();
@@ -136,9 +147,9 @@ contract ElockTest is Test {
         assertEq(address(user2.addr).balance, 0);
 
         uint expectedCommission = calcExpectedCommission(transfers);
-        vm.expectEmit(true, false, false, true);
-        emit Withdrawal(user2.addr, user_deposit - expectedCommission, expectedCommission);
-        vm.expectEmit(true, false, false, false);
+        vm.expectEmit(true, true, false, true);
+        emit Withdrawal(address(0), user2.addr, user_deposit - expectedCommission, expectedCommission);
+        vm.expectEmit(true, true, false, false);
         emit WithdrawExecuted(proposalKey);
 
         // vote for proposal as `validator1`
@@ -229,7 +240,7 @@ contract ElockTest is Test {
 
         transfers = new Elock.Transfer[](count);
         for (uint256 i = 0; i < count; i++) {
-            transfers[i] = Elock.Transfer(users[i], values[i], txn[i]);
+            transfers[i] = Elock.Transfer(address(0), users[i], values[i], txn[i]);
         }
 
         return transfers;

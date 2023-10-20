@@ -4,11 +4,12 @@ import {IERC20} from "./IERC20.sol";
 
 contract Elock {
     event Deposited(address indexed token, address from, uint256 pubkey, uint256 value);
-    event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
+    event Withdrawal(address indexed token, address indexed to, uint256 value, uint256 commission);
     event WithdrawExecuted(uint256 indexed proposalKey);
-    event Withdrawal(address indexed recepient, uint256 value, uint256 commission);
+    event WithdrawRejected(uint256 indexed proposalKey, address indexed voter, uint8 reason);
 
     uint256 constant COMMISSION_WITHDRAWAL_THRESHOLD = 0.25 ether;
+    address constant ETH = address(0);
     uint256 immutable glockStartBlock;
     address payable immutable commissionWallet;
 
@@ -43,6 +44,7 @@ contract Elock {
     address[] validatorsIndex;
 
     struct Transfer {
+        address token;
         address payable to;
         uint256 value;
         uint256 trxHash;
@@ -284,14 +286,16 @@ contract Elock {
 
         for (uint256 index = 0; index < transfers.length; index++) {
             Transfer memory transfer = transfers[index];
-            if (transfer.value > transactionFeeInGas) {
-                uint256 withdrawalValue = transfer.value - transactionFeeInGas;
-                transfer.to.transfer(withdrawalValue);
-                emit Withdrawal(transfer.to, withdrawalValue, transactionFeeInGas);
-            }
+            if (transfer.token == ETH) { // ETH withdrawal
+                if (transfer.value > transactionFeeInGas) {
+                    uint256 withdrawalValue = transfer.value - transactionFeeInGas;
+                    transfer.to.transfer(withdrawalValue);
+                    emit Withdrawal(transfer.token, transfer.to, withdrawalValue, transactionFeeInGas);
+                }
 
-            trxWithdrawCount += 1; // TODO use temp var
-            totalSupply -= transfer.value; // TODO use temp var
+                trxWithdrawCount += 1; // TODO use temp var
+                totalSupply -= transfer.value; // TODO use temp var
+            }
         }
 
         collectedCommission += validatorCosts;
