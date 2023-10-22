@@ -25,7 +25,7 @@ pub async fn propose_blocks(
     let elock_address = get_elock_address()?;
 
     // Get starting tx counter
-    let start_block_number = blocks.last().unwrap().number.unwrap() - 1;
+    let start_block_number = blocks.last().unwrap().number.unwrap();
     let starting_tx_counter = get_tx_counter(web3s, elock_address, start_block_number)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get ELock tx counter: {e}"))?;
@@ -39,6 +39,7 @@ pub async fn propose_blocks(
 
     let all_transfers: Vec<TransferPatch> = if final_tx_counter != starting_tx_counter {
         let transfers = get_deposits(web3s, elock_address, start_block_number, final_block_number).await?;
+        assert_eq!(transfers.len(), (final_tx_counter - starting_tx_counter).as_usize(), "Number of deposits does not match tx counter");
         check_roots(client, checker_address, &transfers).await?;
         transfers
     } else {
