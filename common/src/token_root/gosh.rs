@@ -1,13 +1,13 @@
-use crate::gosh::{call_getter, call_function};
 use crate::gosh::helper::EverClient;
+use crate::gosh::{call_function, call_getter};
+use crate::helper::abi::CHECKER_ABI;
 use crate::helper::{
     abi::{ROOT_ABI, TOKEN_WALLET_ABI},
     deserialize_uint,
 };
+use crate::token_root::RootData;
 use serde::Deserialize;
 use serde_json::json;
-use crate::helper::abi::CHECKER_ABI;
-use crate::token_root::RootData;
 
 #[derive(Deserialize)]
 struct GetRootAddrResult {
@@ -167,7 +167,7 @@ pub async fn get_root_address(
         "getRootAddr",
         Some(json!({"data": root_data})),
     )
-        .await?;
+    .await?;
     Ok(root.address)
 }
 
@@ -177,26 +177,19 @@ pub async fn is_root_active(
     root_data: &RootData,
 ) -> anyhow::Result<bool> {
     tracing::info!("Is root active: checker_address={checker_address} root_data={root_data:?}");
-    let root_address = get_root_address(
-        gosh_context,
-        checker_address,
-        root_data
-    ).await?;
-    let res: anyhow::Result<GetNameResult> = call_getter(
-        gosh_context,
-        &root_address,
-        ROOT_ABI,
-        "getName",
-        None,
-    ).await;
+    let root_address = get_root_address(gosh_context, checker_address, root_data).await?;
+    let res: anyhow::Result<GetNameResult> =
+        call_getter(gosh_context, &root_address, ROOT_ABI, "getName", None).await;
     match res {
         Err(e) => {
             tracing::info!("Failed to call root getter: {e}");
             Ok(false)
         }
         Ok(res) => {
-            assert_eq!(res.name, root_data.name,
-                       "Root contract name getter does not match expected");
+            assert_eq!(
+                res.name, root_data.name,
+                "Root contract name getter does not match expected"
+            );
             Ok(true)
         }
     }
@@ -209,7 +202,8 @@ pub async fn deploy_root(
 ) -> anyhow::Result<()> {
     let eth_root = web3::helpers::to_string(&root_data.eth_root)
         .replace('"', "")
-        .trim_start_matches("0x").to_string();
+        .trim_start_matches("0x")
+        .to_string();
     let eth_root = format!("0x000000000000000000000000{}", eth_root);
     call_function(
         gosh_context,
@@ -223,5 +217,6 @@ pub async fn deploy_root(
             "decimals": root_data.decimals,
             "ethroot": eth_root
         })),
-    ).await
+    )
+    .await
 }

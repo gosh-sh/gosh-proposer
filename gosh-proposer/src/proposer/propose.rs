@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use common::elock::deposit::get_deposits;
 use common::elock::transfer::TransferPatch;
 use common::elock::{get_elock_address, get_tx_counter};
@@ -7,11 +6,12 @@ use common::eth::FullBlock;
 use common::gosh::call_function;
 use common::gosh::helper::EverClient;
 use common::helper::abi::CHECKER_ABI;
+use common::token_root::{deploy_root, is_root_active};
 use serde_json::json;
+use std::collections::HashSet;
 use web3::transports::WebSocket;
 use web3::types::H256;
 use web3::Web3;
-use common::token_root::{deploy_root, is_root_active};
 
 pub async fn propose_blocks(
     web3s: &Web3<WebSocket>,
@@ -38,8 +38,13 @@ pub async fn propose_blocks(
     tracing::info!("Final tx counter on {final_block_number}: {final_tx_counter}");
 
     let all_transfers: Vec<TransferPatch> = if final_tx_counter != starting_tx_counter {
-        let transfers = get_deposits(web3s, elock_address, start_block_number, final_block_number).await?;
-        assert_eq!(transfers.len(), (final_tx_counter - starting_tx_counter).as_usize(), "Number of deposits does not match tx counter");
+        let transfers =
+            get_deposits(web3s, elock_address, start_block_number, final_block_number).await?;
+        assert_eq!(
+            transfers.len(),
+            (final_tx_counter - starting_tx_counter).as_usize(),
+            "Number of deposits does not match tx counter"
+        );
         check_roots(client, checker_address, &transfers).await?;
         transfers
     } else {
@@ -90,7 +95,7 @@ async fn check_roots(
         let token_root = web3::helpers::to_string(&transfer.root.eth_root).replace('"', "");
         if !deployed_roots.contains(&token_root) {
             match is_root_active(gosh_context, checker_address, &transfer.root).await {
-                Ok(true) => {},
+                Ok(true) => {}
                 _ => {
                     deploy_root(gosh_context, checker_address, &transfer.root).await?;
                 }

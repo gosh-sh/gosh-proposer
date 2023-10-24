@@ -11,12 +11,14 @@ use common::gosh::helper::create_client;
 use common::gosh::message::get_token_wallet_total_mint;
 use common::helper::abi::{CHECKER_ABI, ELOCK_ABI, PROPOSAL_ABI, ROOT_ABI};
 use common::helper::deserialize_uint;
-use common::token_root::{get_root_address, get_root_owner_address, get_wallet_balance};
+use common::token_root::eth::{get_geth_root_data, get_root_data};
+use common::token_root::{get_root_address, get_root_owner_address, get_wallet_balance, RootData};
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::json;
 use std::collections::HashMap;
 use web3::contract::{Contract, Options};
 use web3::types::{Address, BlockId, BlockNumber, U256};
+use std::str::FromStr;
 
 const COLLECTED_COMMISSIONS_INDEX: u8 = 0x13;
 const ELOCK_WITHDRAWAL_COMMISSION: u128 = 400_000;
@@ -29,6 +31,13 @@ where
     // let eth = wei_to_eth(U256::from(*val));
     // s.serialize_f64(eth)
     s.serialize_u128(*val)
+}
+
+#[derive(Serialize, Clone)]
+struct BurnStatistic {
+    root: RootData,
+    total_value: u128,
+    cnt: usize,
 }
 
 #[derive(Serialize)]
@@ -46,6 +55,7 @@ struct Telemetry {
     queued_burns_cnt: usize,
     #[serde(serialize_with = "round_serialize")]
     queued_burns_total_value: u128,
+    all_burns: Vec<BurnStatistic>,
 
     elock_deposit_counter: u128,
     elock_withdrawal_counter: u128,
@@ -115,9 +125,11 @@ struct ProposalDetails {
 pub async fn get_telemetry() -> anyhow::Result<()> {
     tracing::info!("Get telemetry");
     let gosh_context = create_client()?;
-    let web3s = create_web3_socket().await?;
-    // let root_address = get_root_address()?;
     let checker_address = get_checker_address()?;
+    let root_data = get_geth_root_data();
+    let root_address = get_root_address(&gosh_context, &checker_address, &root_data).await?;
+
+    let web3s = create_web3_socket().await?;
     let elock_address = get_elock_address()?;
     let elock_abi = web3::ethabi::Contract::load(ELOCK_ABI.as_bytes())?;
     let elock_contract = Contract::new(web3s.eth(), elock_address, elock_abi);
@@ -136,10 +148,19 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
     let burns = find_burns(&gosh_context, first_seq_no, current_master_block.seq_no).await?;
 
+    let mut burns_map = HashMap::new();
     let queued_burns_cnt = burns.len();
     let mut queued_burns_total_value = 0;
     for burn in burns {
         queued_burns_total_value += burn.value;
+        let root_data = get_root_data(&web3s, Address::from_str(&burn.eth_root)?).await?;
+        let entry = burns_map.entry(burn.eth_root).or_insert(BurnStatistic{
+            root: root_data,
+            total_value: 0,
+            cnt: 0
+        });
+        (*entry).total_value += burn.value;
+        (*entry).cnt += 1;
     }
 
     let first_block_hash = get_block_from_checker(&gosh_context, &checker_address).await?;
@@ -240,16 +261,15 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         validators_balances.insert(validator, balance.as_u128());
     }
 
-    // let glock_total_supply: GetTotalSupplyResult = call_getter(
-    //     &gosh_context,
-    //     &root_address,
-    //     ROOT_ABI,
-    //     "getTotalSupply",
-    //     None,
-    // )
-    // .await?;
-    // let glock_total_supply = glock_total_supply.value;
-    let glock_total_supply = 0;
+    let glock_total_supply: GetTotalSupplyResult = call_getter(
+        &gosh_context,
+        &root_address,
+        ROOT_ABI,
+        "getTotalSupply",
+        None,
+    )
+    .await?;
+    let glock_total_supply = glock_total_supply.value;
 
     let elock_collected_commissions = get_storage(
         &web3s,
@@ -265,9 +285,9 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     let elock_collected_commissions =
         U256::from_str_radix(&elock_collected_commissions_str, 16)?.as_u128();
 
-    // let wallet_address = get_root_owner_address(&gosh_context, &root_address).await?;
+    let wallet_address = get_root_owner_address(&gosh_context, &root_address).await?;
 
-    let glock_current_commissions = 0; //get_wallet_balance(&gosh_context, &wallet_address).await?;
+    let glock_current_commissions = get_wallet_balance(&gosh_context, &wallet_address).await?;
 
     let current_eth_gas_price = web3s.eth().gas_price().await?.as_u128();
 
@@ -281,8 +301,8 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         0
     };
 
-    let glock_total_commissions = 0;
-        // get_token_wallet_total_mint(&gosh_context, &wallet_address).await?;
+    let glock_total_commissions =
+        get_token_wallet_total_mint(&gosh_context, &wallet_address).await?;
 
     let telemetry = Telemetry {
         glock_eth_block: first_block_number.as_u64(),
@@ -298,6 +318,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
         queued_burns_cnt,
         queued_burns_total_value,
+        all_burns: burns_map.values().map(|v| v.clone()).collect(),
 
         elock_deposit_counter: tx_counter.as_u128(),
         elock_withdrawal_counter: rx_counter.as_u128(),
