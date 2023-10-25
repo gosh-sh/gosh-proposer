@@ -25,22 +25,27 @@
     ],
     "anonymous": false
   },
-  "0xc93e352b0db2382529aa994f33e15a46c2761d27903172db06fcabd426ebc488": {
-    "name": "WithdrawRejected",
+  "0xc2b4a290c20fb28939d29f102514fbffd2b73c059ffba8b78250c94161d5fcc6": {
+    "name": "Withdrawal",
     "params": [
       {
-        "name": "proposalKey",
-        "type": "uint256",
-        "indexed": true
-      },
-      {
-        "name": "voter",
+        "name": "token",
         "type": "address",
         "indexed": true
       },
       {
-        "name": "reason",
-        "type": "uint8",
+        "name": "to",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "value",
+        "type": "uint256",
+        "indexed": false
+      },
+      {
+        "name": "commission",
+        "type": "uint256",
         "indexed": false
       }
     ],
@@ -57,22 +62,22 @@
     ],
     "anonymous": false
   },
-  "0xdf273cb619d95419a9cd0ec88123a0538c85064229baa6363788f743fff90deb": {
-    "name": "Withdrawal",
+  "0xc93e352b0db2382529aa994f33e15a46c2761d27903172db06fcabd426ebc488": {
+    "name": "WithdrawRejected",
     "params": [
       {
-        "name": "recepient",
+        "name": "proposalKey",
+        "type": "uint256",
+        "indexed": true
+      },
+      {
+        "name": "voter",
         "type": "address",
         "indexed": true
       },
       {
-        "name": "value",
-        "type": "uint256",
-        "indexed": false
-      },
-      {
-        "name": "commission",
-        "type": "uint256",
+        "name": "reason",
+        "type": "uint8",
         "indexed": false
       }
     ],

@@ -60,7 +60,8 @@ public:
     address_opt oldroot,
     address_opt newroot,
     address receiver,
-    address_opt trusted
+    address_opt trusted,
+    cell wallet_code
   ) {
     require((root_pubkey != 0) or root_owner, error_code::define_pubkey_or_internal_owner);
     tvm_accept();
@@ -79,7 +80,14 @@ public:
     trusted_ = trusted;
     flag_ = false;
     money_timestamp_ = 0;
+    require(tvm_hash(wallet_code) == wallet_hash, error_code::wrong_wallet_code_hash);
+    require(wallet_code.cdepth() == wallet_code_depth, error_code::wrong_wallet_code_hash);
+    wallet_code_ = wallet_code;
     getMoney();
+    uint128 evers = uint128(10000000000);
+    auto [wallet_init, dest] = calc_wallet_init(root_pubkey_, root_owner_);
+    ITONTokenWalletPtr dest_handle(dest);
+    dest_handle.deploy_noop(wallet_init, Evers(evers.get()));
   }
 
   void getMoney() {

@@ -6,7 +6,9 @@ use common::eth::FullBlock;
 use common::gosh::call_function;
 use common::gosh::helper::EverClient;
 use common::helper::abi::CHECKER_ABI;
+use common::token_root::{deploy_root, is_root_active};
 use serde_json::json;
+use std::collections::HashSet;
 use web3::transports::WebSocket;
 use web3::types::H256;
 use web3::Web3;
@@ -23,7 +25,7 @@ pub async fn propose_blocks(
     let elock_address = get_elock_address()?;
 
     // Get starting tx counter
-    let start_block_number = blocks.last().unwrap().number.unwrap() - 1;
+    let start_block_number = blocks.last().unwrap().number.unwrap();
     let starting_tx_counter = get_tx_counter(web3s, elock_address, start_block_number)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get ELock tx counter: {e}"))?;
@@ -36,7 +38,15 @@ pub async fn propose_blocks(
     tracing::info!("Final tx counter on {final_block_number}: {final_tx_counter}");
 
     let all_transfers: Vec<TransferPatch> = if final_tx_counter != starting_tx_counter {
-        get_deposits(web3s, elock_address, start_block_number, final_block_number).await?
+        let transfers =
+            get_deposits(web3s, elock_address, start_block_number, final_block_number).await?;
+        assert_eq!(
+            transfers.len(),
+            (final_tx_counter - starting_tx_counter).as_usize(),
+            "Number of deposits does not match tx counter"
+        );
+        check_roots(client, checker_address, &transfers).await?;
+        transfers
     } else {
         vec![]
     };
@@ -72,5 +82,27 @@ pub async fn propose_blocks(
     )
     .await
     .map_err(|e| anyhow::format_err!("Failed to call GOSH function: {e}"))?;
+    Ok(())
+}
+
+async fn check_roots(
+    gosh_context: &EverClient,
+    checker_address: &str,
+    transfers: &Vec<TransferPatch>,
+) -> anyhow::Result<()> {
+    let mut deployed_roots = HashSet::new();
+    for transfer in transfers {
+        let token_root = web3::helpers::to_string(&transfer.root.eth_root).replace('"', "");
+        if !deployed_roots.contains(&token_root) {
+            match is_root_active(gosh_context, checker_address, &transfer.root).await {
+                Ok(true) => {}
+                _ => {
+                    deploy_root(gosh_context, checker_address, &transfer.root).await?;
+                }
+            };
+            deployed_roots.insert(token_root);
+        }
+    }
+
     Ok(())
 }

@@ -70,7 +70,7 @@ contract IRootToken {
     bool static flag_;
     uint32 static money_timestamp_;
 
-    constructor(string name, string symbol, uint8 decimals, uint256 root_pubkey, optional(address) root_owner, uint128 total_supply, address checker, uint256 eth_root, optional(address) oldroot, optional(address) newroot, address receiver, optional(address) trusted) functionID(0xa) {
+    constructor(string name, string symbol, uint8 decimals, uint256 root_pubkey, optional(address) root_owner, uint128 total_supply, address checker, uint256 eth_root, optional(address) oldroot, optional(address) newroot, address receiver, optional(address) trusted, TvmCell walletCode) functionID(0xa) {
     }
 }
 

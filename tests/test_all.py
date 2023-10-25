@@ -81,14 +81,15 @@ def make_elock_deposits(elock_address, main_pubkey):
     execute_cmd(f'''cast send --rpc-url $ETH_URL {elock_address} "deposit(uint256)" {main_pubkey} \
 --private-key $ETH_PRIVATE_KEY --value {ELOCK_DEPOSIT_VALUE}''', '../contracts/l1/')
 
-    # Deposit ERC-20
-    execute_cmd(f'''cast send --rpc-url $ETH_URL {ERC20_ROOT} "approve(address,uint256)" {elock_address} \
-1000000000000000000 --private-key $ETH_PRIVATE_KEY''')
-    execute_cmd(f'''cast send --rpc-url $ETH_URL {elock_address} "depositERC20(address,uint256,uint256)" {ERC20_ROOT} \
- 1000000000000000000 {main_pubkey} --private-key $ETH_PRIVATE_KEY''')
+#     # Deposit ERC-20
+#     execute_cmd(f'''cast send --rpc-url $ETH_URL {ERC20_ROOT} "approve(address,uint256)" {elock_address} \
+# 1000000000000000000 --private-key $ETH_PRIVATE_KEY''')
+#     execute_cmd(f'''cast send --rpc-url $ETH_URL {elock_address} "depositERC20(address,uint256,uint256)" {ERC20_ROOT} \
+#  1000000000000000000 {main_pubkey} --private-key $ETH_PRIVATE_KEY''')
 
 
-def deploy_gosh_contract(tvc_path: str, key_path: str, constructor_args: str, abi_path: str = None):
+def deploy_gosh_contract(tvc_path: str, key_path: str, constructor_args: str, abi_path: str = None,
+                         balance: int = 100_000_000_000):
     tmp_tvc_path = "tmp.tvc"
     if abi_path is None:
         abi_path = tvc_path.replace("tvc", "abi.json")
@@ -96,7 +97,7 @@ def deploy_gosh_contract(tvc_path: str, key_path: str, constructor_args: str, ab
     address = execute_cmd(f'''gosh-cli -j genaddr --save --abi {abi_path} \
 --setkey {key_path} {tmp_tvc_path} | jq .raw_address | cut -d '"' -f 2''')
     execute_cmd(f'gosh-cli -j callx --addr {GIVER_ADDRESS} \
---abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 100000000000 --bounce false \
+--abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value {balance} --bounce false \
 --allBalance false --payload ""  --dest {address}')
     execute_cmd(f'gosh-cli -j deployx --abi {abi_path} --keys {key_path} \
 {tmp_tvc_path} {constructor_args}')
@@ -108,7 +109,7 @@ def deploy_glock(last_blocks):
     receiver_address = deploy_gosh_contract("../contracts/l2/receiver.tvc", MAIN_KEY, '')
 
     checker_address = deploy_gosh_contract("../contracts/l2/checker.tvc", MAIN_KEY, f'''\
---prevhash {last_blocks["eth"]["hash"]} --receiver {receiver_address} ''')
+--prevhash {last_blocks["eth"]["hash"]} --receiver {receiver_address} ''', balance=10_000_000_000_000)
 
     execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys {MAIN_KEY} \
 --addr {checker_address} -m setReady --ready true''')
@@ -128,24 +129,27 @@ def deploy_glock(last_blocks):
 
     code_wallet = execute_cmd('''gosh-cli -j decode stateinit --tvc ../contracts/l2/TONTokenWallet.tvc \
 | jq .code | cut -d '"' -f 2''')
+
+    execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys {MAIN_KEY} \
+--addr {checker_address} -m setWalletCode --code {code_wallet}''')
     roots = [
       {
-        "name": "Weenus 💪",
-        "symbol": "WEENUS",
-        "decimals": "18",
-        "ethroot": "0x0000000000000000000000007439e9bb6d8a84dd3a23fe621a30f95403f87fb9"
-      }, {
+      #   "name": "Weenus 💪",
+      #   "symbol": "WEENUS",
+      #   "decimals": "18",
+      #   "ethroot": "0x0000000000000000000000007439e9bb6d8a84dd3a23fe621a30f95403f87fb9"
+      # }, {
         "name": "geth",
         "symbol": "gth",
         "decimals": "18",
         "ethroot": "0x0000000000000000000000000000000000000000000000000000000000000000"
       }
     ]
-    root_addresses = []
 
+
+    root_addresses = []
     for root_params in roots:
         params = json.dumps(root_params)
-
         execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys {MAIN_KEY} \
 --addr {checker_address} -m deployRootContract '{params}' ''')
 
@@ -153,13 +157,15 @@ def deploy_glock(last_blocks):
 --addr {checker_address} -m getRootAddr '{{"data":{params}}}' \
 | jq -r .value0''', ignore_error=True)
 
-        # TODO: check that checker gives 1000 evers after deploy
-        execute_cmd(f'''gosh-cli -j callx --addr -1:9999999999999999999999999999999999999999999999999999999999999999 \
---abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 1000000000000 --bounce false \
---allBalance false --payload ""  --dest {root_address}''')
+#         # TODO: check that checker gives 1000 evers after deploy
+#         execute_cmd(f'''gosh-cli -j callx --addr -1:9999999999999999999999999999999999999999999999999999999999999999 \
+# --abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 1000000000000 --bounce false \
+# --allBalance false --payload ""  --dest {root_address}''')
 
-        execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys {MAIN_KEY} \
---addr {root_address} -m setWalletCode --wallet_code {code_wallet} --_answer_id 0''')
+#         if root_params == roots[1]:
+#             execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys {MAIN_KEY} \
+# --addr {root_address} -m setWalletCode --wallet_code {code_wallet} --_answer_id 0''')
+
         root_addresses.append(root_address)
 
     return checker_address, root_addresses

@@ -74,7 +74,7 @@ pub async fn find_burns(
                     .parse::<u128>()
                     .map_err(|e| anyhow::format_err!("Failed to convert tokens to u128: {e}"))?,
                 tx_id: message.tx_id,
-                eth_root: args.root.eth_root.to_string(),
+                eth_root: web3::helpers::to_string(&args.root.eth_root).replace('"', ""),
             })
         } else {
             tracing::info!("Failed to decode message, skip it. ID={}", message.id);

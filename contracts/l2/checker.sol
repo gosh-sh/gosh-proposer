@@ -25,6 +25,7 @@ contract Checker {
 
     TvmCell _proposalCode;
     TvmCell _rootCode;
+    TvmCell _walletCode;
 
     address _receiver;
 
@@ -77,6 +78,10 @@ contract Checker {
         _rootCode = code;
     }
 
+    function setWalletCode(TvmCell code) public onlyOwner accept {
+        _walletCode = code;
+    }
+
     function setCommission(uint128 a_from_ax_div10000_plus_b, uint128 b_from_ax_div10000_plus_b) public onlyOwner accept {
         a = a_from_ax_div10000_plus_b;
         b = b_from_ax_div10000_plus_b;
@@ -85,7 +90,7 @@ contract Checker {
     function deployRootContract(string name, string symbol, uint8 decimals, uint256 ethroot) public view accept {
         require(_isReady == true, ERR_WRONG_SENDER);    
         TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey(), _receiver);
-        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null, _receiver, null);
+        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null, _receiver, null, _walletCode);
     }
 
     function checkData(BlockData[] data, TransactionPatch[] transactions) public view accept {
