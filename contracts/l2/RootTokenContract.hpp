@@ -36,6 +36,12 @@ __interface ICheckerContract {
   ) = 1016;
 
   [[internal]]
+  void deployIndex(
+    RootData root,
+    uint256 pubkey
+  ) = 1025;
+
+  [[internal]]
   void burnTokens(
     RootData  root, 
     uint256 pubkey, 
@@ -146,6 +152,12 @@ __interface IRootTokenContract {
     uint256 pubkey, 
     address_opt owner
   ) = 1016;
+
+  [[internal, answer_id]]
+  void deployindex(
+    uint256 pubkey, 
+    address_opt owner
+  ) = 1026;
 
   [[internal, answer_id]]
   void burnTokens(

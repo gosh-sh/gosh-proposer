@@ -10,131 +10,18 @@ IFREF {
 GETGLOB 6
 THROWIF 51
 ENDS
-.loc receiver.sol, 26
-ACCEPT
-.loc receiver.sol, 0
-CALLREF {
-	.inline __c7_to_c4
-}
-THROW 0
-
-.macro setRootCode
-DROP
-GETGLOB 6
-THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	.inline __c4_to_c7
-}
-.loc receiver.sol, 39
-LDREF
-ENDS
-.loc receiver.sol, 0
-CALLREF {
-	.inline __setRootCode_1773faee_internal_macro
-}
-CALLREF {
-	.inline __c7_to_c4
-}
-THROW 0
-
-.globl	setRootCode_1773faee_internal
-.type	setRootCode_1773faee_internal, @function
-.inline __setRootCode_1773faee_internal_macro
-
-.macro setRootCode_1773faee_internal_macro
-.loc receiver.sol, 21
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-GETGLOB 2
-EQUAL
-THROWIFNOT 100
-.loc receiver.sol, 26
-ACCEPT
-.loc receiver.sol, 40
-SETGLOB 10
-.loc receiver.sol, 0
-
-.macro burnTokens
-DROP
-GETGLOB 6
-THROWIFNOT 76
-GETGLOB 2
-ISNULL
-IFREF {
-	.inline __c4_to_c7
-}
-.loc receiver.sol, 43
-OVER
-PUSHCONT {
-	LDREF
-	LDREF
-	LDU 8
-	LDREF
-	ENDS
-	CTOS
-}
-PUSHCONT {
-	LDREF
-	LDREF
-	LDU 8
-}
-IFELSE
-LDU 256
-ROLLREV 4
-TUPLE 4
-SWAP
-LDU 256
-LDREF
-ENDS
-CTOS
-LDI 1
-SWAP
-NULLROTRIFNOT
-PUSHCONT {
-	LDMSGADDR
-}
-IF
-LDU 128
-LDU 256
-ENDS
-.loc receiver.sol, 0
-CALLREF {
-	.inline __burnTokens_53ebe340_internal_macro
-}
-IFREF {
-	.inline __c7_to_c4
-}
-THROW 0
-
-.globl	burnTokens_53ebe340_internal
-.type	burnTokens_53ebe340_internal, @function
-.inline __burnTokens_53ebe340_internal_macro
-
-.macro burnTokens_53ebe340_internal_macro
-.loc receiver.sol, 43
-BLKDROP 4
-GETGLOB 10
-SWAP
-GETGLOB 2
-MYADDR
-CALLREF {
-	.inline __ProposalLib_no_obj_calculateRootAddress_b877fe90_macro
-}
-.loc receiver.sol, 31
+.loc indexwallet.sol, 31
 GETGLOB 9
+GETGLOB 10
 SDEQ
 THROWIFNOT 100
-.loc receiver.sol, 26
+.loc indexwallet.sol, 26
 ACCEPT
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
+CALLREF {
+	.inline __c7_to_c4
+}
+THROW 0
 
 .macro updateCode
 DROP
@@ -145,16 +32,16 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc receiver.sol, 48
+.loc indexwallet.sol, 39
 LDREF
 LDREF
 ENDS
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 CALLREF {
 	.inline __updateCode_10aae4d5_internal_macro
 }
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 THROW 0
 
@@ -163,7 +50,7 @@ THROW 0
 .inline __updateCode_10aae4d5_internal_macro
 
 .macro updateCode_10aae4d5_internal_macro
-.loc receiver.sol, 21
+.loc indexwallet.sol, 21
 GETGLOB 5
 DUP
 ISNULL
@@ -175,12 +62,12 @@ IF
 GETGLOB 2
 EQUAL
 THROWIFNOT 100
-.loc receiver.sol, 26
+.loc indexwallet.sol, 26
 ACCEPT
-.loc receiver.sol, 49
+.loc indexwallet.sol, 40
 OVER
 SETCODE
-.loc receiver.sol, 50
+.loc indexwallet.sol, 41
 SWAP
 CTOS
 DUP
@@ -195,17 +82,17 @@ PLDREF
 CTOS
 BLESS
 POP C3
-.loc receiver.sol, 52
+.loc indexwallet.sol, 43
 PUSHINT $onCodeUpgrade_0e89a1b9_internal$
 PUSH C3
 EXECUTE
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 
 .internal-alias onCodeUpgrade_0e89a1b9_internal, 2083461128
 .internal onCodeUpgrade_0e89a1b9_internal
-.loc receiver.sol, 56
+.loc indexwallet.sol, 47
 DROP
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 CALLREF {
 	.inline __c7_to_c4
 }
@@ -214,7 +101,7 @@ THROW 0
 
 .internal-alias onCodeUpgrade_fb00cc5e_internal, 749264623
 .internal onCodeUpgrade_fb00cc5e_internal
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 CALLREF {
 	.inline __c7_to_c4
 }
@@ -224,38 +111,38 @@ THROW 0
 .macro receive_macro
 GETGLOB 6
 THROWIFNOT 76
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 DUP
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 
 .macro on_bounce_macro
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 DUP
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 
 .macro fallback_macro
 GETGLOB 6
 THROWIFNOT 76
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 DUP
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 
 .macro getVersion
 DROP
 GETGLOB 6
 THROWIFNOT 76
-.loc receiver.sol, 74
+.loc indexwallet.sol, 65
 ENDS
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 CALLREF {
 	.inline __getVersion_0d8e6e2c_internal_macro
 }
@@ -285,19 +172,19 @@ PUSHCONT {
 }
 IFELSE
 IFREF {
-	.inline __c7_to_c4
+	.inline __upd_only_time_in_c4
 }
 THROW 0
 
 .macro getVersion_0d8e6e2c_internal_macro
-.loc receiver.sol, 75
+.loc indexwallet.sol, 66
 PUSHREF {
-	.blob x7265636569766572
+	.blob x696e64657877616c6c6574
 }
 PUSHREF {
 	.blob x312e302e30
 }
-.loc receiver.sol, 0
+.loc indexwallet.sol, 0
 
 .macro c4_to_c7
 PUSHROOT
@@ -306,8 +193,19 @@ LDU 256 ; pubkey c4
 LDU 64 ; pubkey timestamp c4
 LDU 1 ; ctor flag
 NIP
+LDMSGADDR
+LDREF
+LDREF
+LDU 8
 LDREF
 ENDS
+CTOS
+LDU 256
+ROLLREV 4
+TUPLE 4
+SWAP
+ENDS
+SETGLOB 11
 SETGLOB 10
 SETGLOB 3
 SETGLOB 2
@@ -322,8 +220,38 @@ PUSHCONT {
 	PUSHROOT
 	CTOS
 	PLDDICT ; D
-	PUSHREF {
+	PUSHINT 1
+	OVER
+	PUSHINT 64
+	DICTUGET
+	PUSHCONT {
+		PUSHREFSLICE {
+			.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+		}
 	}
+	IFNOT
+	PUSHINT 2
+	PUSH S2
+	PUSHINT 64
+	DICTUGET
+IFREFELSEREF
+{
+		LDREF
+		LDREF
+		LDU 8
+		LDU 256
+		ENDS
+		TUPLE 4
+}
+{
+		PUSHREF {
+		}
+		DUP
+		PUSHINT 0
+		DUP
+		TUPLE 4
+}
+	SETGLOB 11
 	SETGLOB 10
 	PUSHINT 64
 	DICTUGET
@@ -338,6 +266,7 @@ IFREFELSE {
 }
 
 .macro c7_to_c4
+GETGLOB 11
 GETGLOB 10
 GETGLOB 3
 GETGLOB 2
@@ -345,7 +274,17 @@ NEWC
 STU 256
 STU 64
 STONE
+STSLICE
+SWAP
+UNTUPLE 4
+REVERSE 5, 0
 STREF
+STREF
+STU 8
+SWAP
+NEWC
+STU 256
+STBREFR
 ENDC
 POPROOT
 
@@ -421,7 +360,9 @@ CTOS
 SBITS
 NEQINT 1
 SETGLOB 6
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+PUSHREFSLICE {
+	.blob x8000000000000000000000000000000000000000000000000000000000000000001_
+}
 SETGLOB 9
 OVER
 CALLREF {
@@ -1434,33 +1375,16 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1756716863
-LEQ
+PUSHINT 1071142485
+EQUAL
 IFJMPREF {
-	DUP
-	PUSHINT 1017
-	EQUAL
-	IFJMPREF {
-		.inline __burnTokens
-	}
-	DUP
-	PUSHINT 1071142485
-	EQUAL
-	IFJMPREF {
-		.inline __getVersion
-	}
-	DUP
-	PUSHINT 1590035614
-	EQUAL
-	IFJMPREF {
-		.inline __setRootCode
-	}
-	DUP
-	PUSHINT 1756716863
-	EQUAL
-	IFJMPREF {
-		.inline __constructor
-	}
+	.inline __getVersion
+}
+DUP
+PUSHINT 1756716863
+EQUAL
+IFJMPREF {
+	.inline __constructor
 }
 DUP
 PUSHINT 2095978802

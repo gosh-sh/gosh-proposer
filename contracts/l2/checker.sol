@@ -10,6 +10,7 @@ pragma AbiHeader pubkey;
 
 import "checkerLib.sol";
 import "proposal.sol";
+import "indexwallet.sol";
 
 contract Checker {
 
@@ -26,6 +27,7 @@ contract Checker {
     TvmCell _proposalCode;
     TvmCell _rootCode;
     TvmCell _walletCode;
+    TvmCell _indexWalletcode;
 
     address _receiver;
 
@@ -60,6 +62,12 @@ contract Checker {
         msg.sender.transfer(1000 ton);
     }
 
+    function deployIndex(RootData  root, uint256 pubkey) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey(), _receiver)) accept functionID(1025) {
+        require(_isReady == true, ERR_WRONG_SENDER);    
+        TvmCell s1 =  ProposalLib.composeIndexWalletStateInit(_indexWalletcode, this, root, pubkey);
+        new IndexWallet{stateInit: s1, value: 5 ton, wid: 0, flag: 1}();
+    }
+
     function setHashRoot(uint256 hash) public onlyOwner accept {
         _prevhash = hash;
         TransactionPatch[] transactions;
@@ -72,6 +80,10 @@ contract Checker {
 
     function setProposalCode(TvmCell code) public onlyOwner accept {
         _proposalCode = code;
+    }
+
+    function setIndexWalletCode(TvmCell code) public onlyOwner accept {
+        _indexWalletcode = code;
     }
 
     function setRootCode(TvmCell code) public onlyOwner accept {
