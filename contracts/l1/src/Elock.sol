@@ -41,7 +41,9 @@ contract Elock {
     bool isDepositsFreezed; // 0x12
     uint256 collectedCommission; // 0x13
 
-    address[] validatorsIndex;
+    address[] validatorsIndex; // 0x14
+
+    mapping (address => mapping (address => ERC20WithdrawalApprovement)) approvedWithdrawals; // 0x15
 
     struct Transfer {
         address token;
@@ -54,6 +56,11 @@ contract Elock {
         uint256 fromBlock;
         uint256 tillBlock;
         Transfer[] transfers;
+    }
+
+    struct ERC20WithdrawalApprovement {
+        uint value;
+        uint commission;
     }
 
     enum FreezeVote { None, Freeze, Unfreeze }
@@ -113,6 +120,20 @@ contract Elock {
 
         trxDepositCount += 1;
         emit Deposited(tokenRoot, msg.sender, pubkey, value);
+    }
+
+    function withdrawERC20(address token) public payable {
+        ERC20WithdrawalApprovement storage approvement = approvedWithdrawals[token][msg.sender];
+        require(approvement.value > 0);
+        require(msg.value == approvement.commission);
+
+        uint value = approvement.value;
+        uint commission = approvement.commission;
+        delete approvedWithdrawals[token][msg.sender];
+        bool isOk = IERC20(token).transfer(msg.sender, value);
+        if (isOk) {
+            emit Withdrawal(token, msg.sender, value, commission);
+        }
     }
 
     function proposeWithdrawal(
@@ -254,8 +275,21 @@ contract Elock {
         return votingForWithdrawal[proposalKey][myAddress];
     }
 
+    function getERC20Approvement(address token, address recipient)
+        public view
+    returns (uint value, uint commission) {
+        return (
+            approvedWithdrawals[token][recipient].value,
+            approvedWithdrawals[token][recipient].commission
+        );
+    }
+
     function _calcRequiredVotes(uint256 validatorsCount) private pure returns (uint256) {
         return validatorsCount / uint256(2) + 1; // 50% + 1 vote
+    }
+
+    function _calculateFinalizeProposalFee() private pure returns (uint256) {
+        return 400_000;
     }
 
     function _updateValidators() private {
@@ -295,6 +329,8 @@ contract Elock {
 
                 trxWithdrawCount += 1; // TODO use temp var
                 totalSupply -= transfer.value; // TODO use temp var
+            } else {
+                _approveWithdrawal(transfer.token, transfer.to, transfer.value, transactionFeeInGas);
             }
         }
 
@@ -306,8 +342,12 @@ contract Elock {
         return true;
     }
 
-    function _calculateFinalizeProposalFee() private pure returns (uint256) {
-        return 400_000;
+    function _approveWithdrawal(address token, address to, uint value, uint interimCommission)
+        private
+    {
+        ERC20WithdrawalApprovement storage approvement = approvedWithdrawals[token][to];
+        approvement.value += value;
+        approvement.commission += interimCommission;
     }
 
     function _cleanWithdrawProposals() private {
