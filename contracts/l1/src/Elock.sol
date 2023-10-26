@@ -132,6 +132,7 @@ contract Elock {
         delete approvedWithdrawals[token][msg.sender];
         bool isOk = IERC20(token).transfer(msg.sender, value);
         if (isOk) {
+            trxWithdrawCount += 1;
             emit Withdrawal(token, msg.sender, value, commission);
         }
     }
@@ -312,7 +313,9 @@ contract Elock {
         uint256 transactionFeeInGas = 21_000 * tx.gasprice + validatorCosts / transfers.length;
 
         for (uint256 index = 0; index < transfers.length; index++) {
-            requiredFunds += transfers[index].value;
+            if (transfers[index].token == ETH) { // ETH withdrawal
+                requiredFunds += transfers[index].value;
+            }
         }
         if (requiredFunds > address(this).balance || requiredFunds > totalSupply) {
             return false;
