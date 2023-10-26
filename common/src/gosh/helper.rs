@@ -8,7 +8,7 @@ use ton_client::processing::ProcessingEvent;
 use ton_client::{ClientConfig, ClientContext};
 
 pub type EverClient = Arc<ClientContext>;
-static DEFAULT_BLOCKCHAIN_TIMEOUT: Duration = Duration::from_secs(15 * 60);
+static DEFAULT_BLOCKCHAIN_TIMEOUT: Duration = Duration::from_secs(3 * 60);
 static MESSAGE_PROCESSING_TIMEOUT: &str = "GOSH_MESSAGE_PROCESSING_TIMEOUT_SEC";
 static WAIT_FOR_TIMEOUT: &str = "GOSH_WAIT_FOR_TIMEOUT_SEC";
 static QUERY_TIMEOUT: &str = "GOSH_QUERY_TIMEOUT_SEC";
