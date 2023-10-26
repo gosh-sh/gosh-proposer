@@ -44,6 +44,7 @@ contract Elock {
     address[] validatorsIndex; // 0x14
 
     mapping (address => mapping (address => ERC20WithdrawalApprovement)) approvedWithdrawals; // 0x15
+    mapping (address => uint) totalSupplies; // 0x16
 
     struct Transfer {
         address token;
@@ -108,18 +109,19 @@ contract Elock {
         emit Deposited(address(0), msg.sender, pubkey, msg.value);
     }
 
-    function depositERC20(address tokenRoot, uint256 value, uint256 pubkey) public payable {
+    function depositERC20(address token, uint256 value, uint256 pubkey) public payable {
         require(isDepositsFreezed == false);
-        require(tokenRoot != address(0));
+        require(token != address(0));
 
-        uint256 allowedAmount = IERC20(tokenRoot).allowance(msg.sender, address(this));
+        uint256 allowedAmount = IERC20(token).allowance(msg.sender, address(this));
         require(allowedAmount >= value, "Not approved");
 
-        bool isOk = IERC20(tokenRoot).transferFrom(msg.sender, address(this), value);
+        bool isOk = IERC20(token).transferFrom(msg.sender, address(this), value);
         require(isOk, "Transfer failed");
 
         trxDepositCount += 1;
-        emit Deposited(tokenRoot, msg.sender, pubkey, value);
+        totalSupplies[token] += value;
+        emit Deposited(token, msg.sender, pubkey, value);
     }
 
     function withdrawERC20(address token) public payable {
@@ -133,6 +135,7 @@ contract Elock {
         bool isOk = IERC20(token).transfer(msg.sender, value);
         if (isOk) {
             trxWithdrawCount += 1;
+            totalSupplies[token] -= value;
             emit Withdrawal(token, msg.sender, value, commission);
         }
     }
@@ -309,8 +312,11 @@ contract Elock {
     function _executeWithdrawals(uint256 proposalKey) private returns (bool) {
         Transfer[] memory transfers = withdrawals[proposalKey].transfers;
         uint256 requiredFunds;
-        uint256 validatorCosts = votingDisposalFee * tx.gasprice;
-        uint256 transactionFeeInGas = 21_000 * tx.gasprice + validatorCosts / transfers.length;
+        uint256 validatorCostsPerUser = votingDisposalFee * tx.gasprice / transfers.length;
+        uint256 transactionFeeInGas = 21_000 * tx.gasprice + validatorCostsPerUser;
+        uint transactionCollectedCommission = 0;
+        uint128 tempTrxWithdrawCount = 0;
+        uint tempTotalSupply = 0;
 
         for (uint256 index = 0; index < transfers.length; index++) {
             if (transfers[index].token == ETH) { // ETH withdrawal
@@ -328,16 +334,19 @@ contract Elock {
                     uint256 withdrawalValue = transfer.value - transactionFeeInGas;
                     transfer.to.transfer(withdrawalValue);
                     emit Withdrawal(transfer.token, transfer.to, withdrawalValue, transactionFeeInGas);
+                    transactionCollectedCommission += validatorCostsPerUser;
                 }
 
-                trxWithdrawCount += 1; // TODO use temp var
-                totalSupply -= transfer.value; // TODO use temp var
+                tempTrxWithdrawCount += 1;
+                tempTotalSupply += transfer.value;
             } else {
-                _approveWithdrawal(transfer.token, transfer.to, transfer.value, transactionFeeInGas);
+                _approveWithdrawal(transfer.token, transfer.to, transfer.value, validatorCostsPerUser);
             }
         }
 
-        collectedCommission += validatorCosts;
+        trxWithdrawCount += tempTrxWithdrawCount;
+        totalSupply -= tempTotalSupply;
+        collectedCommission += transactionCollectedCommission;
         if (collectedCommission > COMMISSION_WITHDRAWAL_THRESHOLD) {
             commissionWallet.transfer(collectedCommission - 21_000 * tx.gasprice);
             collectedCommission = 0;
