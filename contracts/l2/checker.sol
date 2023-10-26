@@ -216,6 +216,10 @@ contract Checker {
         return ("checker", _version);
     }
 
+    function getIndexWalletAddr(RootData data, uint256 pubkey) external view returns(address) {
+        return ProposalLib.calculateIndexWalletAddress(_indexWalletcode, this, data, pubkey);
+    }
+
     function getRootAddr(RootData data) external view returns(address) {
         return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey(), _receiver);
     }
