@@ -212,10 +212,12 @@ pub async fn deploy_root(
         None,
         "deployRootContract",
         Some(json!({
-            "name": root_data.name,
-            "symbol": root_data.symbol,
-            "decimals": root_data.decimals,
-            "ethroot": eth_root
+            "root": {
+                "name": root_data.name,
+                "symbol": root_data.symbol,
+                "decimals": root_data.decimals,
+                "ethroot": eth_root
+            }
         })),
     )
     .await
