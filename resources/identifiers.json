@@ -11,6 +11,9 @@
   "fe173b97": [
     "gasPrice()"
   ],
+  "2d504537": [
+    "getERC20Approvement(address,address)"
+  ],
   "775087f2": [
     "getMyVoteForWithdrawal(uint256,address)"
   ],
@@ -58,5 +61,8 @@
   ],
   "a2e22f0e": [
     "votedForFreezeList()"
+  ],
+  "f4f3b200": [
+    "withdrawERC20(address)"
   ]
 }
