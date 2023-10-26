@@ -10,7 +10,7 @@ use serde::{de::Error, Deserialize, Deserializer, Serialize};
 use std::str::FromStr;
 use web3::types::Address;
 
-#[derive(Debug, Eq, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize, Clone, Hash)]
 pub struct RootData {
     pub name: String,
     pub symbol: String,

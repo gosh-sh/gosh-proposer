@@ -1,5 +1,5 @@
 use common::checker::{get_block_from_checker, get_checker_address};
-use common::elock::transfer::Transfer;
+use common::elock::transfer::TransferPatch;
 use common::elock::{
     get_elock_address, get_last_gosh_block_id, get_storage, COUNTERS_INDEX, TOTAL_SUPPLY_INDEX,
 };
@@ -14,7 +14,7 @@ use common::helper::deserialize_uint;
 use common::token_root::eth::{get_geth_root_data, get_root_data};
 use common::token_root::{get_root_address, get_root_owner_address, get_wallet_balance, RootData};
 use serde::{Deserialize, Serialize, Serializer};
-use serde_json::json;
+use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::str::FromStr;
 use web3::contract::{Contract, Options};
@@ -65,7 +65,7 @@ struct Telemetry {
     elock_proposals_cnt: usize,
 
     glock_proposals_cnt: usize,
-    glock_proposals: HashMap<String, u128>,
+    glock_proposals: HashMap<String, Value>,
 
     #[serde(serialize_with = "round_serialize")]
     elock_balance: u128,
@@ -113,7 +113,7 @@ struct ProposalDetails {
     _hash: String,
     #[serde(rename = "newhash")]
     _new_hash: String,
-    pub transactions: Vec<Transfer>,
+    pub transactions: Vec<TransferPatch>,
     #[serde(deserialize_with = "deserialize_uint")]
     #[serde(rename = "index")]
     _index: u128,
@@ -227,11 +227,17 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         .await
         {
             Ok(proposal_details) => {
-                let mut total_value = 0;
+                let mut data: HashMap<RootData, u128> = HashMap::new();
                 for trans in proposal_details.transactions {
-                    total_value += trans.value;
+                    let entry = data.entry(trans.root)
+                        .or_insert(0);
+                    *entry += trans.data.value;
                 }
-                glock_proposals.insert(proposal_address, total_value);
+                let data = data.into_iter()
+                    .map(|(k, v)| (k, v))
+                    .collect::<Vec<(RootData, u128)>>();
+                let val = json!(data);
+                glock_proposals.insert(proposal_address, val);
             }
             Err(e) => {
                 tracing::info!(
