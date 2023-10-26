@@ -91,10 +91,7 @@
 		{
 			"name": "deployRootContract",
 			"inputs": [
-				{"name":"name","type":"string"},
-				{"name":"symbol","type":"string"},
-				{"name":"decimals","type":"uint8"},
-				{"name":"ethroot","type":"uint256"}
+				{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"}
 			],
 			"outputs": [
 			]
@@ -164,6 +161,16 @@
 			"outputs": [
 				{"name":"value0","type":"string"},
 				{"name":"value1","type":"string"}
+			]
+		},
+		{
+			"name": "getIndexWalletAddr",
+			"inputs": [
+				{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"data","type":"tuple"},
+				{"name":"pubkey","type":"uint256"}
+			],
+			"outputs": [
+				{"name":"value0","type":"address"}
 			]
 		},
 		{
