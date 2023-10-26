@@ -16,9 +16,9 @@ use common::token_root::{get_root_address, get_root_owner_address, get_wallet_ba
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::json;
 use std::collections::HashMap;
+use std::str::FromStr;
 use web3::contract::{Contract, Options};
 use web3::types::{Address, BlockId, BlockNumber, U256};
-use std::str::FromStr;
 
 const COLLECTED_COMMISSIONS_INDEX: u8 = 0x13;
 const ELOCK_WITHDRAWAL_COMMISSION: u128 = 400_000;
@@ -154,13 +154,13 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     for burn in burns {
         queued_burns_total_value += burn.value;
         let root_data = get_root_data(&web3s, Address::from_str(&burn.eth_root)?).await?;
-        let entry = burns_map.entry(burn.eth_root).or_insert(BurnStatistic{
+        let entry = burns_map.entry(burn.eth_root).or_insert(BurnStatistic {
             root: root_data,
             total_value: 0,
-            cnt: 0
+            cnt: 0,
         });
-        (*entry).total_value += burn.value;
-        (*entry).cnt += 1;
+        entry.total_value += burn.value;
+        entry.cnt += 1;
     }
 
     let first_block_hash = get_block_from_checker(&gosh_context, &checker_address).await?;
@@ -318,7 +318,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
         queued_burns_cnt,
         queued_burns_total_value,
-        all_burns: burns_map.values().map(|v| v.clone()).collect(),
+        all_burns: burns_map.values().cloned().collect(),
 
         elock_deposit_counter: tx_counter.as_u128(),
         elock_withdrawal_counter: rx_counter.as_u128(),
