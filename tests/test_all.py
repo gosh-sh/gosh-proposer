@@ -11,6 +11,7 @@ os.environ["GOSH_URL"] = "https://sh.network.gosh.sh"
 os.environ["ETH_VALIDATOR_CONTRACT_ADDRESS"] = ETH_WALLET_ADDR
 os.environ["MAX_BLOCK_IN_ONE_CHUNK"] = "40"
 MAIN_KEY = "keys.json"
+USER_KEY = "owner.keys.json"
 
 GOSH_CLI = os.environ.get('GOSH_CLI', 'gosh-cli')
 
@@ -57,7 +58,7 @@ def execute_cmd(command: str, work_dir=".", ignore_error=False):
         output = e.output.decode("utf-8")
         WAS_ERROR = True
         if not ignore_error:
-            print(f"Command `{command}` execution failed: {output}")
+            print(f"Command `{command}` execution failed: {output} {e.stderr}")
             exit(1)
 
     return output.strip()
@@ -179,6 +180,12 @@ def deploy_glock(last_blocks):
     execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys {MAIN_KEY} \
 --addr {checker_address} -m setWalletCode --code {code_wallet}''')
 
+    # Set index code in checker
+    code_index = execute_cmd('''gosh-cli -j decode stateinit --tvc ../contracts/l2/indexwallet.tvc \
+| jq .code | cut -d '"' -f 2''')
+    execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys {MAIN_KEY} \
+--addr {checker_address} -m setIndexWalletCode --code {code_index}''')
+
     return checker_address
 
 
@@ -193,24 +200,11 @@ def deploy_glock_root(token_name, checker_address):
     params = json.dumps(root_data)
 
     execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/checker.abi.json --keys {MAIN_KEY} \
---addr {checker_address} -m deployRootContract '{params}' ''')
+--addr {checker_address} -m deployRootContract '{{"root":{params}}}' ''')
 
     root_address = execute_cmd(f'''gosh-cli runx --abi ../contracts/l2/checker.abi.json \
---addr {checker_address} -m getRootAddr '{{"data":{params}}}' | jq -r .value0''', ignore_error=True)
+--addr {checker_address} -m getRootAddr '{{"data":{params}}}' | jq -r .value0''')
     return root_address
-
-#         # TODO: check that checker gives 1000 evers after deploy
-#         execute_cmd(f'''gosh-cli -j callx --addr -1:9999999999999999999999999999999999999999999999999999999999999999 \
-# --abi SetcodeMultisigWallet.abi.json --keys devgiver9.json -m submitTransaction --value 1000000000000 --bounce false \
-# --allBalance false --payload ""  --dest {root_address}''')
-
-#         if root_params == roots[1]:
-#             execute_cmd(f'''gosh-cli -j callx --abi ../contracts/l2/RootTokenContract.abi --keys {MAIN_KEY} \
-# --addr {root_address} -m setWalletCode --wallet_code {code_wallet} --_answer_id 0''')
-
-        # root_addresses.append(root_address)
-
-    # return checker_address, root_addresses
 
 
 def parse_events(elock_address):
@@ -230,22 +224,38 @@ def parse_events(elock_address):
         exit(1)
 
 
+def check_index(checker_address, root_data_orig, pubkey):
+    root_data = root_data_orig.copy()
+    eth_root = root_data["ethroot"][2:]
+    root_data["ethroot"] = f"0x000000000000000000000000{eth_root}"
+    params = json.dumps(root_data)
+    index_address = execute_cmd(f'''gosh-cli runx --abi ../contracts/l2/checker.abi.json \
+--addr {checker_address} -m getIndexWalletAddr '{{"data":{params},"pubkey":"{pubkey}"}}' | jq -r .value0''')
+    print(f"{index_address=}")
+    account = execute_cmd(f'''gosh-cli account {index_address}''')
+    convert = json.loads(account)
+    return bool(convert)
+
+
 def test_main():
     execute_cmd(f"gosh-cli genphrase --dump {MAIN_KEY}")
     main_pubkey = load_pubkey(MAIN_KEY)
+    execute_cmd(f"gosh-cli genphrase --dump {USER_KEY}")
+    user_pubkey = load_pubkey(USER_KEY)
+
     last_blocks = get_last_blocks()
+    # elock_address = '0xe3660E9BA4ed1e77f7ABe9D0a83d0B09C835C220'
     elock_address = deploy_elock(last_blocks)
-    # elock_address = '0x69736886754698f0B7335B8b7505C6A169D78a5f'
-    make_eth_deposit(elock_address, main_pubkey, ELOCK_DEPOSIT_VALUE)
-    make_erc20_deposit(elock_address, main_pubkey)
-    make_erc20_deposit(elock_address, main_pubkey, token_name="XEENUS")
+    make_eth_deposit(elock_address, user_pubkey, ELOCK_DEPOSIT_VALUE)
+    make_erc20_deposit(elock_address, user_pubkey)
+    make_erc20_deposit(elock_address, user_pubkey, token_name="XEENUS")
 
     execute_cmd('gosh-cli config --is_json true -e $GOSH_URL')
 
     checker_address = deploy_glock(last_blocks)
-    # checker_address = "0:3ce17532c00eaec23640948c243f6612f47cbbd13d3303b5396ec2716bbb7a15"
     geth_root = deploy_glock_root("GETH", checker_address)
     weenus_root = deploy_glock_root("WEENUS", checker_address)
+    # checker_address = "0:85fd115cadd8a4e91d387a4e546ca44576400a6d0fe8085ac659c7f8c748454d"
 
     root_data = ERC20_ROOTS.get("XEENUS")
     if root_data is None:
@@ -255,18 +265,17 @@ def test_main():
     xeenus_root = execute_cmd(f'''gosh-cli runx --abi ../contracts/l2/checker.abi.json \
     --addr {checker_address} -m getRootAddr '{{"data":{params}}}' | jq -r .value0''', ignore_error=True)
 
-    # checker_address = '0:ab3436466ffd5c7516f00758ab94ee155e6994115b69f3337c736a813b30a556'
-    # root_addresses = ['0:0fce959e8f3a408ab2c5867dc5a2e2c3513c075a28d46f993e2d341cdec9a5a7',
-    #                   '0:c33ce162dbca12d2317722ddc7e81a4c2237b319a8c4e5370b89769ae229b0b1']
 
     root_addresses = [geth_root, weenus_root, xeenus_root]
+    time.sleep(20)
     while True:
         print(f"{checker_address=}")
         print(f"{root_addresses=}")
 
         execute_cmd(f'''MAX_BLOCK_IN_ONE_CHUNK=40 ETH_CONTRACT_ADDRESS={elock_address} \
 CHECKER_ADDRESS={checker_address} gosh_proposer''', '../', ignore_error=True)
-        time.sleep(20)
+        telemetry = execute_cmd(f"CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} l2-telemetry", '../')
+        print(f'{telemetry=}')
         if not WAS_ERROR:
             prop_address = execute_cmd(f'''gosh-cli runx --addr {checker_address} \
 --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr''')
@@ -279,40 +288,53 @@ CHECKER_ADDRESS={checker_address} gosh_proposer''', '../', ignore_error=True)
 
                 execute_cmd(f'''VALIDATORS_KEY_PATH=tests/{MAIN_KEY} ETH_CONTRACT_ADDRESS={elock_address} \
 CHECKER_ADDRESS={checker_address} deposit-proposal-checker''', '../')
-                time.sleep(20)
 
-        root_cnt = len(root_addresses)
-        token_wallets = []
-        for root in root_addresses:
-            token_wallet = execute_cmd(f'''gosh-cli runx --addr {root} \
---abi ../contracts/l2/RootTokenContract.abi -m getWalletAddress --owner null --pubkey {main_pubkey} \
+        time.sleep(60)
+        telemetry = execute_cmd(f"CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} l2-telemetry", '../')
+        print(f'{telemetry=}')
+        index_found = True
+        for root_data in ERC20_ROOTS:
+            index_found = index_found and check_index(checker_address, ERC20_ROOTS[root_data], user_pubkey)
+        if not index_found:
+            continue
+        print("All indexes exist")
+        break
+
+    root_cnt = len(root_addresses)
+    token_wallets = []
+    for root in root_addresses:
+        token_wallet = execute_cmd(f'''gosh-cli runx --addr {root} \
+--abi ../contracts/l2/RootTokenContract.abi -m getWalletAddress --owner null --pubkey {user_pubkey} \
 | jq -r .value0''', ignore_error=True)
-            print(f"{token_wallet=}")
-            if WAS_ERROR:
-                continue
+        print(f"{token_wallet=}")
+        if WAS_ERROR:
+            continue
 
-            balance = execute_cmd(f'''gosh-cli runx --addr {token_wallet} \
+        balance = execute_cmd(f'''gosh-cli runx --addr {token_wallet} \
 --abi ../contracts/l2/TONTokenWallet.abi -m getDetails| jq -r .balance''', ignore_error=True)
-            print(f"root {root} balance {balance=}")
-            if WAS_ERROR:
-                continue
+        print(f"root {root} balance {balance=}")
+        if WAS_ERROR:
+            continue
 
-            if int(balance) > 0:
-                root_cnt -= 1
-                token_wallets.append({"root": root, "wallet": token_wallet, "balance": balance})
+        if int(balance) > 0:
+            root_cnt -= 1
+            token_wallets.append({"root": root, "wallet": token_wallet, "balance": balance})
 
-        if root_cnt == 0:
-            break
+    if root_cnt != 0:
+        print(f"Wrong wallets cnt {root_cnt} != 0")
+        exit(1)
+
 
     print(f'token_wallets = {token_wallets}')
 
     for wallet in token_wallets:
         t_wallet = wallet["wallet"]
         balance = wallet["balance"]
-        execute_cmd(f'''gosh-cli callx --addr {t_wallet} --abi ../contracts/l2/TONTokenWallet.abi --keys {MAIN_KEY} \
+        execute_cmd(f'''gosh-cli callx --addr {t_wallet} --abi ../contracts/l2/TONTokenWallet.abi --keys {USER_KEY} \
 -m burnTokens --_answer_id 0 --to $ETH_WALLET_ADDR --tokens {balance}''')
-
-    time.sleep(10)
+    telemetry = execute_cmd(f"CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} l2-telemetry", '../')
+    print(f'{telemetry=}')
+    time.sleep(20)
 
     find_burns = execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
 withdraw_proposal_checker find_burns''')
@@ -325,7 +347,7 @@ withdraw_proposal_checker create''')
     execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
 withdraw_proposal_checker''')
 
-    time.sleep(10)
+    time.sleep(20)
 
     make_erc20_withdrawal(elock_address, "WEENUS")
     make_erc20_withdrawal(elock_address, "XEENUS")
@@ -333,4 +355,3 @@ withdraw_proposal_checker''')
 
 
 test_main()
-

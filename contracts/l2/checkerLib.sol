@@ -9,6 +9,7 @@ pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 
 import "proposal.sol";
+import "indexwallet.sol";
 
 struct BlockData {
     bytes data;
@@ -97,7 +98,21 @@ library ProposalLib {
         });
         return s1;
     }
+    
+    function calculateIndexWalletAddress(TvmCell code, address checker, RootData root, uint256 pubkey) public returns(address) {
+        TvmCell s1 = composeIndexWalletStateInit(code, checker, root, pubkey);
+        return address.makeAddrStd(0, tvm.hash(s1));
+    }
 
+    function composeIndexWalletStateInit(TvmCell code, address checker, RootData root, uint256 pubkey) public returns(TvmCell) {
+        TvmCell IndexWalletcode = buildIndexWalletCode(code, pubkey);
+        TvmCell s1 = tvm.buildStateInit({
+            code: IndexWalletcode,
+            contr: IndexWallet,
+            varInit: {_checker: checker, _root: root}
+        });
+        return s1;
+    }
 
     function composeProposalStateInit(TvmCell code, uint256 hash, uint128 index, address checker) public returns(TvmCell) {
         TvmCell Proposalcode = buildProposalCode(code, hash);
@@ -115,6 +130,15 @@ library ProposalLib {
     ) public returns (TvmCell) {
         TvmBuilder b;
         b.store(hash);
+        return tvm.setCodeSalt(originalCode, b.toCell());
+    }
+
+    function buildIndexWalletCode(
+        TvmCell originalCode,
+        uint256 pubkey
+    ) public returns (TvmCell) {
+        TvmBuilder b;
+        b.store(pubkey);
         return tvm.setCodeSalt(originalCode, b.toCell());
     }
 }

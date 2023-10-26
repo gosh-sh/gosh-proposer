@@ -122,6 +122,15 @@ public:
     tvm_transfer(dest, 5e10, SEND_ALL_GAS | IGNORE_ACTION_ERRORS);
   }
 
+  void deployindex(uint256 pubkey, address_opt owner) {
+    auto [wallet_init, dest] = calc_wallet_init(pubkey, owner);
+    require(dest == int_sender(), error_code::message_sender_is_not_my_owner);
+    ICheckerContractPtr dest_handle(checker_);
+    RootData root = {name_, symbol_, decimals_, ethroot_};
+    dest_handle(1e9, 1).deployIndex(root, pubkey);
+    getMoney();
+  }
+
   bool setWalletCode(cell wallet_code) {
     require(!wallet_code_, error_code::cant_override_wallet_code);
     check_owner(true);

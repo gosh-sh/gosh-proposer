@@ -10,6 +10,7 @@ pragma AbiHeader pubkey;
 
 import "checkerLib.sol";
 import "proposal.sol";
+import "indexwallet.sol";
 
 contract Checker {
 
@@ -26,6 +27,7 @@ contract Checker {
     TvmCell _proposalCode;
     TvmCell _rootCode;
     TvmCell _walletCode;
+    TvmCell _indexWalletcode;
 
     address _receiver;
 
@@ -60,6 +62,12 @@ contract Checker {
         msg.sender.transfer(1000 ton);
     }
 
+    function deployIndex(RootData  root, uint256 pubkey) public view senderIs(ProposalLib.calculateRootAddress(_rootCode, root, tvm.pubkey(), _receiver)) accept functionID(1025) {
+        require(_isReady == true, ERR_WRONG_SENDER);    
+        TvmCell s1 =  ProposalLib.composeIndexWalletStateInit(_indexWalletcode, this, root, pubkey);
+        new IndexWallet{stateInit: s1, value: 5 ton, wid: 0, flag: 1}();
+    }
+
     function setHashRoot(uint256 hash) public onlyOwner accept {
         _prevhash = hash;
         TransactionPatch[] transactions;
@@ -72,6 +80,10 @@ contract Checker {
 
     function setProposalCode(TvmCell code) public onlyOwner accept {
         _proposalCode = code;
+    }
+
+    function setIndexWalletCode(TvmCell code) public onlyOwner accept {
+        _indexWalletcode = code;
     }
 
     function setRootCode(TvmCell code) public onlyOwner accept {
@@ -87,10 +99,10 @@ contract Checker {
         b = b_from_ax_div10000_plus_b;
     }
 
-    function deployRootContract(string name, string symbol, uint8 decimals, uint256 ethroot) public view accept {
+    function deployRootContract(RootData root) public view accept {
         require(_isReady == true, ERR_WRONG_SENDER);    
-        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, name, symbol, decimals, ethroot, tvm.pubkey(), _receiver);
-        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(name, symbol, decimals, tvm.pubkey(), null, 0, this, ethroot, null, null, _receiver, null, _walletCode);
+        TvmCell s1 =  ProposalLib.composeRootStateInit(_rootCode, root.name, root.symbol, root.decimals, root.ethroot, tvm.pubkey(), _receiver);
+        new IRootToken{stateInit: s1, value: 20 ton, wid: 0, flag: 1}(root.name, root.symbol, root.decimals, tvm.pubkey(), null, 0, this, root.ethroot, null, null, _receiver, null, _walletCode);
     }
 
     function checkData(BlockData[] data, TransactionPatch[] transactions) public view accept {
@@ -202,6 +214,10 @@ contract Checker {
     //Getter 
     function getVersion() external pure returns(string, string) {
         return ("checker", _version);
+    }
+
+    function getIndexWalletAddr(RootData data, uint256 pubkey) external view returns(address) {
+        return ProposalLib.calculateIndexWalletAddress(_indexWalletcode, this, data, pubkey);
     }
 
     function getRootAddr(RootData data) external view returns(address) {

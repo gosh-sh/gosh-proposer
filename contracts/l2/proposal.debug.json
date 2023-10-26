@@ -1,0 +1,3108 @@
+{
+  "026b73db55aec99a42b0b566f7c237559f73a3c95bc5da7a2d2fa3a52b4f73be": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 887
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 888
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 889
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 890
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 891
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 892
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 74
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 898
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 901
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 904
+    }
+  },
+  "12cc974100d94f2377d911abab256a54c2b11067971dc78b634214d9303e3379": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1557
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1558
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1559
+    },
+    "32": {
+      "filename": "./proposal.code",
+      "line": 1533
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 1534
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1535
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 1537
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 1538
+    }
+  },
+  "19e8a32e5ab1ca5c83502fdf10d5290fd083eeda9ee46976388c664af5088f43": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 96
+    }
+  },
+  "22682a93dd1ad9f8a9ab6d2f373d77140088cc05081ee8151e80c5d53d378dc6": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1201
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1202
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1203
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 1204
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 1205
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 1206
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 99
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 1212
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 1215
+    },
+    "120": {
+      "filename": "./proposal.code",
+      "line": 1216
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 1217
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1218
+    },
+    "152": {
+      "filename": "./proposal.code",
+      "line": 1219
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 1220
+    },
+    "184": {
+      "filename": "./proposal.code",
+      "line": 1221
+    },
+    "192": {
+      "filename": "./proposal.code",
+      "line": 1222
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 1223
+    },
+    "208": {
+      "filename": "./proposal.code",
+      "line": 1224
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 1225
+    },
+    "240": {
+      "filename": "./proposal.code",
+      "line": 1226
+    },
+    "288": {
+      "filename": "./proposal.code",
+      "line": 1227
+    },
+    "312": {
+      "filename": "./proposal.code",
+      "line": 1228
+    },
+    "328": {
+      "filename": "./proposal.code",
+      "line": 1229
+    },
+    "336": {
+      "filename": "./proposal.code",
+      "line": 1230
+    },
+    "344": {
+      "filename": "./proposal.code",
+      "line": 1231
+    },
+    "360": {
+      "filename": "./proposal.code",
+      "line": 1233
+    },
+    "368": {
+      "filename": "./proposal.code",
+      "line": 1234
+    },
+    "376": {
+      "filename": "./proposal.code",
+      "line": 1236
+    },
+    "384": {
+      "filename": "./proposal.code",
+      "line": 1237
+    },
+    "400": {
+      "filename": "./proposal.code",
+      "line": 1240
+    }
+  },
+  "289118948c244bd985ad4116820bd431466f6ff2390ac91818a61e1c6480ae87": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1442
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1443
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1444
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 1445
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 1448
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 1449
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 1450
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1451
+    },
+    "160": {
+      "filename": "./proposal.code",
+      "line": 1454
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 1455
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 1456
+    },
+    "224": {
+      "filename": "./proposal.code",
+      "line": 1457
+    }
+  },
+  "38b5b4ffd5851333a33903c80bbb32590a94994b165e949e944e3aef20df3161": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 92
+    },
+    "16": {
+      "filename": "proposal.sol",
+      "line": 92
+    },
+    "32": {
+      "filename": "proposal.sol",
+      "line": 92
+    },
+    "48": {
+      "filename": "proposal.sol",
+      "line": 92
+    },
+    "64": {
+      "filename": "proposal.sol",
+      "line": 92
+    }
+  },
+  "493eeaee108c98be0579f35e67fa611b896b5696583bab534f599e181a20ac5f": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 114
+    },
+    "8": {
+      "filename": "proposal.sol",
+      "line": 115
+    },
+    "16": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "24": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "40": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "56": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "72": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "96": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "104": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "120": {
+      "filename": "proposal.sol",
+      "line": 116
+    },
+    "128": {
+      "filename": "proposal.sol",
+      "line": 117
+    },
+    "136": {
+      "filename": "proposal.sol",
+      "line": 117
+    },
+    "144": {
+      "filename": "proposal.sol",
+      "line": 117
+    },
+    "152": {
+      "filename": "proposal.sol",
+      "line": 117
+    },
+    "160": {
+      "filename": "proposal.sol",
+      "line": 117
+    },
+    "168": {
+      "filename": "proposal.sol",
+      "line": 117
+    },
+    "184": {
+      "filename": "proposal.sol",
+      "line": 118
+    },
+    "200": {
+      "filename": "proposal.sol",
+      "line": 118
+    },
+    "208": {
+      "filename": "proposal.sol",
+      "line": 118
+    },
+    "224": {
+      "filename": "proposal.sol",
+      "line": 118
+    },
+    "240": {
+      "filename": "proposal.sol",
+      "line": 119
+    },
+    "248": {
+      "filename": "proposal.sol",
+      "line": 119
+    },
+    "256": {
+      "filename": "proposal.sol",
+      "line": 120
+    },
+    "272": {
+      "filename": "proposal.sol",
+      "line": 120
+    },
+    "288": {
+      "filename": "proposal.sol",
+      "line": 121
+    },
+    "296": {
+      "filename": "proposal.sol",
+      "line": 121
+    },
+    "320": {
+      "filename": "proposal.sol",
+      "line": 122
+    },
+    "328": {
+      "filename": "proposal.sol",
+      "line": 122
+    },
+    "336": {
+      "filename": "proposal.sol",
+      "line": 122
+    },
+    "344": {
+      "filename": "proposal.sol",
+      "line": 123
+    },
+    "352": {
+      "filename": "proposal.sol",
+      "line": 123
+    },
+    "360": {
+      "filename": "proposal.sol",
+      "line": 124
+    },
+    "368": {
+      "filename": "proposal.sol",
+      "line": 124
+    },
+    "384": {
+      "filename": "proposal.sol",
+      "line": 124
+    },
+    "392": {
+      "filename": "proposal.sol",
+      "line": 124
+    },
+    "408": {
+      "filename": "./proposal.code",
+      "line": 1054
+    },
+    "416": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "424": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "432": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "448": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "464": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "480": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "496": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "504": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "512": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "528": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "536": {
+      "filename": "proposal.sol",
+      "line": 126
+    },
+    "544": {
+      "filename": "./proposal.code",
+      "line": 1070
+    },
+    "560": {
+      "filename": "./proposal.code",
+      "line": 1071
+    },
+    "568": {
+      "filename": "proposal.sol",
+      "line": 128
+    },
+    "576": {
+      "filename": "proposal.sol",
+      "line": 128
+    }
+  },
+  "4c4e2424988381c07d32970a2b87110878dbb033ffd34d07c1ea96c92acec300": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1544
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 1545
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1546
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 1547
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1548
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 1549
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 1550
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 1551
+    },
+    "104": {
+      "filename": "./proposal.code",
+      "line": 1552
+    },
+    "120": {
+      "filename": "./proposal.code",
+      "line": 1553
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 1554
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1555
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 1556
+    },
+    "184": {
+      "filename": "./proposal.code",
+      "line": 1562
+    },
+    "192": {
+      "filename": "./proposal.code",
+      "line": 1563
+    },
+    "208": {
+      "filename": "./proposal.code",
+      "line": 1564
+    },
+    "224": {
+      "filename": "./proposal.code",
+      "line": 1568
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 1569
+    },
+    "256": {
+      "filename": "./proposal.code",
+      "line": 1570
+    },
+    "272": {
+      "filename": "./proposal.code",
+      "line": 1571
+    },
+    "280": {
+      "filename": "./proposal.code",
+      "line": 1572
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 1575
+    },
+    "312": {
+      "filename": "./proposal.code",
+      "line": 1577
+    },
+    "320": {
+      "filename": "./proposal.code",
+      "line": 1578
+    }
+  },
+  "54626db7a50eddfd1be325928f4989a36098d877a14d118eda71c1cbff14fa51": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 29
+    },
+    "16": {
+      "filename": "proposal.sol",
+      "line": 29
+    },
+    "32": {
+      "filename": "proposal.sol",
+      "line": 29
+    },
+    "48": {
+      "filename": "proposal.sol",
+      "line": 29
+    },
+    "72": {
+      "filename": "proposal.sol",
+      "line": 24
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "104": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "112": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "136": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "144": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "160": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "176": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "184": {
+      "filename": "proposal.sol",
+      "line": 75
+    },
+    "208": {
+      "filename": "proposal.sol",
+      "line": 75
+    }
+  },
+  "55a703465a160dce20481375de2e5b830c841c2787303835eb5821d62d65ca9d": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1957
+    }
+  },
+  "5c0f8d2cea029b722b15b14415130a881b98a782e2da336a5e3b53ad460b9b26": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1935
+    }
+  },
+  "61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1470
+    }
+  },
+  "6492a0ad496856321e2560d5dd016729dab20d4a5fa4a4416f50c3def19c64fe": {},
+  "7327573a0f104968e910938afd834cd519bd86d3e62031ac34f27effd8a6c454": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 100
+    },
+    "8": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "24": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "40": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "56": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "72": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "80": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "104": {
+      "filename": "proposal.sol",
+      "line": 101
+    },
+    "112": {
+      "filename": "proposal.sol",
+      "line": 102
+    },
+    "120": {
+      "filename": "proposal.sol",
+      "line": 103
+    },
+    "128": {
+      "filename": "proposal.sol",
+      "line": 103
+    },
+    "136": {
+      "filename": "proposal.sol",
+      "line": 103
+    },
+    "144": {
+      "filename": "proposal.sol",
+      "line": 103
+    },
+    "152": {
+      "filename": "proposal.sol",
+      "line": 103
+    },
+    "168": {
+      "filename": "proposal.sol",
+      "line": 104
+    },
+    "184": {
+      "filename": "proposal.sol",
+      "line": 104
+    },
+    "192": {
+      "filename": "proposal.sol",
+      "line": 104
+    },
+    "208": {
+      "filename": "proposal.sol",
+      "line": 104
+    },
+    "224": {
+      "filename": "proposal.sol",
+      "line": 105
+    },
+    "240": {
+      "filename": "proposal.sol",
+      "line": 105
+    },
+    "256": {
+      "filename": "proposal.sol",
+      "line": 106
+    },
+    "280": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "296": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "304": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "312": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "328": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "336": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "352": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "368": {
+      "filename": "proposal.sol",
+      "line": 107
+    },
+    "376": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "392": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "408": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "424": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "440": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "448": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "456": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "472": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "480": {
+      "filename": "proposal.sol",
+      "line": 108
+    },
+    "488": {
+      "filename": "./proposal.code",
+      "line": 1194
+    },
+    "496": {
+      "filename": "proposal.sol",
+      "line": 110
+    }
+  },
+  "7484ee666f0260eec006610a84d4e65df3d1bdfb40061acb604e9742c97b4ec3": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1079
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1080
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1081
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 1082
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 1083
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 1084
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "96": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "104": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "112": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "120": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "128": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "136": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "152": {
+      "filename": "proposal.sol",
+      "line": 113
+    },
+    "160": {
+      "filename": "./proposal.code",
+      "line": 1098
+    },
+    "176": {
+      "filename": "./proposal.code",
+      "line": 1101
+    },
+    "184": {
+      "filename": "./proposal.code",
+      "line": 1102
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 1103
+    },
+    "208": {
+      "filename": "./proposal.code",
+      "line": 1104
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 1105
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 1106
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 1107
+    },
+    "256": {
+      "filename": "./proposal.code",
+      "line": 1108
+    },
+    "264": {
+      "filename": "./proposal.code",
+      "line": 1109
+    },
+    "272": {
+      "filename": "./proposal.code",
+      "line": 1110
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 1111
+    },
+    "304": {
+      "filename": "./proposal.code",
+      "line": 1112
+    },
+    "352": {
+      "filename": "./proposal.code",
+      "line": 1113
+    },
+    "376": {
+      "filename": "./proposal.code",
+      "line": 1114
+    },
+    "392": {
+      "filename": "./proposal.code",
+      "line": 1115
+    },
+    "400": {
+      "filename": "./proposal.code",
+      "line": 1116
+    },
+    "408": {
+      "filename": "./proposal.code",
+      "line": 1117
+    },
+    "416": {
+      "filename": "./proposal.code",
+      "line": 1118
+    },
+    "432": {
+      "filename": "./proposal.code",
+      "line": 1120
+    },
+    "440": {
+      "filename": "./proposal.code",
+      "line": 1121
+    },
+    "448": {
+      "filename": "./proposal.code",
+      "line": 1122
+    },
+    "464": {
+      "filename": "./proposal.code",
+      "line": 1123
+    },
+    "480": {
+      "filename": "./proposal.code",
+      "line": 1125
+    },
+    "488": {
+      "filename": "./proposal.code",
+      "line": 1126
+    },
+    "496": {
+      "filename": "./proposal.code",
+      "line": 1127
+    },
+    "504": {
+      "filename": "./proposal.code",
+      "line": 1128
+    },
+    "520": {
+      "filename": "./proposal.code",
+      "line": 1130
+    },
+    "528": {
+      "filename": "./proposal.code",
+      "line": 1131
+    },
+    "536": {
+      "filename": "./proposal.code",
+      "line": 1133
+    },
+    "544": {
+      "filename": "./proposal.code",
+      "line": 1134
+    },
+    "560": {
+      "filename": "./proposal.code",
+      "line": 1137
+    }
+  },
+  "7e33396811225e44bac5271d7fb56b07019a11d928c6eec0726779a72d0d6b4a": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 96
+    },
+    "8": {
+      "filename": "proposal.sol",
+      "line": 96
+    }
+  },
+  "7ec1357f74dacacaaf8d6bfeaec10111d34328e90f4bffa38a68028773121694": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 635
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 636
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 637
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 638
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 639
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 640
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 641
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 642
+    },
+    "104": {
+      "filename": "./proposal.code",
+      "line": 643
+    },
+    "120": {
+      "filename": "./proposal.code",
+      "line": 644
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 645
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 646
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 647
+    },
+    "152": {
+      "filename": "./proposal.code",
+      "line": 648
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 649
+    },
+    "184": {
+      "filename": "./proposal.code",
+      "line": 650
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 651
+    },
+    "208": {
+      "filename": "./proposal.code",
+      "line": 655
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 656
+    },
+    "224": {
+      "filename": "./proposal.code",
+      "line": 657
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 658
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 659
+    },
+    "256": {
+      "filename": "./proposal.code",
+      "line": 660
+    },
+    "264": {
+      "filename": "./proposal.code",
+      "line": 661
+    },
+    "280": {
+      "filename": "./proposal.code",
+      "line": 662
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 663
+    },
+    "312": {
+      "filename": "./proposal.code",
+      "line": 664
+    },
+    "320": {
+      "filename": "./proposal.code",
+      "line": 665
+    },
+    "344": {
+      "filename": "./proposal.code",
+      "line": 667
+    },
+    "352": {
+      "filename": "./proposal.code",
+      "line": 668
+    },
+    "360": {
+      "filename": "./proposal.code",
+      "line": 669
+    },
+    "368": {
+      "filename": "./proposal.code",
+      "line": 670
+    },
+    "384": {
+      "filename": "./proposal.code",
+      "line": 671
+    },
+    "400": {
+      "filename": "./proposal.code",
+      "line": 672
+    },
+    "416": {
+      "filename": "./proposal.code",
+      "line": 673
+    },
+    "432": {
+      "filename": "./proposal.code",
+      "line": 674
+    },
+    "448": {
+      "filename": "./proposal.code",
+      "line": 675
+    },
+    "464": {
+      "filename": "./proposal.code",
+      "line": 676
+    },
+    "480": {
+      "filename": "./proposal.code",
+      "line": 677
+    },
+    "496": {
+      "filename": "./proposal.code",
+      "line": 678
+    },
+    "512": {
+      "filename": "./proposal.code",
+      "line": 679
+    },
+    "528": {
+      "filename": "./proposal.code",
+      "line": 680
+    },
+    "552": {
+      "filename": "./proposal.code",
+      "line": 681
+    },
+    "568": {
+      "filename": "./proposal.code",
+      "line": 682
+    },
+    "576": {
+      "filename": "./proposal.code",
+      "line": 683
+    },
+    "592": {
+      "filename": "./proposal.code",
+      "line": 685
+    }
+  },
+  "862625a981d7983957c1812f775cf30b812b98d68ebef18f7aedcc1cec3e9d40": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1413
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1414
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1415
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 1416
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 1419
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 1420
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 1421
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1422
+    },
+    "160": {
+      "filename": "./proposal.code",
+      "line": 1425
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 1426
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 1427
+    },
+    "224": {
+      "filename": "./proposal.code",
+      "line": 1428
+    },
+    "240": {
+      "filename": "./proposal.code",
+      "line": 1431
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 1432
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 1433
+    },
+    "304": {
+      "filename": "./proposal.code",
+      "line": 1434
+    }
+  },
+  "8e8de2c034ce8bc7fa2e0cd39cf95df88c40ae15ddba7666479b506fb443eb09": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 723
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 724
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 725
+    },
+    "32": {
+      "filename": "./proposal.code",
+      "line": 726
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 729
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 730
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 731
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 732
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 733
+    },
+    "104": {
+      "filename": "./proposal.code",
+      "line": 734
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 735
+    },
+    "120": {
+      "filename": "./proposal.code",
+      "line": 737
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 738
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 739
+    },
+    "160": {
+      "filename": "./proposal.code",
+      "line": 740
+    },
+    "176": {
+      "filename": "./proposal.code",
+      "line": 741
+    },
+    "192": {
+      "filename": "./proposal.code",
+      "line": 742
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 743
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 744
+    },
+    "224": {
+      "filename": "./proposal.code",
+      "line": 745
+    },
+    "232": {
+      "filename": "proposal.sol",
+      "line": 24
+    },
+    "248": {
+      "filename": "proposal.sol",
+      "line": 46
+    },
+    "256": {
+      "filename": "proposal.sol",
+      "line": 46
+    },
+    "272": {
+      "filename": "proposal.sol",
+      "line": 47
+    },
+    "280": {
+      "filename": "proposal.sol",
+      "line": 47
+    },
+    "296": {
+      "filename": "proposal.sol",
+      "line": 48
+    },
+    "312": {
+      "filename": "proposal.sol",
+      "line": 48
+    },
+    "328": {
+      "filename": "proposal.sol",
+      "line": 48
+    },
+    "344": {
+      "filename": "proposal.sol",
+      "line": 48
+    },
+    "368": {
+      "filename": "proposal.sol",
+      "line": 49
+    },
+    "384": {
+      "filename": "proposal.sol",
+      "line": 50
+    },
+    "400": {
+      "filename": "proposal.sol",
+      "line": 50
+    },
+    "416": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "424": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "432": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "440": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "448": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "456": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "472": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "488": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "496": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "520": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "528": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "544": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "560": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "568": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "592": {
+      "filename": "proposal.sol",
+      "line": 51
+    },
+    "608": {
+      "filename": "./proposal.code",
+      "line": 783
+    },
+    "616": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "624": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "632": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "648": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "656": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "672": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "688": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "704": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "720": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "736": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "752": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "768": {
+      "filename": "proposal.sol",
+      "line": 52
+    },
+    "784": {
+      "filename": "proposal.sol",
+      "line": 53
+    },
+    "800": {
+      "filename": "proposal.sol",
+      "line": 53
+    },
+    "816": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "824": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "832": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "848": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "864": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "872": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "888": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "904": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "920": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "928": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "936": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "952": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "960": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "968": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "976": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "984": {
+      "filename": "proposal.sol",
+      "line": 54
+    }
+  },
+  "9388fa18e1fcd248c2250d8b5617266c3248e0bb8ec865404eb365bf0463f5d6": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1929
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1930
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 1931
+    }
+  },
+  "940b2234a3c063fed1fa12c0ce20dfa001355c5d9e038b18a5c39a32b6a26a94": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1255
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1256
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1257
+    },
+    "48": {
+      "filename": "proposal.sol",
+      "line": 95
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1261
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 1264
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 1265
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 1266
+    },
+    "104": {
+      "filename": "./proposal.code",
+      "line": 1267
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 1268
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 1269
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1270
+    },
+    "152": {
+      "filename": "./proposal.code",
+      "line": 1271
+    },
+    "160": {
+      "filename": "./proposal.code",
+      "line": 1272
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 1273
+    },
+    "192": {
+      "filename": "./proposal.code",
+      "line": 1274
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 1275
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 1276
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 1277
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 1278
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 1279
+    },
+    "304": {
+      "filename": "./proposal.code",
+      "line": 1280
+    },
+    "312": {
+      "filename": "./proposal.code",
+      "line": 1281
+    },
+    "320": {
+      "filename": "./proposal.code",
+      "line": 1282
+    },
+    "328": {
+      "filename": "./proposal.code",
+      "line": 1283
+    },
+    "344": {
+      "filename": "./proposal.code",
+      "line": 1285
+    },
+    "352": {
+      "filename": "./proposal.code",
+      "line": 1286
+    },
+    "360": {
+      "filename": "./proposal.code",
+      "line": 1288
+    },
+    "368": {
+      "filename": "./proposal.code",
+      "line": 1289
+    },
+    "384": {
+      "filename": "./proposal.code",
+      "line": 1292
+    }
+  },
+  "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7": {},
+  "9ca4f56ebde2ec388116045abba63f3c280cf652556bf9f27201c6a13a58301a": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 691
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 692
+    },
+    "32": {
+      "filename": "./proposal.code",
+      "line": 693
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 694
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 695
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 696
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 697
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 698
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 699
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 700
+    },
+    "152": {
+      "filename": "./proposal.code",
+      "line": 701
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 702
+    },
+    "184": {
+      "filename": "./proposal.code",
+      "line": 703
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 704
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 705
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 706
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 707
+    },
+    "256": {
+      "filename": "./proposal.code",
+      "line": 708
+    },
+    "264": {
+      "filename": "./proposal.code",
+      "line": 709
+    },
+    "272": {
+      "filename": "./proposal.code",
+      "line": 710
+    },
+    "288": {
+      "filename": "./proposal.code",
+      "line": 711
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 712
+    },
+    "312": {
+      "filename": "./proposal.code",
+      "line": 713
+    },
+    "328": {
+      "filename": "./proposal.code",
+      "line": 714
+    },
+    "344": {
+      "filename": "./proposal.code",
+      "line": 715
+    },
+    "360": {
+      "filename": "./proposal.code",
+      "line": 716
+    },
+    "376": {
+      "filename": "./proposal.code",
+      "line": 717
+    },
+    "384": {
+      "filename": "./proposal.code",
+      "line": 718
+    },
+    "392": {
+      "filename": "./proposal.code",
+      "line": 719
+    }
+  },
+  "a8852ce4833ca674ef628c3465b6bf30edc1316f0bb09b6af4b1708ff80d4ab3": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 59
+    },
+    "8": {
+      "filename": "proposal.sol",
+      "line": 59
+    },
+    "24": {
+      "filename": "proposal.sol",
+      "line": 59
+    },
+    "40": {
+      "filename": "proposal.sol",
+      "line": 59
+    },
+    "56": {
+      "filename": "proposal.sol",
+      "line": 59
+    },
+    "72": {
+      "filename": "proposal.sol",
+      "line": 59
+    }
+  },
+  "b1da2b7978f2ef811b3edadd6bf052753b588fbd6af3450c021f14effbea9e10": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 96
+    }
+  },
+  "b3a97ac306a5d2d2f5b5bf27b6dc60f39c837bfeec4c66fb8ef6dd9256a97bc7": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1464
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 1465
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1466
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 1467
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1468
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 1469
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 1472
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 1473
+    },
+    "104": {
+      "filename": "./proposal.code",
+      "line": 1474
+    },
+    "120": {
+      "filename": "./proposal.code",
+      "line": 1477
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 1478
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1479
+    },
+    "160": {
+      "filename": "./proposal.code",
+      "line": 1480
+    },
+    "176": {
+      "filename": "./proposal.code",
+      "line": 1481
+    },
+    "192": {
+      "filename": "./proposal.code",
+      "line": 1482
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 1483
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 1484
+    },
+    "224": {
+      "filename": "./proposal.code",
+      "line": 1485
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 1486
+    },
+    "240": {
+      "filename": "./proposal.code",
+      "line": 1487
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 1488
+    },
+    "264": {
+      "filename": "./proposal.code",
+      "line": 1489
+    },
+    "272": {
+      "filename": "./proposal.code",
+      "line": 1490
+    },
+    "288": {
+      "filename": "./proposal.code",
+      "line": 1491
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 1492
+    },
+    "304": {
+      "filename": "./proposal.code",
+      "line": 1493
+    },
+    "320": {
+      "filename": "./proposal.code",
+      "line": 1494
+    },
+    "328": {
+      "filename": "./proposal.code",
+      "line": 1495
+    },
+    "336": {
+      "filename": "./proposal.code",
+      "line": 1497
+    },
+    "344": {
+      "filename": "./proposal.code",
+      "line": 1498
+    },
+    "352": {
+      "filename": "./proposal.code",
+      "line": 1499
+    },
+    "368": {
+      "filename": "./proposal.code",
+      "line": 1501
+    },
+    "376": {
+      "filename": "./proposal.code",
+      "line": 1502
+    },
+    "384": {
+      "filename": "./proposal.code",
+      "line": 1503
+    },
+    "400": {
+      "filename": "./proposal.code",
+      "line": 1504
+    },
+    "416": {
+      "filename": "./proposal.code",
+      "line": 1505
+    },
+    "432": {
+      "filename": "./proposal.code",
+      "line": 1507
+    },
+    "440": {
+      "filename": "./proposal.code",
+      "line": 1508
+    },
+    "456": {
+      "filename": "./proposal.code",
+      "line": 1509
+    },
+    "464": {
+      "filename": "./proposal.code",
+      "line": 1510
+    },
+    "480": {
+      "filename": "./proposal.code",
+      "line": 1512
+    },
+    "488": {
+      "filename": "./proposal.code",
+      "line": 1513
+    },
+    "504": {
+      "filename": "./proposal.code",
+      "line": 1514
+    },
+    "512": {
+      "filename": "stdlib.sol",
+      "line": 61
+    },
+    "528": {
+      "filename": "stdlib.sol",
+      "line": 61
+    },
+    "536": {
+      "filename": "stdlib.sol",
+      "line": 61
+    },
+    "544": {
+      "filename": "stdlib.sol",
+      "line": 61
+    },
+    "560": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "568": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "584": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "608": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "616": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "656": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "664": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "672": {
+      "filename": "stdlib.sol",
+      "line": 62
+    },
+    "688": {
+      "filename": "stdlib.sol",
+      "line": 63
+    },
+    "704": {
+      "filename": "./proposal.code",
+      "line": 1516
+    },
+    "720": {
+      "filename": "./proposal.code",
+      "line": 1517
+    },
+    "728": {
+      "filename": "./proposal.code",
+      "line": 1518
+    },
+    "744": {
+      "filename": "./proposal.code",
+      "line": 1519
+    },
+    "752": {
+      "filename": "./proposal.code",
+      "line": 1520
+    },
+    "768": {
+      "filename": "./proposal.code",
+      "line": 1521
+    },
+    "784": {
+      "filename": "./proposal.code",
+      "line": 1522
+    },
+    "792": {
+      "filename": "./proposal.code",
+      "line": 1523
+    },
+    "808": {
+      "filename": "./proposal.code",
+      "line": 1526
+    },
+    "816": {
+      "filename": "./proposal.code",
+      "line": 1527
+    }
+  },
+  "b7c2cc2442d4a0d440f0eb080e24b779e5550a573e15d8d55bb22efbe3129518": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1579
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 1583
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1584
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 1587
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 1588
+    }
+  },
+  "b7d69d588a921783726313c960eaa9fbb7b224dc8badb82efbeb892f09ca12c1": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 948
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 949
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 950
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 951
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 952
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 953
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 91
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 959
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 962
+    },
+    "120": {
+      "filename": "./proposal.code",
+      "line": 963
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 964
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 965
+    },
+    "152": {
+      "filename": "./proposal.code",
+      "line": 966
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 967
+    },
+    "184": {
+      "filename": "./proposal.code",
+      "line": 968
+    },
+    "192": {
+      "filename": "./proposal.code",
+      "line": 969
+    },
+    "200": {
+      "filename": "./proposal.code",
+      "line": 970
+    },
+    "208": {
+      "filename": "./proposal.code",
+      "line": 971
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 972
+    },
+    "240": {
+      "filename": "./proposal.code",
+      "line": 973
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 974
+    },
+    "272": {
+      "filename": "./proposal.code",
+      "line": 975
+    },
+    "288": {
+      "filename": "./proposal.code",
+      "line": 976
+    },
+    "296": {
+      "filename": "./proposal.code",
+      "line": 977
+    },
+    "344": {
+      "filename": "./proposal.code",
+      "line": 978
+    },
+    "360": {
+      "filename": "./proposal.code",
+      "line": 979
+    },
+    "376": {
+      "filename": "./proposal.code",
+      "line": 980
+    },
+    "384": {
+      "filename": "./proposal.code",
+      "line": 981
+    },
+    "400": {
+      "filename": "./proposal.code",
+      "line": 982
+    },
+    "408": {
+      "filename": "./proposal.code",
+      "line": 983
+    },
+    "424": {
+      "filename": "./proposal.code",
+      "line": 984
+    },
+    "440": {
+      "filename": "./proposal.code",
+      "line": 985
+    },
+    "456": {
+      "filename": "./proposal.code",
+      "line": 986
+    },
+    "472": {
+      "filename": "./proposal.code",
+      "line": 987
+    },
+    "480": {
+      "filename": "./proposal.code",
+      "line": 988
+    },
+    "488": {
+      "filename": "./proposal.code",
+      "line": 989
+    },
+    "496": {
+      "filename": "./proposal.code",
+      "line": 990
+    },
+    "512": {
+      "filename": "./proposal.code",
+      "line": 992
+    },
+    "520": {
+      "filename": "./proposal.code",
+      "line": 993
+    },
+    "536": {
+      "filename": "./proposal.code",
+      "line": 995
+    },
+    "544": {
+      "filename": "./proposal.code",
+      "line": 996
+    },
+    "560": {
+      "filename": "./proposal.code",
+      "line": 999
+    }
+  },
+  "b8189a47aab6517005015916deb34d1cb254d5f0423358a428477560126082d5": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1409
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1410
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1411
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 1412
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 1438
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 1439
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 1440
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1441
+    }
+  },
+  "bae94e7c5fe2c220c2af866d72f9f1776e7a2e3921b403f139dd8da0e6103e40": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1924
+    },
+    "1": {
+      "filename": "./proposal.code",
+      "line": 1925
+    },
+    "2": {
+      "filename": "./proposal.code",
+      "line": 1926
+    },
+    "3": {
+      "filename": "./proposal.code",
+      "line": 1955
+    },
+    "4": {
+      "filename": "./proposal.code",
+      "line": 1962
+    }
+  },
+  "da576c204fd5d49874695c5a39a8696a3433ce7776b32fee7a1d6a58f6b1da22": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1387
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1388
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1389
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 1390
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 1391
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 1392
+    },
+    "88": {
+      "filename": "proposal.sol",
+      "line": 58
+    },
+    "104": {
+      "filename": "proposal.sol",
+      "line": 58
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 1399
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 1402
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 1405
+    }
+  },
+  "dcfdc461c7cb0251f323281a9c1a79bb9d91f9ea92f78af336450445ab34e453": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 59
+    },
+    "16": {
+      "filename": "proposal.sol",
+      "line": 60
+    },
+    "24": {
+      "filename": "proposal.sol",
+      "line": 60
+    },
+    "40": {
+      "filename": "proposal.sol",
+      "line": 60
+    },
+    "56": {
+      "filename": "proposal.sol",
+      "line": 60
+    },
+    "72": {
+      "filename": "proposal.sol",
+      "line": 60
+    },
+    "80": {
+      "filename": "proposal.sol",
+      "line": 60
+    },
+    "96": {
+      "filename": "proposal.sol",
+      "line": 60
+    },
+    "104": {
+      "filename": "proposal.sol",
+      "line": 61
+    },
+    "120": {
+      "filename": "proposal.sol",
+      "line": 61
+    },
+    "136": {
+      "filename": "proposal.sol",
+      "line": 62
+    },
+    "160": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "176": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "184": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "192": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "200": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "208": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "216": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "224": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "232": {
+      "filename": "proposal.sol",
+      "line": 63
+    },
+    "256": {
+      "filename": "proposal.sol",
+      "line": 64
+    },
+    "272": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "280": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "296": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "312": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "328": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "344": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "352": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "360": {
+      "filename": "proposal.sol",
+      "line": 65
+    },
+    "376": {
+      "filename": "proposal.sol",
+      "line": 66
+    },
+    "384": {
+      "filename": "proposal.sol",
+      "line": 67
+    },
+    "400": {
+      "filename": "proposal.sol",
+      "line": 67
+    },
+    "408": {
+      "filename": "proposal.sol",
+      "line": 67
+    },
+    "424": {
+      "filename": "proposal.sol",
+      "line": 67
+    },
+    "432": {
+      "filename": "proposal.sol",
+      "line": 67
+    },
+    "448": {
+      "filename": "proposal.sol",
+      "line": 68
+    },
+    "464": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "480": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "496": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "512": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "528": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "544": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "552": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "576": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "584": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "744": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "768": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "784": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "792": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "840": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "856": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "872": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "888": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "896": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "912": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "920": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "936": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "952": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "960": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "968": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "976": {
+      "filename": "proposal.sol",
+      "line": 69
+    },
+    "992": {
+      "filename": "./proposal.code",
+      "line": 1378
+    },
+    "1000": {
+      "filename": "./proposal.code",
+      "line": 1381
+    },
+    "1008": {
+      "filename": "./proposal.code",
+      "line": 1383
+    }
+  },
+  "ddb61f72909d79a16fdda4007ecffa299bc46bb919edef1b4406c7a2f577e4f3": {
+    "0": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "16": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "32": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "48": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "56": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "72": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "80": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "96": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "104": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "112": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "128": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "144": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "160": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "176": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "184": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "200": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "208": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "224": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "240": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "256": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "264": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "272": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "288": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "296": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "304": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "312": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "328": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "352": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "368": {
+      "filename": "proposal.sol",
+      "line": 54
+    },
+    "384": {
+      "filename": "proposal.sol",
+      "line": 55
+    },
+    "400": {
+      "filename": "proposal.sol",
+      "line": 55
+    },
+    "416": {
+      "filename": "proposal.sol",
+      "line": 55
+    },
+    "432": {
+      "filename": "proposal.sol",
+      "line": 55
+    },
+    "448": {
+      "filename": "proposal.sol",
+      "line": 55
+    },
+    "456": {
+      "filename": "proposal.sol",
+      "line": 55
+    },
+    "472": {
+      "filename": "proposal.sol",
+      "line": 55
+    },
+    "488": {
+      "filename": "./proposal.code",
+      "line": 859
+    },
+    "504": {
+      "filename": "./proposal.code",
+      "line": 862
+    }
+  },
+  "df0d193ceecb3133527ef74d045c6e2a89400acfd875db29accb122d626dddd0": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 908
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 909
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 910
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 911
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 912
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 916
+    }
+  },
+  "e6936e8f0e7b8fe98c2ca66eee9d4e9dafcfc747defef9cb795288fabb1b7ef3": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 932
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 933
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 934
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 935
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 936
+    },
+    "64": {
+      "filename": "./proposal.code",
+      "line": 937
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 938
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 939
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 940
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 941
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 942
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 943
+    },
+    "144": {
+      "filename": "./proposal.code",
+      "line": 944
+    }
+  },
+  "f24e1e7aa04d89aad2945816b6e9b921f2b3892da9ba53e2383c148351b96d0c": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1565
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 1566
+    }
+  },
+  "f5cc01ddd58c45907236baba5a95ef06c33b3dd4b01fd1844ff84d880c763d6f": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 1928
+    },
+    "8": {
+      "filename": "./proposal.code",
+      "line": 1938
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 1939
+    },
+    "32": {
+      "filename": "./proposal.code",
+      "line": 1940
+    },
+    "48": {
+      "filename": "./proposal.code",
+      "line": 1943
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 1944
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 1945
+    },
+    "88": {
+      "filename": "./proposal.code",
+      "line": 1948
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 1949
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 1950
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 1953
+    }
+  },
+  "fe13b31f8e31c38850e3cb01273f4b9e8480cf5352e8a7adfa03f546d9e909cd": {
+    "0": {
+      "filename": "./proposal.code",
+      "line": 602
+    },
+    "16": {
+      "filename": "./proposal.code",
+      "line": 603
+    },
+    "24": {
+      "filename": "./proposal.code",
+      "line": 604
+    },
+    "40": {
+      "filename": "./proposal.code",
+      "line": 605
+    },
+    "56": {
+      "filename": "./proposal.code",
+      "line": 606
+    },
+    "72": {
+      "filename": "./proposal.code",
+      "line": 607
+    },
+    "80": {
+      "filename": "./proposal.code",
+      "line": 608
+    },
+    "96": {
+      "filename": "./proposal.code",
+      "line": 609
+    },
+    "112": {
+      "filename": "./proposal.code",
+      "line": 610
+    },
+    "120": {
+      "filename": "./proposal.code",
+      "line": 611
+    },
+    "128": {
+      "filename": "./proposal.code",
+      "line": 612
+    },
+    "136": {
+      "filename": "./proposal.code",
+      "line": 613
+    },
+    "152": {
+      "filename": "./proposal.code",
+      "line": 614
+    },
+    "168": {
+      "filename": "./proposal.code",
+      "line": 615
+    },
+    "184": {
+      "filename": "./proposal.code",
+      "line": 616
+    },
+    "192": {
+      "filename": "./proposal.code",
+      "line": 617
+    },
+    "208": {
+      "filename": "./proposal.code",
+      "line": 618
+    },
+    "216": {
+      "filename": "./proposal.code",
+      "line": 619
+    },
+    "232": {
+      "filename": "./proposal.code",
+      "line": 620
+    },
+    "248": {
+      "filename": "./proposal.code",
+      "line": 621
+    },
+    "264": {
+      "filename": "./proposal.code",
+      "line": 622
+    },
+    "272": {
+      "filename": "./proposal.code",
+      "line": 623
+    },
+    "288": {
+      "filename": "./proposal.code",
+      "line": 624
+    },
+    "304": {
+      "filename": "./proposal.code",
+      "line": 625
+    },
+    "320": {
+      "filename": "./proposal.code",
+      "line": 626
+    },
+    "336": {
+      "filename": "./proposal.code",
+      "line": 627
+    },
+    "352": {
+      "filename": "./proposal.code",
+      "line": 628
+    },
+    "368": {
+      "filename": "./proposal.code",
+      "line": 629
+    },
+    "384": {
+      "filename": "./proposal.code",
+      "line": 630
+    },
+    "400": {
+      "filename": "./proposal.code",
+      "line": 631
+    }
+  }
+}
