@@ -91,10 +91,7 @@
 		{
 			"name": "deployRootContract",
 			"inputs": [
-				{"name":"name","type":"string"},
-				{"name":"symbol","type":"string"},
-				{"name":"decimals","type":"uint8"},
-				{"name":"ethroot","type":"uint256"}
+				{"components":[{"name":"name","type":"string"},{"name":"symbol","type":"string"},{"name":"decimals","type":"uint8"},{"name":"ethroot","type":"uint256"}],"name":"root","type":"tuple"}
 			],
 			"outputs": [
 			]

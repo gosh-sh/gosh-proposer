@@ -571,21 +571,24 @@ PUSHCONT {
 }
 IFELSE
 LDU 256
+ROLLREV 4
+TUPLE 4
+SWAP
 ENDS
 .loc checker.sol, 0
 CALLREF {
-	.inline __deployRootContract_0775e64f_internal_macro
+	.inline __deployRootContract_3c799c15_internal_macro
 }
 IFREF {
 	.inline __upd_only_time_in_c4
 }
 THROW 0
 
-.globl	deployRootContract_0775e64f_internal
-.type	deployRootContract_0775e64f_internal, @function
-.inline __deployRootContract_0775e64f_internal_macro
+.globl	deployRootContract_3c799c15_internal
+.type	deployRootContract_3c799c15_internal, @function
+.inline __deployRootContract_3c799c15_internal_macro
 
-.macro deployRootContract_0775e64f_internal_macro
+.macro deployRootContract_3c799c15_internal_macro
 .loc checker.sol, 44
 ACCEPT
 .loc checker.sol, 103
@@ -595,7 +598,14 @@ EQUAL
 THROWIFNOT 100
 .loc checker.sol, 104
 GETGLOB 15
-BLKPUSH 4, 4
+OVER
+FIRST
+PUSH S2
+SECOND
+PUSH S3
+THIRD
+PUSH S4
+INDEX 3
 GETGLOB 2
 GETGLOB 18
 CALLREF {
@@ -606,14 +616,18 @@ GETGLOB 16
 NULL
 GETGLOB 18
 NULL
-DUP
-ROLL 6
+PUSH2 S0, S5
+INDEX 3
 MYADDR
 PUSHINT 0
 NULL
 GETGLOB 2
-BLKSWAP 3, 11
-XCHG S2
+PUSH S11
+THIRD
+PUSH S12
+SECOND
+ROLL 13
+FIRST
 ROLL 13
 DUP
 HASHCU
@@ -3527,6 +3541,12 @@ IFJMPREF {
 	LEQ
 	IFJMPREF {
 		DUP
+		PUSHINT 798690809
+		EQUAL
+		IFJMPREF {
+			.inline __deployRootContract
+		}
+		DUP
 		PUSHINT 817710068
 		EQUAL
 		IFJMPREF {
@@ -3537,12 +3557,6 @@ IFJMPREF {
 		EQUAL
 		IFJMPREF {
 			.inline __getProposalAddr
-		}
-		DUP
-		PUSHINT 845593633
-		EQUAL
-		IFJMPREF {
-			.inline __deployRootContract
 		}
 		DUP
 		PUSHINT 847285003
