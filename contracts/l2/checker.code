@@ -1923,7 +1923,7 @@ CALLREF {
 }
 .loc checker.sol, 0
 
-.macro getRootAddr
+.macro getIndexWalletCode
 DROP
 GETGLOB 6
 THROWIFNOT 76
@@ -1933,6 +1933,65 @@ IFREF {
 	.inline __c4_to_c7
 }
 .loc checker.sol, 223
+OVER
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
+LDU 256
+ENDS
+.loc checker.sol, 0
+CALLREF {
+	.inline __getIndexWalletCode_28507227_internal_macro
+}
+OVER
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 3150353567
+	STUR 130
+	STREF
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	.inline __upd_only_time_in_c4
+}
+THROW 0
+
+.macro getIndexWalletCode_28507227_internal_macro
+.loc checker.sol, 224
+GETGLOB 17
+SWAP
+CALLREF {
+	.inline __ProposalLib_no_obj_buildIndexWalletCode_dc47ed04_macro
+}
+.loc checker.sol, 0
+
+.macro getRootAddr
+DROP
+GETGLOB 6
+THROWIFNOT 76
+GETGLOB 2
+ISNULL
+IFREF {
+	.inline __c4_to_c7
+}
+.loc checker.sol, 227
 OVER
 PUSHCONT {
 	LDREF
@@ -1989,7 +2048,7 @@ IFREF {
 THROW 0
 
 .macro getRootAddr_ced61b3a_internal_macro
-.loc checker.sol, 224
+.loc checker.sol, 228
 GETGLOB 15
 SWAP
 GETGLOB 2
@@ -2008,7 +2067,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 227
+.loc checker.sol, 231
 OVER
 PUSHCONT {
 	LDREF
@@ -2054,7 +2113,7 @@ IFREF {
 THROW 0
 
 .macro getProposalAddr_d14daba4_internal_macro
-.loc checker.sol, 228
+.loc checker.sol, 232
 GETGLOB 14
 GETGLOB 10
 ROT
@@ -2073,7 +2132,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 231
+.loc checker.sol, 235
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -2111,11 +2170,11 @@ IFREF {
 THROW 0
 
 .macro getAllProposalAddr_4579dbb3_internal_macro
-.loc checker.sol, 232
+.loc checker.sol, 236
 PUSHINT 0
 NEWDICT
 PAIR
-.loc checker.sol, 233
+.loc checker.sol, 237
 PUSHINT 0
 PUSHCONT {
 	DUP
@@ -2123,7 +2182,7 @@ PUSHCONT {
 	LESS
 }
 PUSHCONT {
-	.loc checker.sol, 234
+	.loc checker.sol, 238
 	OVER
 	GETGLOB 14
 	GETGLOB 10
@@ -2141,7 +2200,7 @@ PUSHCONT {
 	DICTUSET
 	PAIR
 	POP S2
-	.loc checker.sol, 233
+	.loc checker.sol, 237
 	INC
 	UFITS 128
 	.loc checker.sol, 0
@@ -2159,7 +2218,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 239
+.loc checker.sol, 243
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -2197,7 +2256,7 @@ IFREF {
 THROW 0
 
 .macro getTransactions_83920e90_internal_macro
-.loc checker.sol, 240
+.loc checker.sol, 244
 GETGLOB 19
 .loc checker.sol, 0
 
@@ -2210,7 +2269,7 @@ ISNULL
 IFREF {
 	.inline __c4_to_c7
 }
-.loc checker.sol, 243
+.loc checker.sol, 247
 ENDS
 .loc checker.sol, 0
 CALLREF {
@@ -2250,7 +2309,7 @@ IFREF {
 THROW 0
 
 .macro getStatus_4e69d560_internal_macro
-.loc checker.sol, 244
+.loc checker.sol, 248
 GETGLOB 10
 GETGLOB 11
 GETGLOB 18
@@ -3475,7 +3534,7 @@ CALLREF {
 
 .macro public_function_selector
 DUP
-PUSHINT 1219851760
+PUSHINT 1188408382
 LEQ
 IFJMPREF {
 	DUP
@@ -3566,9 +3625,15 @@ IFJMPREF {
 		}
 	}
 	DUP
-	PUSHINT 1219851760
+	PUSHINT 1188408382
 	LEQ
 	IFJMPREF {
+		DUP
+		PUSHINT 1002869919
+		EQUAL
+		IFJMPREF {
+			.inline __getIndexWalletCode
+		}
 		DUP
 		PUSHINT 1071142485
 		EQUAL
@@ -3587,12 +3652,6 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __checkDataIndex
 		}
-		DUP
-		PUSHINT 1219851760
-		EQUAL
-		IFJMPREF {
-			.inline __setProposalCode
-		}
 	}
 }
 DUP
@@ -3600,9 +3659,15 @@ PUSHINT 2095978802
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 1790296642
+	PUSHINT 1590035614
 	LEQ
 	IFJMPREF {
+		DUP
+		PUSHINT 1219851760
+		EQUAL
+		IFJMPREF {
+			.inline __setProposalCode
+		}
 		DUP
 		PUSHINT 1387268623
 		EQUAL
@@ -3621,17 +3686,17 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __setRootCode
 		}
+	}
+	DUP
+	PUSHINT 2061617210
+	LEQ
+	IFJMPREF {
 		DUP
 		PUSHINT 1790296642
 		EQUAL
 		IFJMPREF {
 			.inline __getIndexWalletAddr
 		}
-	}
-	DUP
-	PUSHINT 2095978802
-	LEQ
-	IFJMPREF {
 		DUP
 		PUSHINT 1906800401
 		EQUAL
@@ -3650,12 +3715,12 @@ IFJMPREF {
 		IFJMPREF {
 			.inline __setReady
 		}
-		DUP
-		PUSHINT 2095978802
-		EQUAL
-		IFJMPREF {
-			.inline __updateCode
-		}
+	}
+	DUP
+	PUSHINT 2095978802
+	EQUAL
+	IFJMPREF {
+		.inline __updateCode
 	}
 }
 
