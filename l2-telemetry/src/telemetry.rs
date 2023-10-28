@@ -1,7 +1,7 @@
 use common::checker::{get_block_from_checker, get_checker_address};
 use common::elock::transfer::TransferPatch;
 use common::elock::{
-    get_elock_address, get_last_gosh_block_id, get_storage, COUNTERS_INDEX, TOTAL_SUPPLY_INDEX,
+    get_elock_address, get_last_gosh_block_id, get_storage, COUNTERS_INDEX,
 };
 use common::eth::{create_web3_socket, read_block};
 use common::gosh::block::{get_latest_master_block, get_master_block_seq_no};
@@ -19,6 +19,7 @@ use std::collections::HashMap;
 use std::str::FromStr;
 use web3::contract::{Contract, Options};
 use web3::types::{Address, BlockId, BlockNumber, U256};
+use common::elock;
 
 const COLLECTED_COMMISSIONS_INDEX: u8 = 0x13;
 const ELOCK_WITHDRAWAL_COMMISSION: u128 = 400_000;
@@ -59,8 +60,8 @@ struct Telemetry {
 
     elock_deposit_counter: u128,
     elock_withdrawal_counter: u128,
-    #[serde(serialize_with = "round_serialize")]
-    elock_total_supply: u128,
+    elock_total_supplies: Value,
+
 
     elock_proposals_cnt: usize,
 
@@ -189,13 +190,9 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     let rx_counter = U256::from_str_radix(&counters_str[0..32], 16)?;
     let tx_counter = U256::from_str_radix(&counters_str[32..64], 16)?;
 
-    let total_supply =
-        get_storage(&web3s, elock_address, last_block_number, TOTAL_SUPPLY_INDEX).await?;
-    let supply_str = web3::helpers::to_string(&total_supply)
-        .replace('"', "")
-        .trim_start_matches("0x")
-        .to_string();
-    let total_supply = U256::from_str_radix(&supply_str, 16)?;
+    let elock_total = elock::get_total_supplies(&web3s, &elock_contract).await?;
+    let elock_total_supplies = Vec::from_iter(elock_total.into_iter());
+    let elock_total_supplies = json!(elock_total_supplies);
 
     let proposals: Vec<U256> = elock_contract
         .query("getProposalList", (), None, Options::default(), None)
@@ -328,7 +325,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
         elock_deposit_counter: tx_counter.as_u128(),
         elock_withdrawal_counter: rx_counter.as_u128(),
-        elock_total_supply: total_supply.as_u128(),
+        elock_total_supplies,
 
         elock_proposals_cnt,
         glock_proposals_cnt,

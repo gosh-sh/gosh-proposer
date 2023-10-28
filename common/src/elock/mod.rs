@@ -1,7 +1,11 @@
 use std::{env, str::FromStr};
+use std::collections::HashMap;
+use web3::contract::{Contract, Options};
 use web3::transports::WebSocket;
 use web3::types::{Address, BlockNumber, H256, U256, U64};
 use web3::Web3;
+use crate::token_root::eth::get_root_data;
+use crate::token_root::RootData;
 
 pub mod deposit;
 pub mod transfer;
@@ -66,5 +70,33 @@ pub async fn get_last_gosh_block_id(
         .trim_start_matches("0x")
         .to_string();
     tracing::info!("last gosh block from ELock: {res}");
+    Ok(res)
+}
+
+pub async fn get_total_supplies(
+    web3s: &Web3<WebSocket>,
+    elock_contract: &Contract<WebSocket>,
+) -> anyhow::Result<HashMap<RootData, u128>> {
+    let mut res = HashMap::new();
+    let token_roots: Vec<Address> = elock_contract
+        .query("getTokenRoots", (), None, Options::default(), None)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to call ELock getter getTokenRoots: {e}"))?;
+
+    for root in token_roots {
+        let root_data = get_root_data(
+            web3s,
+            root,
+        ).await?;
+        let value: U256 = elock_contract.query(
+            "getTotalSupply",
+            root,
+            None,
+            Options::default(),
+            None,
+        ).await
+            .map_err(|e| anyhow::format_err!("Failed to call ELock getter getTotalSupply: {e}"))?;
+        res.insert(root_data, value.as_u128());
+    }
     Ok(res)
 }
