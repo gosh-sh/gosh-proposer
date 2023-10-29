@@ -9,10 +9,10 @@ use common::gosh::burn::find_burns;
 use common::gosh::call_getter;
 use common::gosh::helper::create_client;
 use common::gosh::message::get_token_wallet_total_mint;
-use common::helper::abi::{CHECKER_ABI, ELOCK_ABI, PROPOSAL_ABI, ROOT_ABI};
+use common::helper::abi::{CHECKER_ABI, ELOCK_ABI, PROPOSAL_ABI};
 use common::helper::deserialize_uint;
 use common::token_root::eth::{get_geth_root_data, get_root_data};
-use common::token_root::{get_root_address, get_root_owner_address, get_wallet_balance, RootData};
+use common::token_root::{get_root_address, get_root_owner_address, get_root_owner_balance, get_root_total_supply, RootData};
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -72,16 +72,14 @@ struct Telemetry {
     elock_balance: u128,
     validators_balances: HashMap<Address, u128>,
 
-    #[serde(serialize_with = "round_serialize")]
-    glock_total_supply: u128,
+    glock_total_supply: Value,
 
     #[serde(serialize_with = "round_serialize")]
     elock_collected_commissions: u128,
 
     #[serde(serialize_with = "round_serialize")]
     glock_total_commissions: u128,
-    #[serde(serialize_with = "round_serialize")]
-    glock_current_commissions: u128,
+    glock_current_commissions: Value,
 
     current_eth_gas_price: u128,
     #[serde(serialize_with = "round_serialize")]
@@ -93,13 +91,6 @@ struct Telemetry {
 struct AllProposals {
     #[serde(rename = "value0")]
     addresses: Vec<String>,
-}
-
-#[derive(Deserialize)]
-struct GetTotalSupplyResult {
-    #[serde(deserialize_with = "deserialize_uint")]
-    #[serde(rename = "value0")]
-    value: u128,
 }
 
 #[derive(Serialize)]
@@ -264,16 +255,6 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         validators_balances.insert(validator, balance.as_u128());
     }
 
-    let glock_total_supply: GetTotalSupplyResult = call_getter(
-        &gosh_context,
-        &root_address,
-        ROOT_ABI,
-        "getTotalSupply",
-        None,
-    )
-    .await?;
-    let glock_total_supply = glock_total_supply.value;
-
     let elock_collected_commissions = get_storage(
         &web3s,
         elock_address,
@@ -290,7 +271,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
     let wallet_address = get_root_owner_address(&gosh_context, &root_address).await?;
 
-    let glock_current_commissions = get_wallet_balance(&gosh_context, &wallet_address).await?;
+    // let glock_current_commissions = get_wallet_balance(&gosh_context, &wallet_address).await?;
 
     let current_eth_gas_price = web3s.eth().gas_price().await?.as_u128();
 
@@ -306,6 +287,36 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
     let glock_total_commissions =
         get_token_wallet_total_mint(&gosh_context, &wallet_address).await?;
+
+
+    let all_token_roots = elock::get_token_roots(
+        &elock_contract
+    ).await?;
+    let mut all_roots_comissions = vec![];
+    let mut all_roots_supplies = vec![];
+    for root in all_token_roots {
+        let data = get_root_data(
+            &web3s,
+            root,
+        ).await?;
+        let address = get_root_address(
+            &gosh_context,
+            &checker_address,
+            &data
+        ).await?;
+        let balance = get_root_owner_balance(
+            &gosh_context,
+            &address,
+        ).await?;
+        all_roots_comissions.push((data.clone(), balance));
+        let total_supply = get_root_total_supply(
+            &gosh_context, &address
+        ).await?;
+        all_roots_supplies.push((data, total_supply));
+    }
+
+    let glock_current_commissions = json!(all_roots_comissions);
+    let glock_total_supply = json!(all_roots_supplies);
 
     let telemetry = Telemetry {
         glock_eth_block: first_block_number.as_u64(),

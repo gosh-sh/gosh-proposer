@@ -32,6 +32,7 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
             None => anyhow::bail!("Failed to fetch block with proposal hash"),
         }
     };
+    let from_block_num = from_block_num + 1;
     let start_tx_counter = get_tx_counter(web3s, elock_address, from_block_num)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;

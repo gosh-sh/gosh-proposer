@@ -73,15 +73,21 @@ pub async fn get_last_gosh_block_id(
     Ok(res)
 }
 
+pub async fn get_token_roots(
+    elock_contract: &Contract<WebSocket>,
+) -> anyhow::Result<Vec<Address>> {
+    elock_contract
+        .query("getTokenRoots", (), None, Options::default(), None)
+        .await
+        .map_err(|e| anyhow::format_err!("Failed to call ELock getter getTokenRoots: {e}"))
+}
+
 pub async fn get_total_supplies(
     web3s: &Web3<WebSocket>,
     elock_contract: &Contract<WebSocket>,
 ) -> anyhow::Result<HashMap<RootData, u128>> {
     let mut res = HashMap::new();
-    let token_roots: Vec<Address> = elock_contract
-        .query("getTokenRoots", (), None, Options::default(), None)
-        .await
-        .map_err(|e| anyhow::format_err!("Failed to call ELock getter getTokenRoots: {e}"))?;
+    let token_roots = get_token_roots(elock_contract).await?;
 
     for root in token_roots {
         let root_data = get_root_data(
