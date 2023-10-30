@@ -208,6 +208,7 @@ public:
   ) {
     require(hasWalletCode(), error_code::wallet_code_not_initialized);
     require(pubkey != 0, error_code::define_pubkey_or_internal_owner);
+    tvm_accept();
     getMoney();
     address_opt owner;
     uint128 evers = uint128(10000000000);
