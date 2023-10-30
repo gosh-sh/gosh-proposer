@@ -56,12 +56,11 @@ struct Telemetry {
     queued_burns_cnt: usize,
     #[serde(serialize_with = "round_serialize")]
     queued_burns_total_value: u128,
-    all_burns: Vec<BurnStatistic>,
+    queued_burns: Vec<BurnStatistic>,
 
     elock_deposit_counter: u128,
     elock_withdrawal_counter: u128,
-    elock_total_supplies: Value,
-
+    elock_total_supplies: Vec<(RootData, u128)>,
 
     elock_proposals_cnt: usize,
 
@@ -72,14 +71,14 @@ struct Telemetry {
     elock_balance: u128,
     validators_balances: HashMap<Address, u128>,
 
-    glock_total_supply: Value,
+    glock_total_supply: Vec<(RootData, u128)>,
 
     #[serde(serialize_with = "round_serialize")]
     elock_collected_commissions: u128,
 
     #[serde(serialize_with = "round_serialize")]
     glock_total_commissions: u128,
-    glock_current_commissions: Value,
+    glock_current_commissions: Vec<(RootData, u128)>,
 
     current_eth_gas_price: u128,
     #[serde(serialize_with = "round_serialize")]
@@ -183,7 +182,6 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
     let elock_total = elock::get_total_supplies(&web3s, &elock_contract).await?;
     let elock_total_supplies = Vec::from_iter(elock_total.into_iter());
-    let elock_total_supplies = json!(elock_total_supplies);
 
     let proposals: Vec<U256> = elock_contract
         .query("getProposalList", (), None, Options::default(), None)
@@ -307,16 +305,18 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         let balance = get_root_owner_balance(
             &gosh_context,
             &address,
-        ).await?;
+        ).await.unwrap_or(0);
         all_roots_comissions.push((data.clone(), balance));
         let total_supply = get_root_total_supply(
             &gosh_context, &address
-        ).await?;
+        ).await.unwrap_or(0);
         all_roots_supplies.push((data, total_supply));
     }
 
-    let glock_current_commissions = json!(all_roots_comissions);
-    let glock_total_supply = json!(all_roots_supplies);
+    let glock_current_commissions = all_roots_comissions;
+    let glock_total_supply = all_roots_supplies;
+
+    let queued_burns: Vec<BurnStatistic> = burns_map.values().cloned().collect();
 
     let telemetry = Telemetry {
         glock_eth_block: first_block_number.as_u64(),
@@ -332,7 +332,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
         queued_burns_cnt,
         queued_burns_total_value,
-        all_burns: burns_map.values().cloned().collect(),
+        queued_burns,
 
         elock_deposit_counter: tx_counter.as_u128(),
         elock_withdrawal_counter: rx_counter.as_u128(),

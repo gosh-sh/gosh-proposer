@@ -86,6 +86,7 @@ pub async fn get_total_supplies(
     web3s: &Web3<WebSocket>,
     elock_contract: &Contract<WebSocket>,
 ) -> anyhow::Result<HashMap<RootData, u128>> {
+    tracing::info!("Get ELock total supplies");
     let mut res = HashMap::new();
     let token_roots = get_token_roots(elock_contract).await?;
 
@@ -104,5 +105,6 @@ pub async fn get_total_supplies(
             .map_err(|e| anyhow::format_err!("Failed to call ELock getter getTotalSupply: {e}"))?;
         res.insert(root_data, value.as_u128());
     }
+    tracing::info!("ELock total supplies: {res:?}");
     Ok(res)
 }
