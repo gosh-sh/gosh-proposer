@@ -3,9 +3,11 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::sync::Arc;
 use ton_client::net::ParamsOfQuery;
+use crate::helper::serialize_u128;
 
 #[derive(Deserialize, Debug, Serialize)]
 pub struct MasterBlock {
+    #[serde(serialize_with = "serialize_u128")]
     pub seq_no: u128,
     #[serde(rename = "id")]
     pub block_id: String,

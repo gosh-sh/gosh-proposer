@@ -10,10 +10,10 @@ use common::gosh::call_getter;
 use common::gosh::helper::create_client;
 use common::gosh::message::get_token_wallet_total_mint;
 use common::helper::abi::{CHECKER_ABI, ELOCK_ABI, PROPOSAL_ABI};
-use common::helper::deserialize_uint;
+use common::helper::{deserialize_uint, serialize_u128};
 use common::token_root::eth::{get_geth_root_data, get_root_data};
 use common::token_root::{get_root_address, get_root_owner_address, get_root_owner_balance, get_root_total_supply, RootData};
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -25,20 +25,19 @@ const COLLECTED_COMMISSIONS_INDEX: u8 = 0x13;
 const ELOCK_WITHDRAWAL_COMMISSION: u128 = 400_000;
 const ELOCK_TRANSFER_COMMISSION: u128 = 21_000;
 
-fn round_serialize<S>(val: &u128, s: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    // let eth = wei_to_eth(U256::from(*val));
-    // s.serialize_f64(eth)
-    s.serialize_u128(*val)
-}
-
 #[derive(Serialize, Clone)]
 struct BurnStatistic {
     root: RootData,
+    #[serde(serialize_with = "serialize_u128")]
     total_value: u128,
     cnt: usize,
+}
+
+#[derive(Serialize)]
+struct RootValue {
+    root: RootData,
+    #[serde(serialize_with = "serialize_u128")]
+    value: u128,
 }
 
 #[derive(Serialize)]
@@ -47,42 +46,50 @@ struct Telemetry {
     last_eth_block: u64,
     eth_block_diff: u64,
 
+    #[serde(serialize_with = "serialize_u128")]
     elock_gosh_block_seq_no: u128,
     elock_gosh_block_id: String,
+    #[serde(serialize_with = "serialize_u128")]
     last_gosh_block_seq_no: u128,
     last_gosh_block_id: String,
+    #[serde(serialize_with = "serialize_u128")]
     gosh_block_diff: u128,
 
     queued_burns_cnt: usize,
-    #[serde(serialize_with = "round_serialize")]
+    #[serde(serialize_with = "serialize_u128")]
     queued_burns_total_value: u128,
     queued_burns: Vec<BurnStatistic>,
 
+    #[serde(serialize_with = "serialize_u128")]
     elock_deposit_counter: u128,
+    #[serde(serialize_with = "serialize_u128")]
     elock_withdrawal_counter: u128,
-    elock_total_supplies: Vec<(RootData, u128)>,
+    elock_total_supplies: Vec<RootValue>,
 
     elock_proposals_cnt: usize,
 
     glock_proposals_cnt: usize,
     glock_proposals: HashMap<String, Value>,
 
-    #[serde(serialize_with = "round_serialize")]
+    #[serde(serialize_with = "serialize_u128")]
     elock_balance: u128,
     validators_balances: HashMap<Address, u128>,
 
-    glock_total_supply: Vec<(RootData, u128)>,
+    glock_total_supply: Vec<RootValue>,
 
-    #[serde(serialize_with = "round_serialize")]
+
+    #[serde(serialize_with = "serialize_u128")]
     elock_collected_commissions: u128,
 
-    #[serde(serialize_with = "round_serialize")]
+    #[serde(serialize_with = "serialize_u128")]
     glock_total_commissions: u128,
-    glock_current_commissions: Vec<(RootData, u128)>,
+    glock_current_commissions: Vec<RootValue>,
 
+    #[serde(serialize_with = "serialize_u128")]
     current_eth_gas_price: u128,
-    #[serde(serialize_with = "round_serialize")]
+    #[serde(serialize_with = "serialize_u128")]
     current_approximate_elock_commissions: u128,
+    #[serde(serialize_with = "serialize_u128")]
     current_approximate_elock_commissions_per_person: u128,
 }
 
@@ -95,6 +102,7 @@ struct AllProposals {
 #[derive(Serialize)]
 struct GLockProposal {
     address: String,
+    #[serde(serialize_with = "serialize_u128")]
     total_value: u128,
 }
 
@@ -181,7 +189,11 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     let tx_counter = U256::from_str_radix(&counters_str[32..64], 16)?;
 
     let elock_total = elock::get_total_supplies(&web3s, &elock_contract).await?;
-    let elock_total_supplies = Vec::from_iter(elock_total.into_iter());
+    let elock_total_supplies = Vec::from_iter(elock_total.into_iter())
+        .into_iter().map(|(root, value)| RootValue{
+            root,
+            value
+        }).collect();
 
     let proposals: Vec<U256> = elock_contract
         .query("getProposalList", (), None, Options::default(), None)
@@ -313,8 +325,16 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         all_roots_supplies.push((data, total_supply));
     }
 
-    let glock_current_commissions = all_roots_comissions;
-    let glock_total_supply = all_roots_supplies;
+    let glock_current_commissions = all_roots_comissions
+        .into_iter().map(|(root, value)| RootValue{
+        root,
+        value
+    }).collect();
+    let glock_total_supply = all_roots_supplies
+        .into_iter().map(|(root, value)| RootValue{
+        root,
+        value
+    }).collect();
 
     let queued_burns: Vec<BurnStatistic> = burns_map.values().cloned().collect();
 

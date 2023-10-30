@@ -250,10 +250,9 @@ def test_main():
     user_pubkey = load_pubkey(USER_KEY)
 
     last_blocks = get_last_blocks()
-    # elock_address = '0xe3660E9BA4ed1e77f7ABe9D0a83d0B09C835C220'
     elock_address = deploy_elock(last_blocks)
     make_eth_deposit(elock_address, user_pubkey, ELOCK_DEPOSIT_VALUE)
-    make_erc20_deposit(elock_address, user_pubkey)
+    make_erc20_deposit(elock_address, user_pubkey, value=1_000_000_000_000_000_000_000)
     make_erc20_deposit(elock_address, user_pubkey, token_name="XEENUS")
 
     execute_cmd('gosh-cli config --is_json true -e $GOSH_URL')
@@ -261,7 +260,7 @@ def test_main():
     checker_address = deploy_glock(last_blocks)
     geth_root = deploy_glock_root("GETH", checker_address)
     weenus_root = deploy_glock_root("WEENUS", checker_address)
-    # checker_address = "0:85fd115cadd8a4e91d387a4e546ca44576400a6d0fe8085ac659c7f8c748454d"
+
     get_telemetry(checker_address, elock_address)
 
     root_data = ERC20_ROOTS.get("XEENUS")
@@ -274,6 +273,8 @@ def test_main():
 
 
     root_addresses = [geth_root, weenus_root, xeenus_root]
+    print(f"{root_addresses}")
+
     time.sleep(20)
     while True:
         print(f"{checker_address=}")
