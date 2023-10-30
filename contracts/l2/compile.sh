@@ -18,3 +18,6 @@ set -x
 
 ./compiler/solc --tvm-version gosh indexwallet.sol
 ./compiler/tvm_linker compile --lib ./compiler/stdlib_sol.tvm indexwallet.code -o indexwallet.tvc
+
+rm *.code
+rm *.debug.json
