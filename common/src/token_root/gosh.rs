@@ -34,6 +34,14 @@ struct GetWalletAddressResult {
 }
 
 #[derive(Deserialize)]
+struct GetTotalSupplyResult {
+    #[serde(deserialize_with = "deserialize_uint")]
+    #[serde(rename = "value0")]
+    value: u128,
+}
+
+
+#[derive(Deserialize)]
 struct EverAddress {
     #[serde(deserialize_with = "deserialize_uint")]
     #[serde(rename = "workchain_id")]
@@ -221,4 +229,18 @@ pub async fn deploy_root(
         })),
     )
     .await
+}
+
+pub async fn get_root_total_supply(
+    gosh_context: &EverClient,
+    root_address: &str,
+) -> anyhow::Result<u128> {
+    let res: GetTotalSupplyResult = call_getter(
+        gosh_context,
+        root_address,
+        ROOT_ABI,
+        "getTotalSupply",
+        None,
+    ).await?;
+    Ok(res.value)
 }

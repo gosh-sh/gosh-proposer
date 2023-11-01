@@ -12,6 +12,7 @@ contract Elock {
     address constant ETH = address(0);
     uint256 immutable glockStartBlock;
     address payable immutable commissionWallet;
+    address immutable deployer;
 
     uint256 public totalSupply; // 0x0
     uint128 public trxDepositCount; // 0x1
@@ -89,6 +90,7 @@ contract Elock {
         glockStartBlock = _initialL2Block;
         lastProcessedL2Block = _initialL2Block;
         commissionWallet = _commissionWallet;
+        deployer = msg.sender;
         for (uint256 i = 0; i < _goshValidators.length; i++) {
             validators[_goshValidators[i]] = true;
         }
@@ -107,6 +109,10 @@ contract Elock {
         unchecked {
             totalSupply += msg.value;
         }
+        if (totalSupplies[address(0)] == 0) {
+            tokenRoots.push(address(0));
+        }
+        totalSupplies[address(0)] += msg.value;
         trxDepositCount += 1;
         emit Deposited(address(0), msg.sender, pubkey, msg.value);
     }
@@ -122,7 +128,12 @@ contract Elock {
         require(isOk, "Transfer failed");
 
         trxDepositCount += 1;
+
+        if (totalSupplies[token] == 0) {
+            tokenRoots.push(token);
+        }
         totalSupplies[token] += value;
+
         emit Deposited(token, msg.sender, pubkey, value);
     }
 
@@ -138,6 +149,10 @@ contract Elock {
         if (isOk) {
             trxWithdrawCount += 1;
             totalSupplies[token] -= value;
+
+            if (totalSupplies[token] == 0) {
+                removeTokenRoot(token);
+            }
             emit Withdrawal(token, msg.sender, value, commission);
         }
     }
@@ -253,6 +268,7 @@ contract Elock {
     }
 
     function setProposalWithdrawalFee(uint fee) public {
+        require(msg.sender == deployer);
         require(fee > 0);
         require(fee != proposalWithdrawalFee);
 
@@ -280,6 +296,14 @@ contract Elock {
 
     function getVotesForWithdrawal(uint256 proposalKey) public view returns (uint256 votes) {
         return votesPerProposal[proposalKey];
+    }
+
+    function getTotalSupply(address token_root) public view returns (uint amount) {
+        return totalSupplies[token_root];
+    }
+
+    function getTokenRoots() public view returns (address[] memory roots) {
+        return tokenRoots;
     }
 
     function getMyVoteForWithdrawal(uint256 proposalKey, address myAddress)
@@ -355,6 +379,11 @@ contract Elock {
 
         trxWithdrawCount += tempTrxWithdrawCount;
         totalSupply -= tempTotalSupply;
+        totalSupplies[address(0)] -= tempTotalSupply;
+
+        if (totalSupplies[address(0)] == 0) {
+            removeTokenRoot(address(0));
+        }
         collectedCommission += transactionCollectedCommission;
         if (collectedCommission > COMMISSION_WITHDRAWAL_THRESHOLD) {
             commissionWallet.transfer(collectedCommission - 21_000 * tx.gasprice);
@@ -385,6 +414,16 @@ contract Elock {
         }
         delete _proposalKeys;
         votingDisposalFee = 0;
+    }
+
+    function removeTokenRoot(address root) private {
+        for (uint256 i = 0; i < tokenRoots.length; i++) {
+            if (tokenRoots[i] == root) {
+                tokenRoots[i] = tokenRoots[tokenRoots.length - 1];
+                tokenRoots.pop();
+                return;
+            }
+        }
     }
 
     function gasPrice() public view returns (uint256) {

@@ -11,6 +11,9 @@
   "fe173b97": [
     "gasPrice()"
   ],
+  "2d504537": [
+    "getERC20Approvement(address,address)"
+  ],
   "775087f2": [
     "getMyVoteForWithdrawal(uint256,address)"
   ],
@@ -22,6 +25,12 @@
   ],
   "c44339ce": [
     "getProposedValidators()"
+  ],
+  "f2a21250": [
+    "getTokenRoots()"
+  ],
+  "68da10ae": [
+    "getTotalSupply(address)"
   ],
   "b7ab4db5": [
     "getValidators()"
@@ -58,5 +67,8 @@
   ],
   "a2e22f0e": [
     "votedForFreezeList()"
+  ],
+  "f4f3b200": [
+    "withdrawERC20(address)"
   ]
 }

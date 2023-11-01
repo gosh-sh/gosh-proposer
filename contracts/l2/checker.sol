@@ -220,6 +220,10 @@ contract Checker {
         return ProposalLib.calculateIndexWalletAddress(_indexWalletcode, this, data, pubkey);
     }
 
+    function getIndexWalletCode(uint256 pubkey) external view returns(TvmCell) {
+        return ProposalLib.buildIndexWalletCode(_indexWalletcode, pubkey);
+    }
+
     function getRootAddr(RootData data) external view returns(address) {
         return ProposalLib.calculateRootAddress(_rootCode, data, tvm.pubkey(), _receiver);
     }

@@ -1,7 +1,7 @@
 use crate::eth::{create_web3_socket, read_block};
 use crate::gosh::block::get_latest_master_block;
 use crate::gosh::helper::create_client;
-use serde::{Deserialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serializer};
 use serde_json::json;
 use web3::types::{BlockId, BlockNumber};
 
@@ -16,6 +16,14 @@ where
 {
     let s = String::deserialize(deserializer)?;
     Ok(s.parse::<T>().unwrap_or_default())
+}
+
+pub fn serialize_u128<S>(val: &u128, s: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+{
+    let val_str = format!("{val}");
+    s.serialize_str(&val_str)
 }
 
 pub async fn get_last_blocks() -> anyhow::Result<()> {

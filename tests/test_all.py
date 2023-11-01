@@ -237,6 +237,12 @@ def check_index(checker_address, root_data_orig, pubkey):
     return bool(convert)
 
 
+def get_telemetry(checker_address, elock_address):
+    telemetry = execute_cmd(f"CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} l2-telemetry", '../')
+    data = json.loads(telemetry)
+    print(json.dumps(data, indent=2))
+
+
 def test_main():
     execute_cmd(f"gosh-cli genphrase --dump {MAIN_KEY}")
     main_pubkey = load_pubkey(MAIN_KEY)
@@ -244,10 +250,9 @@ def test_main():
     user_pubkey = load_pubkey(USER_KEY)
 
     last_blocks = get_last_blocks()
-    # elock_address = '0xe3660E9BA4ed1e77f7ABe9D0a83d0B09C835C220'
     elock_address = deploy_elock(last_blocks)
     make_eth_deposit(elock_address, user_pubkey, ELOCK_DEPOSIT_VALUE)
-    make_erc20_deposit(elock_address, user_pubkey)
+    make_erc20_deposit(elock_address, user_pubkey, value=1_000_000_000_000_000_000_000)
     make_erc20_deposit(elock_address, user_pubkey, token_name="XEENUS")
 
     execute_cmd('gosh-cli config --is_json true -e $GOSH_URL')
@@ -255,7 +260,8 @@ def test_main():
     checker_address = deploy_glock(last_blocks)
     geth_root = deploy_glock_root("GETH", checker_address)
     weenus_root = deploy_glock_root("WEENUS", checker_address)
-    # checker_address = "0:85fd115cadd8a4e91d387a4e546ca44576400a6d0fe8085ac659c7f8c748454d"
+
+    get_telemetry(checker_address, elock_address)
 
     root_data = ERC20_ROOTS.get("XEENUS")
     if root_data is None:
@@ -263,10 +269,12 @@ def test_main():
         exit(1)
     params = json.dumps(root_data)
     xeenus_root = execute_cmd(f'''gosh-cli runx --abi ../contracts/l2/checker.abi.json \
-    --addr {checker_address} -m getRootAddr '{{"data":{params}}}' | jq -r .value0''', ignore_error=True)
+--addr {checker_address} -m getRootAddr '{{"data":{params}}}' | jq -r .value0''', ignore_error=True)
 
 
     root_addresses = [geth_root, weenus_root, xeenus_root]
+    print(f"{root_addresses}")
+
     time.sleep(20)
     while True:
         print(f"{checker_address=}")
@@ -274,8 +282,7 @@ def test_main():
 
         execute_cmd(f'''MAX_BLOCK_IN_ONE_CHUNK=40 ETH_CONTRACT_ADDRESS={elock_address} \
 CHECKER_ADDRESS={checker_address} gosh_proposer''', '../', ignore_error=True)
-        telemetry = execute_cmd(f"CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} l2-telemetry", '../')
-        print(f'{telemetry=}')
+
         if not WAS_ERROR:
             prop_address = execute_cmd(f'''gosh-cli runx --addr {checker_address} \
 --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr''')
@@ -285,13 +292,11 @@ CHECKER_ADDRESS={checker_address} gosh_proposer''', '../', ignore_error=True)
                 prop_address = prop_address[-1]
                 execute_cmd(f'''gosh-cli -j callx --addr {prop_address} --abi ../contracts/l2/proposal_test.abi.json  \
 -m setvdict --key {main_pubkey}''')
-
+                get_telemetry(checker_address, elock_address)
                 execute_cmd(f'''VALIDATORS_KEY_PATH=tests/{MAIN_KEY} ETH_CONTRACT_ADDRESS={elock_address} \
 CHECKER_ADDRESS={checker_address} deposit-proposal-checker''', '../')
 
         time.sleep(60)
-        telemetry = execute_cmd(f"CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} l2-telemetry", '../')
-        print(f'{telemetry=}')
         index_found = True
         for root_data in ERC20_ROOTS:
             index_found = index_found and check_index(checker_address, ERC20_ROOTS[root_data], user_pubkey)
@@ -324,7 +329,6 @@ CHECKER_ADDRESS={checker_address} deposit-proposal-checker''', '../')
         print(f"Wrong wallets cnt {root_cnt} != 0")
         exit(1)
 
-
     print(f'token_wallets = {token_wallets}')
 
     for wallet in token_wallets:
@@ -332,10 +336,8 @@ CHECKER_ADDRESS={checker_address} deposit-proposal-checker''', '../')
         balance = wallet["balance"]
         execute_cmd(f'''gosh-cli callx --addr {t_wallet} --abi ../contracts/l2/TONTokenWallet.abi --keys {USER_KEY} \
 -m burnTokens --_answer_id 0 --to $ETH_WALLET_ADDR --tokens {balance}''')
-    telemetry = execute_cmd(f"CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} l2-telemetry", '../')
-    print(f'{telemetry=}')
     time.sleep(20)
-
+    get_telemetry(checker_address, elock_address)
     find_burns = execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
 withdraw_proposal_checker find_burns''')
     print(f'{find_burns=}')
@@ -343,15 +345,19 @@ withdraw_proposal_checker find_burns''')
 withdraw_proposal_checker create''')
 
     time.sleep(10)
+    get_telemetry(checker_address, elock_address)
 
     execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
 withdraw_proposal_checker''')
 
-    time.sleep(20)
+    time.sleep(60)
 
     make_erc20_withdrawal(elock_address, "WEENUS")
     make_erc20_withdrawal(elock_address, "XEENUS")
     parse_events(elock_address)
 
+    get_telemetry(checker_address, elock_address)
+
 
 test_main()
+print("Success!!!")
