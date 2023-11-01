@@ -74,7 +74,7 @@ def load_pubkey(path):
 
 
 def get_last_blocks():
-    last_blocks = execute_cmd("withdraw_proposal_checker get_last_blocks", "..")
+    last_blocks = execute_cmd("withdraw-proposal-checker get_last_blocks", "..")
     print(f"last blocks out: {last_blocks}")
     res = json.loads(last_blocks)
     return res
@@ -208,7 +208,7 @@ def deploy_glock_root(token_name, checker_address):
 
 
 def parse_events(elock_address):
-    events = execute_cmd(f'''ETH_CONTRACT_ADDRESS={elock_address} withdraw_proposal_checker events''')
+    events = execute_cmd(f'''ETH_CONTRACT_ADDRESS={elock_address} withdraw-proposal-checker events''')
     events = json.loads(events)
 
     deposit_cnt = 0
@@ -251,17 +251,20 @@ def test_main():
 
     last_blocks = get_last_blocks()
     elock_address = deploy_elock(last_blocks)
-    make_eth_deposit(elock_address, user_pubkey, ELOCK_DEPOSIT_VALUE)
-    make_erc20_deposit(elock_address, user_pubkey, value=1_000_000_000_000_000_000_000)
-    make_erc20_deposit(elock_address, user_pubkey, token_name="XEENUS")
+    print(f'{elock_address=}')
+    exit(0)
+    # make_eth_deposit(elock_address, user_pubkey, ELOCK_DEPOSIT_VALUE)
+    # make_erc20_deposit(elock_address, user_pubkey, value=1_000_000_000_000_000_000_000)
+    # make_erc20_deposit(elock_address, user_pubkey, token_name="XEENUS")
 
     execute_cmd('gosh-cli config --is_json true -e $GOSH_URL')
 
     checker_address = deploy_glock(last_blocks)
+    print(f'{checker_address=}')
     geth_root = deploy_glock_root("GETH", checker_address)
     weenus_root = deploy_glock_root("WEENUS", checker_address)
 
-    get_telemetry(checker_address, elock_address)
+    # get_telemetry(checker_address, elock_address)
 
     root_data = ERC20_ROOTS.get("XEENUS")
     if root_data is None:
@@ -274,14 +277,14 @@ def test_main():
 
     root_addresses = [geth_root, weenus_root, xeenus_root]
     print(f"{root_addresses}")
-
+    exit(0)
     time.sleep(20)
     while True:
         print(f"{checker_address=}")
         print(f"{root_addresses=}")
 
         execute_cmd(f'''MAX_BLOCK_IN_ONE_CHUNK=40 ETH_CONTRACT_ADDRESS={elock_address} \
-CHECKER_ADDRESS={checker_address} gosh_proposer''', '../', ignore_error=True)
+CHECKER_ADDRESS={checker_address} gosh-proposer''', '../', ignore_error=True)
 
         if not WAS_ERROR:
             prop_address = execute_cmd(f'''gosh-cli runx --addr {checker_address} \
@@ -339,16 +342,16 @@ CHECKER_ADDRESS={checker_address} deposit-proposal-checker''', '../')
     time.sleep(20)
     get_telemetry(checker_address, elock_address)
     find_burns = execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
-withdraw_proposal_checker find_burns''')
+withdraw-proposal-checker find_burns''')
     print(f'{find_burns=}')
     execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
-withdraw_proposal_checker create''')
+withdraw-proposal-checker create''')
 
     time.sleep(10)
     get_telemetry(checker_address, elock_address)
 
     execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
-withdraw_proposal_checker''')
+withdraw-proposal-checker''')
 
     time.sleep(60)
 

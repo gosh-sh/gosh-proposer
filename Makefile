@@ -9,7 +9,7 @@ fix:
 
 .PHONY: run_proposer
 run_proposer:
-	cargo run -p gosh_proposer --release
+	cargo run -p gosh-proposer --release
 
 .PHONY: run_deposit
 run_deposit:
@@ -17,11 +17,11 @@ run_deposit:
 
 .PHONY: run_withdraw
 run_withdraw:
-	cargo run -p withdraw_proposal_checker --release
+	cargo run -p withdraw-proposal-checker --release
 
 .PHONY: get_blocks
 get_blocks:
-	cargo run -p withdraw_proposal_checker --release  -- get_last_blocks
+	cargo run -p withdraw-proposal-checker --release  -- get_last_blocks
 
 .PHONY: check
 check:
@@ -29,7 +29,7 @@ check:
 
 .PHONY: debug_run
 debug_run:
-	GOSH_LOG=trace cargo run -p gosh_proposer --releaes
+	GOSH_LOG=trace cargo run -p gosh-proposer --releaes
 
 .PHONY: test
 test:
@@ -41,8 +41,8 @@ build:
 
 .PHONY: install
 install: build
-	cp target/release/gosh_proposer ~/.cargo/bin/
+	cp target/release/gosh-proposer ~/.cargo/bin/
 	cp target/release/deposit-proposal-checker ~/.cargo/bin/
-	cp target/release/withdraw_proposal_checker ~/.cargo/bin/
+	cp target/release/withdraw-proposal-checker ~/.cargo/bin/
 	cp target/release/l2-telemetry ~/.cargo/bin/
 

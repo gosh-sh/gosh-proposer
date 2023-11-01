@@ -25,27 +25,27 @@ jobs:
       fail-fast: false
       matrix:
         bin:
-          - gosh_proposer
+          - gosh-proposer
         result:
-          # - gosh_proposer-darwin-arm64
-          # - gosh_proposer-darwin-amd64
-          - gosh_proposer-linux-arm64
-          - gosh_proposer-linux-amd64
+          # - gosh-proposer-darwin-arm64
+          # - gosh-proposer-darwin-amd64
+          - gosh-proposer-linux-arm64
+          - gosh-proposer-linux-amd64
 
         include:
-          # - result: gosh_proposer-darwin-arm64
+          # - result: gosh-proposer-darwin-arm64
           #   target: aarch64-apple-darwin
           #   os: macos-12
 
-          # - result: gosh_proposer-darwin-amd64
+          # - result: gosh-proposer-darwin-amd64
           #   target: x86_64-apple-darwin
           #   os: macos-12
 
-          - result: gosh_proposer-linux-arm64
+          - result: gosh-proposer-linux-arm64
             target: aarch64-unknown-linux-musl
             os: ubuntu-latest
 
-          - result: gosh_proposer-linux-amd64
+          - result: gosh-proposer-linux-amd64
             target: x86_64-unknown-linux-musl
             os: ubuntu-latest
 
@@ -131,10 +131,10 @@ jobs:
     strategy:
       matrix:
         result:
-          # - gosh_proposer-darwin-arm64
-          # - gosh_proposer-darwin-amd64
-          - gosh_proposer-linux-arm64
-          - gosh_proposer-linux-amd64
+          # - gosh-proposer-darwin-arm64
+          # - gosh-proposer-darwin-amd64
+          - gosh-proposer-linux-arm64
+          - gosh-proposer-linux-amd64
 
     steps:
       - name: Download all artifacts

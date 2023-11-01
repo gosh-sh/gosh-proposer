@@ -6,7 +6,7 @@ Project working scheme
 2) Get latest ETH and GOSH blocks:
 
 ```bash
-withdraw_proposal_checker get_last_blocks
+withdraw-proposal-checker get_last_blocks
 ```
 
 3) Deploy ELock contract to the ETH network with latest GOSH block and validator wallet addresses
@@ -100,7 +100,7 @@ Withdrawal flow can be triggered less often to save ETH operational balance. In 
 `1 hour`. Fixed time interval can be changed to interactive by querying amount of withdrawals (see paragraph 3 of the 
 current section) and comparing them to some value.
 
-NOTE: calls of `withdraw_proposal_checker` can stuck due to ETH library issues, so it should be run with timeout of
+NOTE: calls of `withdraw-proposal-checker` can stuck due to ETH library issues, so it should be run with timeout of
 approximately `5 minutes` and retried in case of error. 
 
 1) On each validator run checkers in loop:
@@ -118,7 +118,7 @@ loop:
 ```bash
 loop:
   loop:
-    timeout -k 1 5m withdraw_proposal_checker
+    timeout -k 1 5m withdraw-proposal-checker
     # retry if timeout expired
   sleep 1 hour
 ```
@@ -127,10 +127,10 @@ or
 
 ```bash
 loop:
-  TOTAL_VALUE=$(withdraw_proposal_checker find_burns | jq -r .total_value)
+  TOTAL_VALUE=$(withdraw-proposal-checker find_burns | jq -r .total_value)
   if [[ $TOTAL_VALUE -ge $APPROPRIATE_AMOUNT ]]; then
     loop:
-      timeout -k 1 5m withdraw_proposal_checker
+      timeout -k 1 5m withdraw-proposal-checker
       # retry if timeout expired
   fi
   sleep 15 min
@@ -142,7 +142,7 @@ loop:
 
 ```bash
 loop:
-  gosh_proposer
+  gosh-proposer
   sleep 60 sec
 ```
 
@@ -151,7 +151,7 @@ loop:
 ```bash
 loop:
   loop:
-    timeout -k 1 5m withdraw_proposal_checker create
+    timeout -k 1 5m withdraw-proposal-checker create
     # retry if timeout expired
   sleep 1 hour
 ```
@@ -160,10 +160,10 @@ or
 
 ```bash
 loop:
-  TOTAL_VALUE=$(withdraw_proposal_checker find_burns | jq -r .total_value)
+  TOTAL_VALUE=$(withdraw-proposal-checker find_burns | jq -r .total_value)
   if [[ $TOTAL_VALUE -ge $APPROPRIATE_AMOUNT ]]; then
     loop:
-      timeout -k 1 5m withdraw_proposal_checker
+      timeout -k 1 5m withdraw-proposal-checker
       # retry if timeout expired
   fi
   sleep 15 min
@@ -171,10 +171,10 @@ loop:
 
 3) Query amount of withdrawals
 
-Call of `withdraw_proposal_checker` with `find_burns` subcommand will print all found withdrawals: 
+Call of `withdraw-proposal-checker` with `find_burns` subcommand will print all found withdrawals: 
 
 ```bash
-$ withdraw_proposal_checker find_burns
+$ withdraw-proposal-checker find_burns
 {
   "count": 1,
   "total_value": 19980000000000000

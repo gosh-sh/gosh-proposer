@@ -21,7 +21,7 @@ echo "export PUBKEY=$PUBKEY" > $TEST_TRACE
 cd ..
 
 # Query last blocks
-LAST_BLOCKS=$(cargo run -p withdraw_proposal_checker --release  -- get_last_blocks)
+LAST_BLOCKS=$(cargo run -p withdraw-proposal-checker --release  -- get_last_blocks)
 echo "LAST_BLOCKS=$LAST_BLOCKS"
 LAST_GOSH_BLOCK=$(echo $LAST_BLOCKS | jq -r .gosh.id )
 LAST_ETH_BLOCK=$(echo $LAST_BLOCKS | jq -r .eth.hash )
@@ -132,10 +132,10 @@ sleep 10
 cd ..
 
 # Find all burns
-ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw_proposal_checker --release  -- find_burns
+ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw-proposal-checker --release  -- find_burns
 
 # Create proposal in Elock
-ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw_proposal_checker --release  -- create
+ROOT_ADDRESS=$ROOT_ADDRESS ETH_CONTRACT_ADDRESS=$ETH_CONTRACT_ADDRESS cargo run -p withdraw-proposal-checker --release  -- create
 
 sleep 10
 # Vote for proposal

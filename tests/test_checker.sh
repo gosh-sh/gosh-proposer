@@ -11,7 +11,7 @@ gosh-cli genphrase --dump keys.json
 PUBKEY="0x$(cat keys.json | jq  -r .public)"
 
 # Query last blocks
-LAST_BLOCKS=$(cargo run -p withdraw_proposal_checker --release  -- get_last_blocks)
+LAST_BLOCKS=$(cargo run -p withdraw-proposal-checker --release  -- get_last_blocks)
 echo "LAST_BLOCKS=$LAST_BLOCKS"
 LAST_ETH_BLOCK=$(echo $LAST_BLOCKS | jq -r .eth.hash )
 echo "export LAST_ETH_BLOCK=$LAST_ETH_BLOCK"

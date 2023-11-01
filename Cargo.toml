@@ -5,7 +5,7 @@ members = [
     "deposit-proposal-checker",
     "gosh-proposer",
     "l2-telemetry",
-    "withdraw_proposal_checker",
+    "withdraw-proposal-checker",
 ]
 resolver = "2"
 

@@ -1,5 +1,5 @@
 [package]
-name = "withdraw_proposal_checker"
+name = "withdraw-proposal-checker"
 version = "0.1.0"
 edition = "2021"
 

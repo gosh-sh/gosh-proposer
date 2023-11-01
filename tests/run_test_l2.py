@@ -85,7 +85,7 @@ def main():
         # time.sleep(60)
         get_telemetry(checker_address, elock_address)
         execute_cmd(f'''MAX_BLOCK_IN_ONE_CHUNK=64 CHECKER_ADDRESS={checker_address} \
-ETH_CONTRACT_ADDRESS={elock_address} gosh_proposer''', ignore_error=True)
+ETH_CONTRACT_ADDRESS={elock_address} gosh-proposer''', ignore_error=True)
         prop_address = execute_cmd(f'''gosh-cli runx --addr {checker_address} \
 --abi ../contracts/l2/checker.abi.json -m getAllProposalAddr''')
         prop_address = json.loads(prop_address)['value0']
@@ -97,9 +97,9 @@ ETH_CONTRACT_ADDRESS={elock_address} gosh_proposer''', ignore_error=True)
             execute_cmd(f'''VALIDATORS_KEY_PATH={MAIN_KEY} CHECKER_ADDRESS={checker_address} \
 ETH_CONTRACT_ADDRESS={elock_address} deposit-proposal-checker''', ignore_error=True)
         execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
-withdraw_proposal_checker create''')
+withdraw-proposal-checker create''')
         execute_cmd(f'''CHECKER_ADDRESS={checker_address} ETH_CONTRACT_ADDRESS={elock_address} \
-withdraw_proposal_checker''')
+withdraw-proposal-checker''')
 
 
 def generate_contract_addresses(tvc_path: str, key_path: str):
@@ -122,7 +122,7 @@ def deploy_contract(tvc_path: str, key_path: str, constructor_args: str):
 
 
 def get_last_blocks():
-    last_blocks = execute_cmd("withdraw_proposal_checker get_last_blocks")
+    last_blocks = execute_cmd("withdraw-proposal-checker get_last_blocks")
     print(f"last blocks out: {last_blocks}")
     res = json.loads(last_blocks)
     return res
@@ -163,15 +163,19 @@ def deploy_l2():
     checker_address = generate_contract_addresses(checker_tvc, MAIN_KEY)
 
     print(f"{receiver_address=}\n{checker_address=}")
-    exit(0)
+    # exit(0)
+
+    # receiver_address = '0:fa6bffa50471fa430dcd133218858f5ef41bdb145c5b8b38e08124fbac4c6f04'
+    # checker_address = '0:410fed0f41e881ace4e4c0eb8e29c629a317375e44d908c46af3f8aafa96bdae'
+
 
     # for main change to real one !!!
     # proposal_tvc = '../contracts/l2/proposal_test.tvc'
     proposal_tvc = '../contracts/l2/proposal.tvc'
 
     # for main change to real one !!!
-    ask_test_giver(receiver_address, 100_000_000_000)
-    ask_test_giver(checker_address, 10_000_000_000_000)
+    # ask_test_giver(receiver_address, 100_000_000_000)
+    # ask_test_giver(checker_address, 10_000_000_000_000)
 
     deploy_contract(receiver_tvc, MAIN_KEY, '')
     deploy_contract(checker_tvc, MAIN_KEY,
