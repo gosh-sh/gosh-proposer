@@ -45,6 +45,8 @@ contract Elock {
 
     mapping (address => mapping (address => ERC20WithdrawalApprovement)) approvedWithdrawals; // 0x15
     mapping (address => uint) totalSupplies; // 0x16
+    address[] tokenRoots; // 0x17
+    uint public proposalWithdrawalFee = 400_000;
 
     struct Transfer {
         address token;
@@ -250,6 +252,13 @@ contract Elock {
         }
     }
 
+    function setProposalWithdrawalFee(uint fee) public {
+        require(fee > 0);
+        require(fee != proposalWithdrawalFee);
+
+        proposalWithdrawalFee = fee;
+    }
+
     function getProposalList() public view returns (uint256[] memory proposalKeys) {
         return _proposalKeys;
     }
@@ -292,8 +301,8 @@ contract Elock {
         return validatorsCount / uint256(2) + 1; // 50% + 1 vote
     }
 
-    function _calculateFinalizeProposalFee() private pure returns (uint256) {
-        return 400_000;
+    function _calculateFinalizeProposalFee() private view returns (uint256) {
+        return proposalWithdrawalFee;
     }
 
     function _updateValidators() private {
