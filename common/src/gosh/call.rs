@@ -100,8 +100,9 @@ pub async fn call_function(
     args: Option<serde_json::Value>,
 ) -> anyhow::Result<()> {
     tracing::info!(
-        "call_function: address={address}, function_name={function_name}, args={args:?}"
+        "call_function: address={address}, function_name={function_name}"
     );
+    tracing::trace!("call args={args:?}");
 
     let call_set = match args {
         Some(value) => CallSet::some_with_function_and_input(function_name, value),

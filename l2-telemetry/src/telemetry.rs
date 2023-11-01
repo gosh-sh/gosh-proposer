@@ -8,11 +8,10 @@ use common::gosh::block::{get_latest_master_block, get_master_block_seq_no};
 use common::gosh::burn::find_burns;
 use common::gosh::call_getter;
 use common::gosh::helper::create_client;
-use common::gosh::message::get_token_wallet_total_mint;
 use common::helper::abi::{CHECKER_ABI, ELOCK_ABI, PROPOSAL_ABI};
 use common::helper::{deserialize_uint, serialize_u128};
-use common::token_root::eth::{get_geth_root_data, get_root_data};
-use common::token_root::{get_root_address, get_root_owner_address, get_root_owner_balance, get_root_total_supply, RootData};
+use common::token_root::eth::get_root_data;
+use common::token_root::{get_root_address, get_root_owner_balance, get_root_total_supply, RootData};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -125,8 +124,6 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     tracing::info!("Get telemetry");
     let gosh_context = create_client()?;
     let checker_address = get_checker_address()?;
-    let root_data = get_geth_root_data();
-    let root_address = get_root_address(&gosh_context, &checker_address, &root_data).await?;
 
     let web3s = create_web3_socket().await?;
     let elock_address = get_elock_address()?;
@@ -279,10 +276,6 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     let elock_collected_commissions =
         U256::from_str_radix(&elock_collected_commissions_str, 16)?.as_u128();
 
-    let wallet_address = get_root_owner_address(&gosh_context, &root_address).await?;
-
-    // let glock_current_commissions = get_wallet_balance(&gosh_context, &wallet_address).await?;
-
     let current_eth_gas_price = web3s.eth().gas_price().await?.as_u128();
 
     let current_approximate_elock_commissions = (ELOCK_WITHDRAWAL_COMMISSION * ((elock_proposals_cnt + 1) as u128) + // + 1  because usually there no proposals and one will definitely be created for withdrawal
@@ -294,9 +287,6 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     } else {
         0
     };
-
-    let glock_total_commissions =
-        get_token_wallet_total_mint(&gosh_context, &wallet_address).await?;
 
 
     let all_token_roots = elock::get_token_roots(
@@ -325,7 +315,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         all_roots_supplies.push((data, total_supply));
     }
 
-    let glock_current_commissions = all_roots_comissions
+    let glock_current_commissions: Vec<RootValue> = all_roots_comissions
         .into_iter().map(|(root, value)| RootValue{
         root,
         value
@@ -335,6 +325,11 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         root,
         value
     }).collect();
+
+    let mut glock_total_commissions = 0;
+    for val in &glock_current_commissions {
+        glock_total_commissions += val.value;
+    }
 
     let queued_burns: Vec<BurnStatistic> = burns_map.values().cloned().collect();
 
