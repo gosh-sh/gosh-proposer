@@ -100,6 +100,10 @@ contract Proposal {
         uint16 key;
         optional(uint16, TvmSlice) res = _vdict.next(key);
         mapping(uint16 => uint256) result;
+        if (_vdict.exists(key)) {
+            uint256 pubkey = _vdict[key].load(uint256);
+            result[key] = pubkey;
+        }
         while (res.hasValue()) {
             (uint16 newkey, TvmSlice data) = res.get();
             data.skip(5 * 8);
@@ -114,6 +118,13 @@ contract Proposal {
         uint16 key;
         optional(uint16) result;
         optional(uint16, TvmSlice) res = _vdict.next(key);
+        if (_vdict.exists(key)) {
+            uint256 pubkey1 = _vdict[key].load(uint256);
+            if (pubkey == pubkey1) {
+                result = key;
+                return result;
+            }
+        }
         while (res.hasValue()) {
             (uint16 newkey, TvmSlice data) = res.get();
             key = newkey;
