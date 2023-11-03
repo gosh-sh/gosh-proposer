@@ -80,6 +80,7 @@ contract Checker {
 
     function setProposalCode(TvmCell code) public onlyOwner accept {
         _proposalCode = code;
+        _proposalCount = 0;
     }
 
     function setIndexWalletCode(TvmCell code) public onlyOwner accept {

@@ -30,6 +30,7 @@ contract Proposal {
         _;
     }
 
+    uint128 _random = 0;
     uint256 _hash; 
     uint256 _newhash;
     address static _checker; 

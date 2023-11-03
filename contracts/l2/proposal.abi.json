@@ -77,6 +77,7 @@
 		{"name":"_pubkey","type":"uint256"},
 		{"name":"_timestamp","type":"uint64"},
 		{"name":"_constructorFlag","type":"bool"},
+		{"name":"_random","type":"uint128"},
 		{"name":"_hash","type":"uint256"},
 		{"name":"_newhash","type":"uint256"},
 		{"name":"_checker","type":"address"},
