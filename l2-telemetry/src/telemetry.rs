@@ -19,6 +19,7 @@ use std::str::FromStr;
 use web3::contract::{Contract, Options};
 use web3::types::{Address, BlockId, BlockNumber, U256};
 use common::elock;
+use common::gosh::balance::query_balance;
 
 const COLLECTED_COMMISSIONS_INDEX: u8 = 0x13;
 const ELOCK_WITHDRAWAL_COMMISSION: u128 = 400_000;
@@ -73,9 +74,10 @@ struct Telemetry {
     #[serde(serialize_with = "serialize_u128")]
     elock_balance: u128,
     validators_balances: HashMap<Address, u128>,
+    min_validator_balance: u128,
 
     glock_total_supply: Vec<RootValue>,
-
+    glock_checker_balance: u128,
 
     #[serde(serialize_with = "serialize_u128")]
     elock_collected_commissions: u128,
@@ -254,12 +256,17 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         .map_err(|e| anyhow::format_err!("Failed to call ELock getter getProposalList: {e}"))?;
 
     let mut validators_balances = HashMap::new();
+    let mut min_validator_balance = u128::MAX;
     for validator in validators {
         let balance = web3s
             .eth()
             .balance(validator, Some(BlockNumber::Number(last_block_number)))
-            .await?;
-        validators_balances.insert(validator, balance.as_u128());
+            .await?
+            .as_u128();
+        if balance < min_validator_balance {
+            min_validator_balance = balance;
+        }
+        validators_balances.insert(validator, balance);
     }
 
     let elock_collected_commissions = get_storage(
@@ -292,7 +299,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     let all_token_roots = elock::get_token_roots(
         &elock_contract
     ).await?;
-    let mut all_roots_comissions = vec![];
+    let mut all_roots_commissions = vec![];
     let mut all_roots_supplies = vec![];
     for root in all_token_roots {
         let data = get_root_data(
@@ -308,14 +315,14 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
             &gosh_context,
             &address,
         ).await.unwrap_or(0);
-        all_roots_comissions.push((data.clone(), balance));
+        all_roots_commissions.push((data.clone(), balance));
         let total_supply = get_root_total_supply(
             &gosh_context, &address
         ).await.unwrap_or(0);
         all_roots_supplies.push((data, total_supply));
     }
 
-    let glock_current_commissions: Vec<RootValue> = all_roots_comissions
+    let glock_current_commissions: Vec<RootValue> = all_roots_commissions
         .into_iter().map(|(root, value)| RootValue{
         root,
         value
@@ -332,6 +339,11 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
     }
 
     let queued_burns: Vec<BurnStatistic> = burns_map.values().cloned().collect();
+
+    let glock_checker_balance = query_balance(
+        &gosh_context,
+        &checker_address
+    ).await?;
 
     let telemetry = Telemetry {
         glock_eth_block: first_block_number.as_u64(),
@@ -359,8 +371,10 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
 
         elock_balance: elock_balance.as_u128(),
         validators_balances,
+        min_validator_balance,
 
         glock_total_supply,
+        glock_checker_balance,
 
         elock_collected_commissions,
 
