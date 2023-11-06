@@ -41,6 +41,14 @@ struct RootValue {
 }
 
 #[derive(Serialize)]
+struct ExtendedRootValue {
+    root: RootData,
+    #[serde(serialize_with = "serialize_u128")]
+    value: u128,
+    gosh_root: String,
+}
+
+#[derive(Serialize)]
 struct Telemetry {
     glock_eth_block: u64,
     last_eth_block: u64,
@@ -76,7 +84,7 @@ struct Telemetry {
     validators_balances: HashMap<Address, u128>,
     min_validator_balance: u128,
 
-    glock_total_supply: Vec<RootValue>,
+    glock_total_supply: Vec<ExtendedRootValue>,
     glock_checker_balance: u128,
 
     #[serde(serialize_with = "serialize_u128")]
@@ -319,7 +327,7 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         let total_supply = get_root_total_supply(
             &gosh_context, &address
         ).await.unwrap_or(0);
-        all_roots_supplies.push((data, total_supply));
+        all_roots_supplies.push((data, total_supply, address));
     }
 
     let glock_current_commissions: Vec<RootValue> = all_roots_commissions
@@ -328,9 +336,10 @@ pub async fn get_telemetry() -> anyhow::Result<()> {
         value
     }).collect();
     let glock_total_supply = all_roots_supplies
-        .into_iter().map(|(root, value)| RootValue{
+        .into_iter().map(|(root, value, address)| ExtendedRootValue{
         root,
-        value
+        value,
+        gosh_root: address,
     }).collect();
 
     let mut glock_total_commissions = 0;
