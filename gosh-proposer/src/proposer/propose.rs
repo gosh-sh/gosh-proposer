@@ -26,7 +26,8 @@ pub async fn propose_blocks(
 
     // Get starting tx counter
     let start_block_number = blocks.last().unwrap().number.unwrap();
-    let starting_tx_counter = get_tx_counter(web3s, elock_address, start_block_number)
+    // We should check tx counter on the block before starting to get changes from the first block
+    let starting_tx_counter = get_tx_counter(web3s, elock_address, start_block_number - 1)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get ELock tx counter: {e}"))?;
     tracing::info!("Start tx counter on {start_block_number}: {starting_tx_counter}");
@@ -37,7 +38,7 @@ pub async fn propose_blocks(
         .map_err(|e| anyhow::format_err!("Failed to get ELock tx counter: {e}"))?;
     tracing::info!("Final tx counter on {final_block_number}: {final_tx_counter}");
 
-    let all_transfers: Vec<TransferPatch> = if final_tx_counter != starting_tx_counter {
+    let all_transfers: Vec<TransferPatch> = {
         let transfers =
             get_deposits(web3s, elock_address, start_block_number, final_block_number).await?;
         assert_eq!(
@@ -47,8 +48,6 @@ pub async fn propose_blocks(
         );
         check_roots(client, checker_address, &transfers).await?;
         transfers
-    } else {
-        vec![]
     };
 
     let mut json_blocks = vec![];
