@@ -32,6 +32,7 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
             None => anyhow::bail!("Failed to fetch block with proposal hash"),
         }
     };
+    // Get counter on the last saved block
     let start_tx_counter = get_tx_counter(web3s, elock_address, from_block_num)
         .await
         .map_err(|e| anyhow::format_err!("Failed to get env ELock tx counter: {e}"))?;
@@ -58,6 +59,8 @@ pub async fn validate_proposal(web3s: &Web3<WebSocket>, proposal: Proposal) -> a
     if verifying_transfers.len() != tx_cnt {
         anyhow::bail!("Number of transfers in proposal is not equal to tx counter change");
     }
+    // Query deposits starting from the new block (because borders are included)
+    let from_block_num = from_block_num + 1;
 
     // Get real deposits and compare them to transfers from proposal
     let actual_deposits =
